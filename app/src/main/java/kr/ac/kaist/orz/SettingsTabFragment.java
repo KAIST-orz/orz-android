@@ -23,10 +23,6 @@ public class SettingsTabFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     public SettingsTabFragment() {
@@ -42,11 +38,9 @@ public class SettingsTabFragment extends Fragment {
      * @return A new instance of fragment SettingsTabFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingsTabFragment newInstance(String param1, String param2) {
+    public static SettingsTabFragment newInstance() {
         SettingsTabFragment fragment = new SettingsTabFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,10 +48,6 @@ public class SettingsTabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
