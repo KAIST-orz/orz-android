@@ -39,12 +39,14 @@
             android:id="@+id/button_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_in" />
+            android:text="@string/sign_in"
+            android:onClick="signIn" />
 
         <Button
             android:id="@+id/button_register_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/register_account" />
+            android:text="@string/register_account"
+            android:onClick="registerAccount" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
