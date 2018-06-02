@@ -1,12 +1,23 @@
 package kr.ac.kaist.orz;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageView;
+
+import java.util.Calendar;
 
 
 /**
@@ -22,6 +33,10 @@ public class CalendarTabFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private ImageView toPreviousDay;
+    private ImageView toNextDay;
+    private Button pickDate;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -51,8 +66,19 @@ public class CalendarTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_calendar_tab, container, false);
+
+        // Initiate the pickDate button
+        pickDate = (Button) view.findViewById(R.id.pickDate);
+        pickDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(view);
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar_tab, container, false);
+        return view;
     }
 /*
     // TODO: Rename method, update argument and hook method into UI event
@@ -93,4 +119,37 @@ public class CalendarTabFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    /*
+     * onClick by button5
+     */
+    public void showDatePickerDialog(View view) {
+        FragmentActivity parentActivity = getActivity();
+        if (parentActivity == null) {
+            return;
+        }
+        DialogFragment dialog = new DatePickerFragment();
+        dialog.show(parentActivity.getFragmentManager(), "datePicker");
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+                                    implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker.
+            final Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Initiate appropriate action.
+
+        }
+    }
+
 }
