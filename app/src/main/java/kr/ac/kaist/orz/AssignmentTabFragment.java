@@ -7,6 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.support.v7.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -47,39 +53,47 @@ public class AssignmentTabFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        */
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
+
+        ListView m_ListView;
+        ListAdapter m_Adapter;
+
+        //데이터를 저장하게 되는 리스트
+        List<assignmentTab> list = new ArrayList<>();
+        //리스트뷰에 보여질 아이템을 추가
+        list.add(new assignmentTab("Logical Writing", "Writing Assignment 1"));
+        list.add(new assignmentTab("Computer Architecture", "Homework 1"));
+        list.add(new assignmentTab("Computer Architecture", "Homework 2"));
+        list.add(new assignmentTab("Computer Architecture", "Homework 3"));
+        list.add(new assignmentTab("Computer Architecture", "Homework 4"));
+        list.add(new assignmentTab("Introduction to Software Engineering", "Homework 1"));
+
+        // Xml에서 추가한 ListView 연결
+        m_ListView = (ListView)view.findViewById(R.id.listview_assignment);
+
+        //리스트뷰와 리스트를 연결하기 위해 사용되는 어댑터
+        m_Adapter = new assignmentTabViewAdapter(getActivity(), list);
+        //리스트뷰의 어댑터를 지정해준다.
+        m_ListView.setAdapter(m_Adapter);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_assignment_tab, container, false);
+        return view;
     }
-/*
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -103,4 +117,6 @@ public class AssignmentTabFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }
