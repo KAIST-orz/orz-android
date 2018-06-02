@@ -7,39 +7,43 @@
     android:layout_height="match_parent"
     tools:context=".CalendarTabFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="1"
+        android:background="@color/colorPrimary">
 
-        <ImageView
-            android:id="@+id/previousDay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_arrow_back_black_24dp" />
+        <ImageButton
+            android:id="@+id/to_previous_day"
+            android:layout_width="64dp"
+            android:layout_height="36dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/pickDate"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/pick_date"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:text="Button" />
+            android:backgroundTint="@android:color/darker_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/to_next_day"
+            app:layout_constraintStart_toEndOf="@+id/to_previous_day"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/nextDay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_arrow_forward_black_24dp" />
+        <ImageButton
+            android:id="@+id/to_next_day"
+            android:layout_width="64dp"
+            android:layout_height="36dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_arrow_forward_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <ScrollView
         android:layout_width="0dp"
@@ -49,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
