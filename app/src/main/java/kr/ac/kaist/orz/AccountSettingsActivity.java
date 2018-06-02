@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AccountSettingsActivity extends AppCompatActivity {
@@ -16,12 +18,20 @@ public class AccountSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_settings);
 
-        EditText idView = findViewById(R.id.editText_id);
-        EditText emailView = findViewById(R.id.editText_email);
         Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.schools_array, R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        schoolsSpinner.setAdapter(adapter);
+
+        TextView idView = findViewById(R.id.editText_id);
+        EditText passView = findViewById(R.id.editText_password);
+        EditText verifyView = findViewById(R.id.editText_verify);
+        EditText emailView = findViewById(R.id.editText_email);
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
-        idView.setText(getUserID());
+        idView.setText(" ".concat(getUserID()));
+        passView.setText(getUserPassword());
+        verifyView.setText(getUserPassword());
         emailView.setText(getUserEmail());
         schoolsSpinner.setSelection(getUserSchool());
         lecturerCheckBox.setChecked(isUserLecturer());
@@ -31,12 +41,16 @@ public class AccountSettingsActivity extends AppCompatActivity {
         return "asdf";
     }
 
+    public String getUserPassword() {
+        return "asdf";
+    }
+
     public String getUserEmail() {
         return "asdf@asdf";
     }
 
     public int getUserSchool() {
-        return 0;
+        return 1;
     }
 
     public boolean isUserLecturer() {
@@ -44,34 +58,27 @@ public class AccountSettingsActivity extends AppCompatActivity {
     }
 
     public void update(View v) {
-        EditText idView = findViewById(R.id.editText_id);
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
         EditText emailView = findViewById(R.id.editText_email);
         Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
-        String id = idView.getText().toString();
-        int pass = passView.getText().toString().hashCode();
-        int verify = verifyView.getText().toString().hashCode();
+        String pass = passView.getText().toString();
+        String verify = verifyView.getText().toString();
         String email = emailView.getText().toString();
         String school = schoolsSpinner.getSelectedItem().toString();
         boolean isLecturer = lecturerCheckBox.isChecked();
 
-        if(id.length() == 0)
-            Toast.makeText(this, "The ID is empty", Toast.LENGTH_LONG).show();
 
-        else if(pass == 0)
+        if(pass.length() == 0)
             Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
 
-        else if(verify == 0)
+        else if(verify.length() == 0)
             Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
 
         else if(email.length() == 0)
             Toast.makeText(this, "The email is empty", Toast.LENGTH_LONG).show();
-
-        else if(!checkID(id))
-            Toast.makeText(this, "The ID already exists", Toast.LENGTH_LONG).show();
 
         else if(!checkPassword(pass, verify))
             Toast.makeText(this, "The passwords does not match", Toast.LENGTH_LONG).show();
@@ -86,12 +93,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
     }
 
-    public boolean checkID(String id) {
-        return !id.equals("asdf");
-    }
-
-    public boolean checkPassword(int pass, int verify) {
-        return pass == verify;
+    public boolean checkPassword(String pass, String verify) {
+        return pass.equals(verify);
     }
 
     public boolean checkEmail(String email) {

@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -118,5 +119,20 @@ public class OrzMainActivity extends AppCompatActivity {
             // Show 3 total pages.
             return 3;
         }
+    }
+
+    public void settings_account(View v) {
+        Intent intent = new Intent(getApplicationContext(), AccountSettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void settings_notification(View v) {
+        Intent intent = new Intent(getApplicationContext(), NotificationSettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void settings_myCourses(View v) {
+        Intent intent = new Intent(getApplicationContext(), MyCoursesActivity.class);
+        startActivity(intent);
     }
 }

@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText passView = findViewById(R.id.editText_password);
 
         String id = idView.getText().toString();
-        int pass = passView.getText().toString().hashCode();
+        String pass = passView.getText().toString();
 
         if(checkLogin(id, pass)) {
             Toast.makeText(this, "signin success", Toast.LENGTH_LONG).show();
@@ -31,17 +31,15 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "signin failed", Toast.LENGTH_LONG).show();
     }
 
-    public boolean checkLogin(String id, int pass) {
-        if(pass == getPassword(id))
-            return true;
-        return false;
+    public boolean checkLogin(String id, String pass) {
+        return pass.equals(getPassword(id));
     }
 
-    public int getPassword(String id) {
+    public String getPassword(String id) {
         if(id.equals("asdf"))
-            return "asdf".hashCode();
+            return "asdf";
         else
-            return -1;
+            return "zxcv";
     }
 
     public void registerAccount(View v) {

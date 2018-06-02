@@ -1,6 +1,7 @@
 package kr.ac.kaist.orz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,7 @@ public class SettingsTabFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public SettingsTabFragment() {
         // Required empty public constructor
@@ -54,13 +55,14 @@ public class SettingsTabFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings_tab, container, false);
     }
-/*
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
+/*
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -71,12 +73,12 @@ public class SettingsTabFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+*/
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-*/
 
     /**
      * This interface must be implemented by activities that contain this
