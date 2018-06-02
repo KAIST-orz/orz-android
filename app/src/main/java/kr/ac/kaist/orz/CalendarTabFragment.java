@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -13,9 +15,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.Dictionary;
 
 
 /**
@@ -40,6 +46,9 @@ public class CalendarTabFragment extends Fragment
 
     // Keep the date information which the user has chosen
     private Calendar calendar;
+
+    // The layout to draw schedule views onto
+    private ConstraintLayout scheduleLayout;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -118,6 +127,9 @@ public class CalendarTabFragment extends Fragment
         pickDate.setText(formatDateOfCalendar());
 
         // TODO: Initialize the schedules of the previously chosen date.
+
+        // The layout to draw schedules onto.
+        scheduleLayout = (ConstraintLayout) view.findViewById(R.id.schedule_layout);
 
         // Inflate the layout for this fragment
         return view;
@@ -227,5 +239,36 @@ public class CalendarTabFragment extends Fragment
         public void setOnDateSetListener(DatePickerDialog.OnDateSetListener listener) {
             this.mOnDateSetListener = listener;
         }
+    }
+
+    // Displays the schedules of the date the user has picked.
+    private void displaySchedulesOfCurrentDate() {
+
+    }
+
+    /*
+     * Assumption: No two schedules conflict. A schedule starts at least the minute
+     * other schedule ends.
+     * Time frames are displayed in units of 5 minutes. No schedule is shorter than 5 minutes.
+     * ends -> less than the actual end time
+     * starts -> more than the actual start time
+     */
+    private void createScheduleView(int startHour, int startMinute, int endHour, int endMinute,
+                                    String[] descriptions) {
+        TextView scheduleView = new TextView(getActivity());
+
+        if (startHour == -1) {
+            // Schedule starts before the time frame of this day.
+
+        }
+
+        if (endHour == -1) {
+            // Schedule ends after the time frame of this day.
+
+        }
+
+        ConstraintSet set = new ConstraintSet();
+
+
     }
 }
