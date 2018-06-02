@@ -19,5 +19,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <EditText
+            android:id="@+id/editText_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/id_hint"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editText_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/editText_verify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/verify_password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/editText_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/email_hint"
+            android:inputType="textEmailAddress" />
+
+        <Spinner
+            android:id="@+id/spinner_schools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/checkBox_lecturer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_lecturer" />
+
+        <Button
+            android:id="@+id/button_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update"
+            android:onClick="update" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

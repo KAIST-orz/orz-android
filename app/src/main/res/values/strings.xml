@@ -16,6 +16,12 @@
     <string name="label_register_account">Register an orz account</string>
     <string name="label_my_courses">My Courses</string>
     <string name="label_open_courses">Open Courses</string>
+    <string name="update">Update</string>
+    <string name="label_update_account">Update an orz account</string>
+
+    <string name="settings_account">Account</string>
+    <string name="settings_notification">Notification</string>
+    <string name="settings_myCourses">My Courses</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
