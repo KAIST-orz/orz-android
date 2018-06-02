@@ -2,36 +2,45 @@ package kr.ac.kaist.orz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyCoursesActivity extends AppCompatActivity {
-    private TextView selected_item_textview;
+    private ListView m_ListView;
+    private ListAdapter m_Adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
 
-        ListView listview = (ListView)findViewById(R.id.listview);
-//        selected_item_textview = (TextView)findViewById(R.id.selected_item_textview);
-
-
         //데이터를 저장하게 되는 리스트
-        List<String> list = new ArrayList<>();
+        List<myCourseInformation> list = new ArrayList<>();
+        //리스트뷰에 보여질 아이템을 추가
+        list.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh"));
+        list.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee"));
+        list.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon"));
+        list.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
+
+        // Xml에서 추가한 ListView 연결
+        m_ListView = (ListView)findViewById(R.id.listview);
 
         //리스트뷰와 리스트를 연결하기 위해 사용되는 어댑터
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, list);
+        m_Adapter = new myCourseViewAdapter(this, list);
 
         //리스트뷰의 어댑터를 지정해준다.
-        listview.setAdapter(adapter);
+        m_ListView.setAdapter(m_Adapter);
+
+
+        /*
+        m_Adapter.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh"));
+        m_Adapter.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee"));
+        m_Adapter.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon"));
+        m_Adapter.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
+        */
 
         /*
         //리스트뷰의 아이템을 클릭시 해당 아이템의 문자열을 가져오기 위한 처리
@@ -49,12 +58,5 @@ public class MyCoursesActivity extends AppCompatActivity {
             }
         });
         */
-
-        //리스트뷰에 보여질 아이템을 추가
-        list.add("사과");
-        list.add("배");
-        list.add("귤");
-        list.add("바나나");
-
     }
 }
