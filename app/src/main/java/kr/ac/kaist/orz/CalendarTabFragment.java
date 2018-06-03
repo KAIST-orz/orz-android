@@ -50,7 +50,7 @@ public class CalendarTabFragment extends Fragment
     // The layout to draw schedule views onto
     private ConstraintLayout scheduleLayout;
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public CalendarTabFragment() {
         // Required empty public constructor
@@ -158,7 +158,7 @@ public class CalendarTabFragment extends Fragment
         super.onDetach();
         mListener = null;
     }
-*/
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

@@ -24,7 +24,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkLogin(id, pass)) {
             Toast.makeText(this, "signin success", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
+            //Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AssignmentDetailsActivity.class);
             startActivity(intent);
         }
         else

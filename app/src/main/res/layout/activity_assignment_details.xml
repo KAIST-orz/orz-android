@@ -6,4 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".AssignmentDetailsActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:dividerHorizontal"
+            android:showDividers="middle" >
+
+            <TextView
+                android:id="@+id/textView_subject_assignment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subject\nAssignment" />
+
+            <Button
+                android:id="@+id/button_due"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Due"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_estimated_time"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estimated Time"
+                android:gravity="center_vertical"
+                android:textAllCaps="false"
+                android:onClick="enter_expected_time" />
+
+            <ListView
+                android:id="@+id/listView_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="#00000000" />
+
+            <ListView
+                android:id="@+id/listView_time_for_assignment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="#00000000" />
+
+            <TextView
+                android:id="@+id/textView_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="description" />
+        </LinearLayout>
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>
