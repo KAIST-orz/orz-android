@@ -27,6 +27,33 @@
     <string name="notification_settings_time_for_assignment">Time for Assignment</string>
     <string name="notification_settings_assignment_due">Assignment Due</string>
 
+    <!-- Time labels for calendar view. -->
+    <string name="time_0am">0 AM</string>
+    <string name="time_1am">1 AM</string>
+    <string name="time_2am">2 AM</string>
+    <string name="time_3am">3 AM</string>
+    <string name="time_4am">4 AM</string>
+    <string name="time_5am">5 AM</string>
+    <string name="time_6am">6 AM</string>
+    <string name="time_7am">7 AM</string>
+    <string name="time_8am">8 AM</string>
+    <string name="time_9am">9 AM</string>
+    <string name="time_10am">10 AM</string>
+    <string name="time_11am">11 AM</string>
+    <string name="time_12pm">12 PM</string>
+    <string name="time_1pm">1 PM</string>
+    <string name="time_2pm">2 PM</string>
+    <string name="time_3pm">3 PM</string>
+    <string name="time_4pm">4 PM</string>
+    <string name="time_5pm">5 PM</string>
+    <string name="time_6pm">6 PM</string>
+    <string name="time_7pm">7 PM</string>
+    <string name="time_8pm">8 PM</string>
+    <string name="time_9pm">9 PM</string>
+    <string name="time_10pm">10 PM</string>
+    <string name="time_11pm">11 PM</string>
+    <string name="time_12am">12 AM</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
