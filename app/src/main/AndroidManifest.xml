@@ -36,7 +36,8 @@
         <activity android:name=".RegisterAssignmentActivity" />
         <activity android:name=".ScheduleDetailsActivity" />
         <activity android:name=".RegisterScheduleActivity" />
-        <activity android:name=".AccountSettingsActivity" />
+        <activity android:name=".AccountSettingsActivity"
+                  android:label="@string/label_update_account" />
         <activity android:name=".MyCoursesActivity"
                   android:label="@string/label_my_courses"
                   android:parentActivityName=".OrzMainActivity">

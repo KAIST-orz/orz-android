@@ -96,8 +96,22 @@ public class AssignmentTabFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+/*
     @Override
+<<<<<<< .merge_file_a19328
+=======
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+*/
+    @Override
+
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -117,6 +131,4 @@ public class AssignmentTabFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }
