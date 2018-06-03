@@ -22,6 +22,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
 
+        /*
         //데이터를 저장하게 되는 리스트
         final List<myCourseInformation> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
@@ -38,6 +39,7 @@ public class MyCoursesActivity extends AppCompatActivity {
 
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
+        */
 
         //Floating Action Button을 누르면 OpenCourse 페이지로 넘어갈 수 있게.
         FloatingActionButton fab = findViewById(R.id.myCourse_fab);

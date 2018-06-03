@@ -74,6 +74,7 @@ public class AssignmentTabFragment extends Fragment {
         int assignment_id=123; //각 assignment 마다 unique 하게 부여되며, assignment들을 구별하고 파악하는데 사용됨.
                            //DB에서 값을 받아서, AssignmentTabFragment의 버튼 클릭시, Intent를 통해 'AssignmentDetailsActivity.java'로 전달될 것임.
 
+        /*
         //데이터를 저장하게 되는 리스트
         final List<assignmentTab> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
@@ -91,6 +92,7 @@ public class AssignmentTabFragment extends Fragment {
         m_Adapter = new assignmentTabViewAdapter(getActivity(), list);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
+        */
 
 
         //AssignmentTabFragment의 listview에 보여지는 row를 클릭 할 경우, AssignmentDetailsActivity로 넘어가는 기능
@@ -124,6 +126,7 @@ public class AssignmentTabFragment extends Fragment {
         return view;
     }
 
+/*
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
