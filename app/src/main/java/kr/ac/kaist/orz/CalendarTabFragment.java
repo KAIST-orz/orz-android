@@ -41,7 +41,7 @@ public class CalendarTabFragment extends Fragment
     // Keep the date information which the user has chosen
     private Calendar calendar;
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public CalendarTabFragment() {
         // Required empty public constructor
@@ -129,14 +129,29 @@ public class CalendarTabFragment extends Fragment
             mListener.onFragmentInteraction(uri);
         }
     }
+<<<<<<< .merge_file_a01964
 
+
+=======
+/*
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+*/
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-*/
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
