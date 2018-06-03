@@ -3,10 +3,12 @@ package kr.ac.kaist.orz;
 public class assignmentTab {
     private String assignmentCourse;
     private String assignmentName;
-
-    public assignmentTab(String input_course, String input_name){
+    private int assignmentID;
+    
+    public assignmentTab(String input_course, String input_name, int input_ID){
         assignmentCourse = input_course;
         assignmentName = input_name;
+        assignmentID = input_ID;
     }
 
     public String getCourse() {
@@ -16,4 +18,6 @@ public class assignmentTab {
     public String getName() {
         return assignmentName;
     }
+
+    public int getID(){return assignmentID;}
 }

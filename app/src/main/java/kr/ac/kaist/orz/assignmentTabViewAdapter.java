@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,15 +27,13 @@ public class assignmentTabViewAdapter extends ArrayAdapter {
         assignmentTab aItem = (assignmentTab) getItem(position);
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
- //       TextView courseName = (TextView) customView.findViewById(R.id.assignmentCourse);
- //       TextView assignmentName = (TextView) customView.findViewById(R.id.assignmentName);
-
-        Button p1_button = (Button)customView.findViewById(R.id.assignment_button);
+        TextView assignmentName = (TextView) customView.findViewById(R.id.assignment_view);
+        //Button p1_button = (Button)customView.findViewById(R.id.assignment_button2);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
         String assignCourse = aItem.getCourse();
         String assignName = aItem.getName();
-        p1_button.setText(assignCourse.concat("\n").concat(assignName));
+        assignmentName.setText(assignCourse.concat("\n").concat(assignName));
 
         return customView;
     }
