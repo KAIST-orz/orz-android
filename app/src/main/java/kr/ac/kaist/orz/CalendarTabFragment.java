@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,9 +12,11 @@ import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
@@ -100,7 +103,7 @@ public class CalendarTabFragment extends Fragment
         scheduleLayout = (ConstraintLayout) view.findViewById(R.id.schedule_layout);
 
         // TODO: Dummy schedule for test display
-        final Schedule[] schedules = createDummySchedules();
+        final Schedule[] schedules = createDummySchedules(5);
 
         // Set onClick listeners as the methods in this class.
         pickDate.setOnClickListener(new View.OnClickListener() {
@@ -136,17 +139,12 @@ public class CalendarTabFragment extends Fragment
         // Let the button to show picked date.
         pickDate.setText(formatDateOfCalendar());
 
+        displaySchedules(schedules);
+
         // Inflate the layout for this fragment
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        Schedule[] schedules = createDummySchedules();
-        displaySchedules(schedules);
-    }
 /*
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -315,46 +313,38 @@ public class CalendarTabFragment extends Fragment
                 break;
         }
 
-        // TODO: Fill the color.
+        // TODO: Fill appropriate color.
         scheduleView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
 
-        // TODO: Set onClickListener for scheduleView.
-
-        // Finally add the view to the layout and adjust according to the layout.
+        // Assign a unique ID for constraint setup.
         int viewId = View.generateViewId();
         scheduleView.setId(viewId);
+
+        // Add view to the layout.
         scheduleLayout.addView(scheduleView);
 
+        // Get the width of the screen and set it as minimum width.
+        WindowManager wm = activity.getWindowManager();
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int windowWidth = size.x;
+
+        // Set width and height of the scheduleView.
+        scheduleView.setMinimumHeight((int) OrzMainActivity.dpToPx(height));
+        scheduleView.setMinimumWidth(windowWidth);
+
+        // Constrain the top and the left side of the view.
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(scheduleLayout);
 
-        float leftMarginInPx = getResources().getDimension(R.dimen.schedule_view_left_margin);
-        float rightMarginInPx = getResources().getDimension(R.dimen.schedule_view_right_margin);
-
-        // Constraint left side to the delimiter.
+        // Constrain the left to the delimiter in the layout.
+        int leftMarginInPx = (int) getResources().getDimension(R.dimen.schedule_view_left_margin);
         constraintSet.connect(scheduleView.getId(), ConstraintSet.START,
                             R.id.delimiter, ConstraintSet.END, (int) leftMarginInPx);
 
-        /*
-        // Constraint right side to the parent.
-        constraintSet.connect(scheduleView.getId(), ConstraintSet.END,
-                            scheduleLayout.getId(), ConstraintSet.END, (int) rightMarginInPx);
-                            */
-
-
-        // TODO: This worked. keep using.
-        scheduleView.setMinimumHeight((int) OrzMainActivity.dpToPx((float) height));
-        scheduleView.setMinimumWidth((int)
-                ((scheduleLayout.getRight() - getResources().getDimension(R.dimen.schedule_view_right_margin))
-                - (scheduleLayout.findViewById(R.id.delimiter).getRight() +
-                        getResources().getDimension(R.dimen.schedule_view_left_margin))));
-
-        System.out.println(scheduleLayout.getRight());
-        System.out.println(((scheduleLayout.getRight() - getResources().getDimension(R.dimen.schedule_view_right_margin))
-                - (scheduleLayout.findViewById(R.id.delimiter).getRight() +
-                        getResources().getDimension(R.dimen.schedule_view_left_margin))));
-        // Now constraint the top margin.
-        // TODO: should include the case when year is different.
+        // Constrain the top to the parent layout.
+        // TODO: should include the case when year is different. ('<' -> '!=' ?);
         if (schedule.start.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)) {
             // If the schedule starts before the current day, connect to the top of the layout.
 
@@ -370,18 +360,8 @@ public class CalendarTabFragment extends Fragment
                                 ConstraintSet.BOTTOM, (int) marginFromTimeLineInPx);
         }
 
-        // Set height of the view.
-        //constraintSet.constrainDefaultHeight(scheduleView.getId(), (int) OrzMainActivity.dpToPx((float) height));
-        /*
-        constraintSet.constrainMinHeight(scheduleView.getId(), (int) OrzMainActivity.dpToPx((float) height));
-        constraintSet.constrainMaxHeight(scheduleView.getId(), (int) OrzMainActivity.dpToPx((float) height));
-        */
+        // TODO: Set onClickListener for scheduleView.
 
-        /*
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) scheduleView.getLayoutParams();
-        layoutParams.height = (int) OrzMainActivity.dpToPx((float) height);
-        scheduleView.setLayoutParams(layoutParams);
-        */
         constraintSet.applyTo(scheduleLayout);
     }
 
@@ -438,12 +418,6 @@ public class CalendarTabFragment extends Fragment
         return height;
     }
 
-    private int calculateScheduleViewOffset(Calendar start) {
-
-
-        return 0;
-    }
-
     class Schedule {
         int scheduleID;
         Calendar start;
@@ -460,27 +434,25 @@ public class CalendarTabFragment extends Fragment
         }
     }
 
-    private Schedule[] createDummySchedules() {
-        Schedule[] schedules = new Schedule[4];
+    private Schedule[] createDummySchedules(int num) {
+        Schedule[] schedules = new Schedule[num];
 
         int i;
-        for (i = 0; i < 4; i++) {
+        for (i = 0; i < num-1; i++) {
             Calendar start = Calendar.getInstance();
-            start.set(2018, 5, 3, 2*i, 0);
+            start.set(2018, 5, 3, num * i, 0);
 
             Calendar end = Calendar.getInstance();
-            end.set(2018, 5, 3, 2*i+1, 30);
+            end.set(2018, 5, 3, num * (i + 1), 0);
 
             schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i);
         }
 
-        /*
         Calendar start = Calendar.getInstance();
-        start.set(2018, 5, 3, i, 0);
+        start.set(2018, 5, 3, num*i, 0);
         Calendar end = Calendar.getInstance();
         end.set(2018, 5, 4, 0, 0);
         schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i);
-        */
 
         return schedules;
     }
