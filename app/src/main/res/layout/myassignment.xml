@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/assignment_button"
+        android:layout_width="390dp"
+        android:layout_height="55dp"
+
+        android:layout_marginTop="16dp"
+        android:background="@drawable/arrow_button"
+
+        android:fontFamily="sans-serif"
+        android:gravity="left|center_vertical"
+        android:text="Button_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+
+    <!--
+    android:gravity="left|center_vertical"
+    버튼 내부에 추가시, 버튼을 왼쪽에 정렬.
+    https://stackoverflow.com/questions/11337513/left-align-text-inside-a-button-in-android
+    -->

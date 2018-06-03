@@ -89,7 +89,6 @@ public class AssignmentTabFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
-    //Reference (Display a ListView in a Fragment) : https://www.youtube.com/watch?v=edZwD54xfbk
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
