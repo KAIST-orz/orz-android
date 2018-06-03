@@ -68,6 +68,7 @@ public class AssignmentTabFragment extends Fragment {
         ListView m_ListView;
         ListAdapter m_Adapter;
 
+        /*
         //데이터를 저장하게 되는 리스트
         List<assignmentTab> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
@@ -85,11 +86,13 @@ public class AssignmentTabFragment extends Fragment {
         m_Adapter = new assignmentTabViewAdapter(getActivity(), list);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
+        */
 
         // Inflate the layout for this fragment
         return view;
     }
 
+/*
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

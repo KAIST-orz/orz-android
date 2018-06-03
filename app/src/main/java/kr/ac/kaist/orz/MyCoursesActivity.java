@@ -17,6 +17,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
 
+        /*
         //데이터를 저장하게 되는 리스트
         List<myCourseInformation> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
@@ -33,6 +34,7 @@ public class MyCoursesActivity extends AppCompatActivity {
 
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
+        */
 
 
         /*
