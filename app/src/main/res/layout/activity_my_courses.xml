@@ -6,22 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MyCoursesActivity">
 
-    <!--
-    <TextView
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/myCourse_fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/selected_item_textview"
-        android:background="@android:color/holo_blue_light"
-        android:text="아래 목록에서 선택하세요!"/>
-
-
-    <ListView
-        android:id="@+id/myCourse_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="82dp" />
-    -->
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="60dp"
+        android:src="@android:drawable/ic_menu_search"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ListView
         android:layout_width="wrap_content"
