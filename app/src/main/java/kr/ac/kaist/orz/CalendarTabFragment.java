@@ -43,7 +43,7 @@ public class CalendarTabFragment extends Fragment
     private Button pickDate;
 
     // Keep the date information which the user has chosen
-    private Calendar calendar;
+    private Calendar current;
 
     // The layout onto which the schedule views are placed.
     private ConstraintLayout scheduleLayout;
@@ -77,14 +77,14 @@ public class CalendarTabFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         // When this fragment is first created, instantiate a new Calendar object.
-        calendar = Calendar.getInstance();
+        current = Calendar.getInstance();
         numOfCurrentSchedules = -1;     // Initialize to -1 to indicate the initiation.
     }
 
-    // Formats the date held by calendar to "MMM DD, YYYY" format.
+    // Formats the date held by current to "MMM DD, YYYY" format.
     public String formatDateOfCalendar() {
         DateFormat formatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        return formatter.format(calendar.getTime());
+        return formatter.format(current.getTime());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class CalendarTabFragment extends Fragment
         toPreviousDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                calendar.add(Calendar.DATE, -1);
+                current.add(Calendar.DATE, -1);
                 pickDate.setText(formatDateOfCalendar());
 
                 // TODO: Communicate with the server and draw schedules on the layout.
@@ -124,7 +124,7 @@ public class CalendarTabFragment extends Fragment
         toNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                calendar.add(Calendar.DATE, 1);
+                current.add(Calendar.DATE, 1);
                 pickDate.setText(formatDateOfCalendar());
 
                 // TODO: Communicate with the server and draw schedules on the layout.
@@ -156,9 +156,9 @@ public class CalendarTabFragment extends Fragment
 
         // Putting currently picked (being shown) date as arguments.
         Bundle args = new Bundle();
-        args.putInt("year", calendar.get(Calendar.YEAR));
-        args.putInt("month", calendar.get(Calendar.MONTH));
-        args.putInt("day", calendar.get(Calendar.DAY_OF_MONTH));
+        args.putInt("year", current.get(Calendar.YEAR));
+        args.putInt("month", current.get(Calendar.MONTH));
+        args.putInt("day", current.get(Calendar.DAY_OF_MONTH));
         dialog.setArguments(args);
 
         // Show to the user. fragment manager is OrzMainActivity's manager.
@@ -167,8 +167,8 @@ public class CalendarTabFragment extends Fragment
 
     // Listener for the date picker's DateSet event.
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Change where the calendar is pointing.
-        calendar.set(year, month, day);
+        // Change where the current is pointing.
+        current.set(year, month, day);
         pickDate.setText(formatDateOfCalendar());
 
         // Get schedules (possibly from the server) and display onto screen.
@@ -177,7 +177,7 @@ public class CalendarTabFragment extends Fragment
 
     // TODO: Communicates with the server to acquire the schedules for this day.
     public Schedule[] getSchedules() {
-        return createDummySchedules(4);
+        return createDummySchedules(6);
     }
 
     // Displays the schedules of the date the user has picked.
@@ -191,11 +191,11 @@ public class CalendarTabFragment extends Fragment
 
         for (Schedule schedule : schedules) {
             // TODO: these schedules should be first filtered before being passed to this method.
-            if ((schedule.end.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)
-                    || schedule.end.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)
-                    || schedule.start.get(Calendar.YEAR) > calendar.get(Calendar.YEAR)
-                    || schedule.start.get(Calendar.DAY_OF_YEAR) > calendar.get(Calendar.DAY_OF_YEAR))
-                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
+            if ((schedule.end.get(Calendar.YEAR) < current.get(Calendar.YEAR)
+                    || schedule.end.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                    || schedule.start.get(Calendar.YEAR) > current.get(Calendar.YEAR)
+                    || schedule.start.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
+                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
                         && schedule.end.get(Calendar.HOUR_OF_DAY) == 0
                         && schedule.end.get(Calendar.MINUTE) == 0)) {
                 continue;
@@ -222,43 +222,26 @@ public class CalendarTabFragment extends Fragment
      * 2. Layout does not change: I used some hard-coded values for the height of the view.
      */
     private void createScheduleView(final Schedule schedule) {
-        Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-        LayoutInflater inflater = activity.getLayoutInflater();
-
         // Calculate the height of the view and determine which layout resource to use.
-        View scheduleView;
+        ScheduleView scheduleView;
         int height = calculateScheduleViewHeight(schedule.start, schedule.end);
-        int numOfTextViews = 1;     // Number of TextViews in the layout.
 
         // There are four resources we can make use of according to the height.
         if (schedule.description != null
                 && height >= getResources().getInteger(R.integer.schedule_view_large_height)) {
             // With description (assignment schedule), and it is large enough.
-            scheduleView = inflater.inflate(R.layout.schedule_view_large, null);
-            numOfTextViews = 2;
+            scheduleView = new ScheduleViewLarge(getContext());
         } else if (height >= getResources().getInteger(R.integer.schedule_view_medium_height)) {
-            scheduleView = inflater.inflate(R.layout.schedule_view_medium, null);
+            scheduleView = new ScheduleViewMedium(getContext());
         } else if (height >= getResources().getInteger(R.integer.schedule_view_small_height)) {
-            scheduleView = inflater.inflate(R.layout.schedule_view_small, null);
+            scheduleView = new ScheduleViewSmall(getContext());
         } else {
-            scheduleView = new View(activity);
-            numOfTextViews = 0;
+            scheduleView = new ScheduleViewMinimal(getContext());
         }
 
         // Fill in the title and description of the schedule.
-        switch (numOfTextViews) {
-            case 2:
-                TextView description = scheduleView.findViewById(R.id.schedule_description);
-                description.setText(schedule.description);
-            case 1:
-                TextView title = scheduleView.findViewById(R.id.schedule_title);
-                title.setText(schedule.title);
-            default:
-                break;
-        }
+        scheduleView.setTitle(schedule.title);
+        scheduleView.setDescription(schedule.description);
 
         // TODO: Fill appropriate background and font color.
         scheduleView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
@@ -271,7 +254,7 @@ public class CalendarTabFragment extends Fragment
         scheduleLayout.addView(scheduleView);
 
         // Get the width of the screen and set it as minimum width (the view then expands as desired).
-        WindowManager wm = activity.getWindowManager();
+        WindowManager wm = getActivity().getWindowManager();
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -288,11 +271,11 @@ public class CalendarTabFragment extends Fragment
         // Constrain the left to the delimiter in the layout.
         int leftMarginInPx = (int) getResources().getDimension(R.dimen.schedule_view_left_margin);
         constraintSet.connect(scheduleView.getId(), ConstraintSet.START,
-                            R.id.delimiter, ConstraintSet.END, (int) leftMarginInPx);
+                            R.id.delimiter, ConstraintSet.END, leftMarginInPx);
 
         // Constrain the top of the view to appropriate place.
-        if (schedule.start.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)
-                || schedule.start.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)) {
+        if (schedule.start.get(Calendar.YEAR) < current.get(Calendar.YEAR)
+                || schedule.start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
             // If the schedule started before the day, it should seem like continuing from the day before.
             constraintSet.connect(scheduleView.getId(), ConstraintSet.TOP,
                                 scheduleLayout.getId(), ConstraintSet.TOP, 0);
@@ -330,7 +313,7 @@ public class CalendarTabFragment extends Fragment
         int endMinute;      // The minute in an hour the schedule starts in the current day.
 
         // Adding top margin in case the schedule starts before the current day.
-        if (start.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)) {
+        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
             height += getResources().getInteger(R.integer.timeline_margin_top) + 2;
             startHour = 0;
             startMinute = 0;
@@ -340,7 +323,7 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Adding bottom margin in case the schedule
-        if (end.get(Calendar.DAY_OF_YEAR) > calendar.get(Calendar.DAY_OF_YEAR)) {
+        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
             if (end.get(Calendar.HOUR_OF_DAY) != 0 || end.get(Calendar.MINUTE) != 0) {
                 height += getResources().getInteger(R.integer.timeline_margin_bottom) + 2;
             }
@@ -352,7 +335,7 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Schedules are in 5 minute units, thus one slot corresponds to 5 minutes.
-        // 5 minutes in the calendar tab corresponds to @integer/timeline_5min dp.
+        // 5 minutes in the current tab corresponds to @integer/timeline_5min dp.
         int slotSize = getResources().getInteger(R.integer.timeline_5min);
         int numOfSlots = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 5;
 
@@ -456,18 +439,19 @@ public class CalendarTabFragment extends Fragment
         Schedule[] schedules = new Schedule[num];
 
         int i;
-        for (i = 0; i < num-1; i++) {
+        for (i = 0; i < num; i++) {
             Calendar start = Calendar.getInstance();
-            start.set(Calendar.HOUR_OF_DAY, num * i);
+            start.set(Calendar.HOUR_OF_DAY, i);
             start.set(Calendar.MINUTE, 0);
 
             Calendar end = Calendar.getInstance();
-            end.set(Calendar.HOUR_OF_DAY, num * (i + 1));
-            end.set(Calendar.MINUTE, 0);
+            end.set(Calendar.HOUR_OF_DAY, i);
+            end.set(Calendar.MINUTE, 10);
 
-            schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i, num * i);
+            schedules[i] = new Schedule(start, end, "Assignment Assignment Assignment Assignment " + i, "Description " + i, num * i);
         }
 
+        /*
         Calendar start = Calendar.getInstance();
         start.set(Calendar.HOUR_OF_DAY, num * i);
         start.set(Calendar.MINUTE, 0);
@@ -478,6 +462,7 @@ public class CalendarTabFragment extends Fragment
         end.set(Calendar.MINUTE, 0);
 
         schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i, num * i);
+        */
         return schedules;
     }
 
