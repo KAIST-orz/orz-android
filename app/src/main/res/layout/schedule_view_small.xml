@@ -5,6 +5,7 @@
     android:id="@+id/schedule_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/holo_red_dark"
     android:orientation="vertical">
 
     <TextView
@@ -16,6 +17,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="TextView"
+        android:textColor="@android:color/background_light"
         android:textSize="12sp"
         android:textStyle="bold" />
 

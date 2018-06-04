@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-/*
+
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class myCourseViewAdapter extends ArrayAdapter {
 
@@ -40,6 +40,6 @@ public class myCourseViewAdapter extends ArrayAdapter {
         return customView;
     }
 }
-*/
+
 
 //Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic

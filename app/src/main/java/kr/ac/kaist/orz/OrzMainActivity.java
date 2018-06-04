@@ -126,11 +126,7 @@ public class OrzMainActivity extends AppCompatActivity {
     }
 
 
-    // Converts value in dp metrics into pixels.
-    public static float dpToPx(float dp) {
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return Math.round(px);
+
 
     public void settings_account(View v) {
         Intent intent = new Intent(getApplicationContext(), AccountSettingsActivity.class);
