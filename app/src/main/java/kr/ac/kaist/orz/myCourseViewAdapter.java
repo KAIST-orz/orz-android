@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import kr.ac.kaist.orz.models.myCourseInformation;
+
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class myCourseViewAdapter extends ArrayAdapter {
 

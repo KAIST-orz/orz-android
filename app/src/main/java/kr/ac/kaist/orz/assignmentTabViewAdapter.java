@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import kr.ac.kaist.orz.models.assignmentTab;
+
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class assignmentTabViewAdapter extends ArrayAdapter {
 

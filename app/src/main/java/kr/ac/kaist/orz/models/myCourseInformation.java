@@ -1,4 +1,4 @@
-package kr.ac.kaist.orz;
+package kr.ac.kaist.orz.models;
 
 //myCourseInformation 자바 클래스는 값을 저장해줄 공간의 틀을 짜는 것
 

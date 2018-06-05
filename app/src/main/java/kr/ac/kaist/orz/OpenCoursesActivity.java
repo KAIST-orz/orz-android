@@ -8,6 +8,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.kaist.orz.models.myCourseInformation;
+
 public class OpenCoursesActivity extends AppCompatActivity {
     private ListView m_ListView;
     private ListAdapter m_Adapter;

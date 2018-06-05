@@ -1,4 +1,4 @@
-package kr.ac.kaist.orz;
+package kr.ac.kaist.orz.models;
 
 public class assignmentTab {
     private String assignmentCourse;
