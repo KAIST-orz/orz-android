@@ -4,24 +4,31 @@ package kr.ac.kaist.orz;
 
 public class myCourseInformation {
     private String courseName;
-    private String courseID;
+    private String courseCode;
     private String courseLecturer;
+    private int courseID;
 
-    public myCourseInformation(String input_name, String input_id, String input_lecturer){
+    public myCourseInformation(String input_name, String input_code, String input_lecturer, int input_id){
         courseName = input_name;
-        courseID = input_id;
+        courseCode = input_code;
         courseLecturer = input_lecturer;
+        courseID = input_id;
     }
 
     public String getCourseName() {
         return courseName;
     }
 
-    public String getCourseID() {
-        return courseID;
+    public String getCourseCode() {
+        return courseCode;
     }
 
     public String getCourseLecturer() {
         return courseLecturer;
     }
+
+    public int getCourseID() {
+        return courseID;
+    }
 }
+
