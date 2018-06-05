@@ -25,11 +25,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="CourseLecturer"
-        app:layout_constraintStart_toEndOf="@+id/myCourseID"
+        app:layout_constraintStart_toEndOf="@+id/myCourseCode"
         app:layout_constraintTop_toBottomOf="@+id/myCourseName" />
 
     <TextView
-        android:id="@+id/myCourseID"
+        android:id="@+id/myCourseCode"
         android:layout_width="91dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/myCourseName" />
 
     <Button
-        android:id="@+id/AddDelete_button"
+        android:id="@+id/myCourse_AddDelete"
         android:layout_width="45dp"
         android:layout_height="44dp"
         android:layout_marginBottom="8dp"
