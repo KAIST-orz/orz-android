@@ -20,29 +20,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterAccountActivity"
+        <activity
+            android:name=".RegisterAccountActivity"
             android:label="@string/label_register_account" />
         <activity android:name=".AssignmentDetailsActivity" />
         <activity android:name=".RegisterAssignmentActivity" />
         <activity android:name=".ScheduleDetailsActivity" />
         <activity android:name=".RegisterScheduleActivity" />
-        <activity android:name=".AccountSettingsActivity"
+        <activity
+            android:name=".AccountSettingsActivity"
             android:label="@string/label_update_account" />
-        <activity android:name=".MyCoursesActivity"
+        <activity
+            android:name=".MyCoursesActivity"
             android:label="@string/label_my_courses"
             android:parentActivityName=".OrzMainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".OrzMainActivity" />
         </activity>
-        <activity android:name=".OpenCoursesActivity"
+        <activity
+            android:name=".OpenCoursesActivity"
             android:label="@string/label_open_courses"
             android:parentActivityName=".MyCoursesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MyCoursesActivity" />
         </activity>
-        <activity android:name=".NotificationSettingsActivity"></activity>
+        <activity android:name=".NotificationSettingsActivity" />
     </application>
 
 </manifest>
