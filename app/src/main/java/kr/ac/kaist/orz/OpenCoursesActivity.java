@@ -20,12 +20,12 @@ public class OpenCoursesActivity extends AppCompatActivity {
         //데이터를 저장하게 되는 리스트
         List<myCourseInformation> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(A)","Sumgwon Kang"));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(B)","Park Jinah"));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(C)","Martin ZIEGLER"));
-        list.add(new myCourseInformation("Data Structure", "CS206(A)","Keeung Kin"));
-        list.add(new myCourseInformation("Data Structure", "CS206(B)","Alice Oh"));
-        list.add(new myCourseInformation("Data Structure", "CS206(C)","Duksan Ryu"));
+        list.add(new myCourseInformation("Discrete Mathematics", "CS204(A)","Sumgwon Kang",0));
+        list.add(new myCourseInformation("Discrete Mathematics", "CS204(B)","Park Jinah", 1));
+        list.add(new myCourseInformation("Discrete Mathematics", "CS204(C)","Martin ZIEGLER", 2));
+        list.add(new myCourseInformation("Data Structure", "CS206(A)","Keeung Kin", 3));
+        list.add(new myCourseInformation("Data Structure", "CS206(B)","Alice Oh", 4));
+        list.add(new myCourseInformation("Data Structure", "CS206(C)","Duksan Ryu", 5));
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_openCourse);
