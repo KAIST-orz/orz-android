@@ -41,4 +41,5 @@ public class myCourseViewAdapter extends ArrayAdapter {
     }
 }
 
+
 //Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic

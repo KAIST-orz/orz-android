@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import android.content.res.Resources;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,6 +124,9 @@ public class OrzMainActivity extends AppCompatActivity {
             return 3;
         }
     }
+
+
+
 
     public void settings_account(View v) {
         Intent intent = new Intent(getApplicationContext(), AccountSettingsActivity.class);
