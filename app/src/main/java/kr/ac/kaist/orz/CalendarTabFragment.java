@@ -441,14 +441,14 @@ public class CalendarTabFragment extends Fragment
         int i;
         for (i = 0; i < num; i++) {
             Calendar start = Calendar.getInstance();
-            start.set(Calendar.HOUR_OF_DAY, i);
+            start.set(Calendar.HOUR_OF_DAY, num*i);
             start.set(Calendar.MINUTE, 0);
 
             Calendar end = Calendar.getInstance();
-            end.set(Calendar.HOUR_OF_DAY, i);
-            end.set(Calendar.MINUTE, 10);
+            end.set(Calendar.HOUR_OF_DAY, num*(i+1));
+            end.set(Calendar.MINUTE, 0);
 
-            schedules[i] = new Schedule(start, end, "Assignment Assignment Assignment Assignment " + i, "Description " + i, num * i);
+            schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i, num * i);
         }
 
         /*

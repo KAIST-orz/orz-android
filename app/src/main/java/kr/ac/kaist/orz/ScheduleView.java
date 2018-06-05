@@ -4,17 +4,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /*
  * This is a custom view that displays a schedule.
  */
 abstract public class ScheduleView extends FrameLayout {
-    // The ID of the schedule this view is showing.
-    private int scheduleId;
-
-    protected TextView titleText;
-    protected TextView descText;
+    private LinearLayout layout;
+    private TextView titleText;
+    private TextView descText;
 
     public ScheduleView(Context context) {
         super(context);
@@ -33,13 +32,17 @@ abstract public class ScheduleView extends FrameLayout {
 
     // Binds the two TextViews into the member fields.
     protected void bindTextViews(View view) {
-        titleText = (TextView) view.findViewById(R.id.schedule_title);
-        descText = (TextView) view.findViewById(R.id.schedule_description);
+        titleText = (TextView) findViewById(R.id.schedule_title);
+        descText = (TextView) findViewById(R.id.schedule_description);
     }
 
     // Child classes should override this method. This method should properly
     // inflate the view for each view size.
-    abstract protected void init(Context context);
+    protected void init(Context context) {
+        layout = (LinearLayout) findViewById(R.id.schedule_linear_layout);
+        titleText = (TextView) findViewById(R.id.schedule_title);
+        descText = (TextView) findViewById(R.id.schedule_description);
+    }
 
     // Set the title of the schedule view.
     public void setTitle(String title) {
@@ -55,14 +58,16 @@ abstract public class ScheduleView extends FrameLayout {
         }
     }
 
-    // Gets schedule id of the schedule represented by this view.
-    public int getScheduleId() {
-        return scheduleId;
+    @Override
+    public void setMinimumWidth(int minWidth) {
+        super.setMinimumWidth(minWidth);
+        layout.setMinimumWidth(minWidth);
     }
 
-    // Set the schedule id of the schedule represented by this view.
-    public void setScheduleId(int scheduleId) {
-        this.scheduleId = scheduleId;
+    @Override
+    public void setMinimumHeight(int minHeight) {
+        super.setMinimumHeight(minHeight);
+        layout.setMinimumHeight(minHeight);
     }
 }
 
@@ -75,8 +80,8 @@ class ScheduleViewLarge extends ScheduleView {
     // Inflate the schedule_view_large.xml file.
     @Override
     protected void init(Context context) {
-        View view = inflate(context, R.layout.schedule_view_large, this);
-        bindTextViews(view);
+        inflate(context, R.layout.schedule_view_large, this);
+        super.init(context);
     }
 }
 
@@ -89,8 +94,8 @@ class ScheduleViewMedium extends ScheduleView {
     // Inflate the schedule_view_medium.xml file.
     @Override
     protected void init(Context context) {
-        View view = inflate(context, R.layout.schedule_view_medium, this);
-        bindTextViews(view);
+        inflate(context, R.layout.schedule_view_medium, this);
+        super.init(context);
     }
 }
 
@@ -103,8 +108,8 @@ class ScheduleViewSmall extends ScheduleView {
     // Inflate the schedule_view_small.xml file.
     @Override
     protected void init(Context context) {
-        View view = inflate(context, R.layout.schedule_view_small, this);
-        bindTextViews(view);
+        inflate(context, R.layout.schedule_view_small, this);
+        super.init(context);
     }
 }
 

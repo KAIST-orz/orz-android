@@ -59,7 +59,7 @@
             android:id="@+id/schedule_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingRight="8dp">
+            android:paddingEnd="8dp">
 
             <TextView
                 android:id="@+id/textView"
