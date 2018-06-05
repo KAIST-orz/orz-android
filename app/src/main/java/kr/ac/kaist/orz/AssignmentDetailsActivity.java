@@ -10,13 +10,22 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
@@ -45,7 +54,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(notification_time.get(position).equals("Add more notification")) {
-                    alarmSelector();
+                    selectAlarm();
                 }
             }
         });
@@ -56,8 +65,8 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(notification_time.get(position).equals("Add more time")) {
-                    dateSelector();
+                if(time_for_assignment.get(position).equals("Add more time")) {
+                    selectDate();
                 }
             }
         });
@@ -79,7 +88,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         description.setText("P. 3-11, 3-17, 3-19, 3-20, 3-21");
     }
 
-    public void alarmSelector() {
+    public void selectAlarm() {
         final String[] times = new String[] {"1min", "3min", "5min", "10min", "30min", "1hour", "2hour", "3hour"};
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle("set time");
@@ -96,8 +105,61 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         adb.show();
     }
 
-    public void dateSelector() {
+    public void selectDate() {
+        final AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        final DatePicker dp = new DatePicker(this);
+        final TimePicker tp1 = new TimePicker(this);
+        final TimePicker tp2 = new TimePicker(this);
 
+        adb.setView(dp);
+        adb.setPositiveButton("set",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "test1", Toast.LENGTH_LONG).show();
+                        adb.setPositiveButton("set",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getApplicationContext(), "test2", Toast.LENGTH_LONG).show();
+                                        adb.setPositiveButton("set",
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        //Toast.makeText(getApplicationContext(), "test3", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                        adb.setNegativeButton("cancel",
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+                                        adb.setView(tp2);
+                                        adb.show();
+                                    }
+                                });
+                        adb.setNegativeButton("cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        adb.setView(tp1);
+                        adb.show();
+                    }
+                });
+        adb.setNegativeButton("cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        adb.show();
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
