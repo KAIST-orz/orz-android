@@ -10,7 +10,7 @@ import android.widget.TextView;
 /*
  * This is a custom view that displays a schedule.
  */
-abstract public class ScheduleView extends FrameLayout {
+public class ScheduleView extends FrameLayout {
     private LinearLayout layout;
     private TextView titleText;
     private TextView descText;
@@ -18,22 +18,6 @@ abstract public class ScheduleView extends FrameLayout {
     public ScheduleView(Context context) {
         super(context);
         init(context);
-    }
-
-    public ScheduleView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public ScheduleView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
-
-    // Binds the two TextViews into the member fields.
-    protected void bindTextViews(View view) {
-        titleText = (TextView) findViewById(R.id.schedule_title);
-        descText = (TextView) findViewById(R.id.schedule_description);
     }
 
     // Child classes should override this method. This method should properly
@@ -58,16 +42,22 @@ abstract public class ScheduleView extends FrameLayout {
         }
     }
 
-    @Override
-    public void setMinimumWidth(int minWidth) {
-        super.setMinimumWidth(minWidth);
-        layout.setMinimumWidth(minWidth);
+    public void setWidth(int width) {
+        setMinimumWidth(width);
+        if (layout != null) {
+            layout.setMinimumWidth(width);
+        }
     }
 
-    @Override
-    public void setMinimumHeight(int minHeight) {
-        super.setMinimumHeight(minHeight);
-        layout.setMinimumHeight(minHeight);
+    public void setHeight(int height) {
+        setMinimumHeight(height);
+        if (layout != null) {
+            layout.setMinimumHeight(height);
+        }
+    }
+
+    public void setColor(int color) {
+        setBackgroundColor(color);
     }
 }
 
@@ -112,19 +102,3 @@ class ScheduleViewSmall extends ScheduleView {
         super.init(context);
     }
 }
-
-// This class does nothing. It is just a view with schedule id attached to it.
-// Defined this class for the typing.
-class ScheduleViewMinimal extends ScheduleView {
-
-    ScheduleViewMinimal(Context context) {
-        super(context);
-    }
-
-    // Do nothing. It is just a simple view.
-    @Override
-    protected void init(Context context) {
-
-    }
-}
-

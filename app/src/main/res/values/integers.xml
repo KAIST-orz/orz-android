@@ -9,4 +9,7 @@
     <integer name="schedule_view_large_height">47</integer>     <!-- Corresponds to 60 minutes -->
     <integer name="schedule_view_medium_height">31</integer>    <!-- Corresponds to 40 minutes -->
     <integer name="schedule_view_small_height">15</integer>     <!-- Corresponds to 20 minutes -->
+
+    <!-- The position of the arrow head from the top. -->
+    <integer name="deadline_view_arrow_position">14</integer>
 </resources>
