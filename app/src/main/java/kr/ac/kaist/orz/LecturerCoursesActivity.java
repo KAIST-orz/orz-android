@@ -66,6 +66,8 @@ public class LecturerCoursesActivity extends AppCompatActivity {
                 intent.putExtra("courseName", list.get(position).getName());
                 intent.putExtra("courseCode", list.get(position).getCode());
                 intent.putExtra("courseLecturer", list.get(position).getProfessor());
+                intent.putExtra("courseID", list.get(position).getID());
+
 
                 startActivity(intent);
             }
