@@ -18,6 +18,8 @@
     <string name="label_open_courses">Open Courses</string>
     <string name="update">Update</string>
     <string name="label_update_account">Update an orz account</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
 
     <string name="settings_account">Account</string>
     <string name="settings_notification">Notification</string>
@@ -54,7 +56,7 @@
     <string name="time_11pm">11 PM</string>
     <string name="time_12am">12 AM</string>
 
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_lecturer_courses">LecturerCoursesActivity</string>
 </resources>
