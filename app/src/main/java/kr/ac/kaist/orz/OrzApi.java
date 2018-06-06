@@ -66,6 +66,23 @@ public interface OrzApi {
             @Body Map<String, String> body
     );
 
+    @POST("api/v1/courses/{courseID}/assignments")
+    Call<Void> registerAssignment(
+            @Path("courseID") int courseID,
+            @Body Map<String, String> body
+    );
+
+    @GET("api/v1/assignments/{assignmentID}")
+    Call<Map<String, String>> getAssignment(
+            @Path("assignmentID") int assignmentID
+    );
+
+    @PUT("api/v1/assignments/{assignmentID}")
+    Call<Void> updateAssignment(
+            @Path("assignmentID") int assignmentID,
+            @Body Map<String, String> body
+    );
+
     // My Courses 에 있는 삭제 버튼을 누를 시, DB에 있는 해당 코스를 삭제함
     //(Used in myCourseViewAdapter)
     @DELETE("api/v1/students/{userID}/courses/{courseID}")

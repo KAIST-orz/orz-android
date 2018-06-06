@@ -51,7 +51,7 @@ public class RegisterLectureActivity extends AppCompatActivity {
                         finish();
                     }
                     else {
-                        Toast.makeText(RegisterLectureActivity.this, "register lecture failed" + String.valueOf(response.code()) , Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterLectureActivity.this, "register lecture failed", Toast.LENGTH_LONG).show();
                     }
                 }
 
