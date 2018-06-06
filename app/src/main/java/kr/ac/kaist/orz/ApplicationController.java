@@ -28,8 +28,6 @@ public class ApplicationController extends Application {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         orzApi = retrofit.create(OrzApi.class);
-
-        user = new User(3, 2, 1);
     }
 
     public OrzApi getApi() {
@@ -38,5 +36,8 @@ public class ApplicationController extends Application {
 
     public User getUser() {
         return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
     }
 }
