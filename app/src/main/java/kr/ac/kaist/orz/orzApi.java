@@ -1,12 +1,12 @@
 package kr.ac.kaist.orz;
 
+import kr.ac.kaist.orz.models.Course;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 import java.util.List;
-
-import kr.ac.kaist.orz.models.Course;
 
 
 public interface orzApi {
