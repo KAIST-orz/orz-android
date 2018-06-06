@@ -8,23 +8,47 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.ac.kaist.orz.models.Course;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MyCoursesActivity extends AppCompatActivity {
     private ListView m_ListView;
-    private ListAdapter m_Adapter;
+    private myCourseViewAdapter m_Adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
 
-        /*
+
         //데이터를 저장하게 되는 리스트
         final List<Course> list = new ArrayList<>();
+
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new Course("Logical Writing", "HSS001(K)","Jaeun Oh"));
-        list.add(new Course("Interactive Product Design", "ID301(A)","Woohun Lee"));
-        list.add(new Course("Computer Organization", "CS311","Hyunsoo Yoon"));
-        list.add(new Course("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Course>> call = api.getStudentCourses(user.getID());
+        call.enqueue(new Callback<List<Course>>() {
+            @Override
+            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Course>> call, Throwable t) {
+            }
+        });
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview);
@@ -34,7 +58,6 @@ public class MyCoursesActivity extends AppCompatActivity {
 
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
-        */
 
         //Floating Action Button을 누르면 OpenCourse 페이지로 넘어갈 수 있게.
         FloatingActionButton fab = findViewById(R.id.myCourse_fab);
