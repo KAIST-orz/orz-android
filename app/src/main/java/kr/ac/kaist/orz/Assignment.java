@@ -51,26 +51,10 @@ public class Assignment {
         return significance;
     }
 
-    public static final int DUE = 0;
-    public static final int COURSE = 1;
-    public static final int SIGNIFICANCE = 2;
-    public static final int AVERAGE_ESTIMATE = 3;
-
-    // Returns a comparator of various types.
-    public static Comparator<Assignment> getComparator(int type) {
-        switch (type) {
-            case DUE:
-                return new DueComparator();
-            case COURSE:
-                return new CourseComparator();
-            case SIGNIFICANCE:
-                return new SignificanceComparator();
-            case AVERAGE_ESTIMATE:
-                return new EstimateComparator();
-            default:
-                return new DueComparator();
-        }
-    }
+    public static final DueComparator DUE_COMPARATOR = new DueComparator();
+    public static final CourseComparator COURSE_COMPARATOR = new CourseComparator();
+    public static final SignificanceComparator SIGNIFICANCE_COMPARATOR = new SignificanceComparator();
+    public static final EstimateComparator ESTIMATE_COMPARATOR = new EstimateComparator();
 
     private static class DueComparator implements Comparator<Assignment> {
         @Override
@@ -100,7 +84,4 @@ public class Assignment {
             return (int) (a1.getAverageTimeEstimate() - a2.getAverageTimeEstimate());
         }
     }
-
-
 }
-

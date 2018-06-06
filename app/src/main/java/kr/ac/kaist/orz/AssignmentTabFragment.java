@@ -1,18 +1,19 @@
 package kr.ac.kaist.orz;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,10 +21,19 @@ import java.util.List;
  * Use the {@link AssignmentTabFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AssignmentTabFragment extends Fragment {
+public class AssignmentTabFragment extends Fragment implements DialogInterface.OnClickListener {
     private ListView assignmentListView;    // The ListView to display items on.
     private AssignmentListViewAdapter listViewAdapter;      // The listViewAdapter that provides data to the ListView.
     private ArrayList<Assignment> assignmentList;   // The list of assignment data.
+
+    // The item names to show on the dialog for picking sorting criteria.
+    private static final String SORT_DUE = "Due";
+    private static final String SORT_COURSE = "Course";
+    private static final String SORT_SIGNIFICANCE = "Significance";
+    private static final String SORT_ESTIMATE = "Average time estimate";
+
+    // Current sorting criteria. Initially sort by due date.
+    private String sortingCriteria = SORT_DUE;
 
     public AssignmentTabFragment() {
         // Required empty public constructor
@@ -39,10 +49,6 @@ public class AssignmentTabFragment extends Fragment {
     public static AssignmentTabFragment newInstance() {
         AssignmentTabFragment fragment = new AssignmentTabFragment();
         Bundle args = new Bundle();
-        /*
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        */
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +70,8 @@ public class AssignmentTabFragment extends Fragment {
         assignmentListView = (ListView) view.findViewById(R.id.listview_assignment);
 
         // TODO: get the list of assignments from server.
-        createDummyAssignments(10);
+        getAssignments();
+        Collections.sort(assignmentList, Assignment.DUE_COMPARATOR);
         listViewAdapter.notifyDataSetChanged();
 
         // Set adapter to the ListView.
@@ -73,14 +80,72 @@ public class AssignmentTabFragment extends Fragment {
         return view;
     }
 
+    private void getAssignments() {
+        assignmentList.clear();
+        createDummyAssignments(10);
+    }
+
     private void createDummyAssignments(int num) {
         for (int i = 0; i < num; i++) {
             Calendar due = Calendar.getInstance();
             due.set(Calendar.HOUR_OF_DAY, i);
 
             Assignment ass = new Assignment(i, "Assignment " + i, "Dumb undergraduates",
-                                            "Discrete mathematics" + (i%3), due, (float) i, i%5);
+                                            "Discrete mathematics ddddddddddddddddddddddddddddddddddddddddddddddddd" + (i%3), due, (float) i, i%5);
             assignmentList.add(ass);
+        }
+    }
+
+    // Shows a dialog that lets the user pick a sorting criteria.
+    public void showSortingCriteriaDialog(Context context) {
+        final String[] criteria = new String[]{SORT_DUE, SORT_COURSE, SORT_SIGNIFICANCE, SORT_ESTIMATE};
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle("Set sorting criteria");
+
+        // Show the current sorting criteria as checked.
+        int checkedItem;
+        for (checkedItem = 0; checkedItem < criteria.length; checkedItem++) {
+            if (sortingCriteria.equals(criteria[checkedItem])) {
+                break;
+            }
+        }
+
+        adb.setSingleChoiceItems(criteria, checkedItem, null);
+        adb.setPositiveButton("close", this);
+        adb.show();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        ListView listView = ((AlertDialog) dialogInterface).getListView();
+        Object checkedItem = listView.getAdapter().getItem(listView.getCheckedItemPosition());
+
+        // The comparator to sort assignmentList with according to the picked one.
+        Comparator<Assignment> assignmentComparator;
+        // Set current sorting criteria.
+        sortingCriteria = checkedItem.toString();
+
+        switch (sortingCriteria) {
+            case SORT_DUE:
+                assignmentComparator = Assignment.DUE_COMPARATOR;
+                break;
+            case SORT_COURSE:
+                assignmentComparator = Assignment.COURSE_COMPARATOR;
+                break;
+            case SORT_SIGNIFICANCE:
+                assignmentComparator = Assignment.SIGNIFICANCE_COMPARATOR;
+                break;
+            case SORT_ESTIMATE:
+                assignmentComparator = Assignment.ESTIMATE_COMPARATOR;
+                break;
+            default:
+                assignmentComparator = null;
+        }
+
+        // Sort the assignmentList with picked sorting criteria, then notify assignmentListViewAdapter.
+        if (assignmentComparator != null) {
+            Collections.sort(assignmentList, assignmentComparator);
+            listViewAdapter.notifyDataSetChanged();
         }
     }
 }

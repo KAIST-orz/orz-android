@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="timeline_margin_top">24</integer>
-    <integer name="timeline_margin_bottom">72</integer>
+    <integer name="timeline_margin_bottom">24</integer>
     <integer name="timeline_gap">49</integer>
     <integer name="timeline_5min">3</integer>
 
