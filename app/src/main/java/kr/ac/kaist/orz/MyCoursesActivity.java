@@ -51,6 +51,9 @@ public class MyCoursesActivity extends AppCompatActivity {
         });
     }
 
+
+    //Activity가 사용자와 상호작용을 하기 직전에 호출되는 부분
+    //[Ref] 안드로이드 생명주기 (http://vaert.tistory.com/161)
     protected void onResume()
     {
         super.onResume();
