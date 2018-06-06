@@ -5,15 +5,16 @@
     android:id="@+id/schedule_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingEnd="8dp"
-    android:paddingStart="8dp"
-    android:paddingTop="2dp">
+    android:background="@android:color/holo_red_dark"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/schedule_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="TextView"
