@@ -2,12 +2,15 @@ package kr.ac.kaist.orz;
 
 import android.app.Application;
 
+import kr.ac.kaist.orz.models.User;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApplicationController extends Application {
     private static ApplicationController instance;
     private OrzApi orzApi;
+    private User user;
 
 
     public static ApplicationController getInstance(){
@@ -17,7 +20,7 @@ public class ApplicationController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
+
         ApplicationController.instance = this;
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -25,9 +28,15 @@ public class ApplicationController extends Application {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         orzApi = retrofit.create(OrzApi.class);
+
+        user = new User(3, 2, 1);
     }
 
     public OrzApi getApi() {
         return orzApi;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

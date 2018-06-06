@@ -9,6 +9,7 @@ import java.util.List;
 
 import kr.ac.kaist.orz.models.Course;
 
+import kr.ac.kaist.orz.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,7 +30,8 @@ public class OpenCoursesActivity extends AppCompatActivity {
 
         //리스트뷰에 보여질 아이템을 추가
         OrzApi api = ApplicationController.getInstance().getApi();
-        Call<List<Course>> call = api.getSchoolCourses(1); // TODO: Use user's school ID
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Course>> call = api.getSchoolCourses(user.getSchoolID());
         call.enqueue(new Callback<List<Course>>() {
             @Override
             public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
