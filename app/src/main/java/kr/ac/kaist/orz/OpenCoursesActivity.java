@@ -28,11 +28,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
         final List<Course> list = new ArrayList<>();
 
         //리스트뷰에 보여질 아이템을 추가
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://ssal.sparcs.org:14545")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        orzApi api = retrofit.create(orzApi.class);
+        OrzApi api = ApplicationController.getInstance().getApi();
         Call<List<Course>> call = api.getSchoolCourses(1); // TODO: Use user's school ID
         call.enqueue(new Callback<List<Course>>() {
             @Override

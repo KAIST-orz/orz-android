@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 import java.util.List;
 
 
-public interface orzApi {
+public interface OrzApi {
     @GET("api/v1/schools/{schoolID}/courses")
     Call<List<Course>> getSchoolCourses(
             @Path("schoolID") int schoolID
