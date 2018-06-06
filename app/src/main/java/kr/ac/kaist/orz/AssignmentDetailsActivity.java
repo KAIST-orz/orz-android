@@ -19,8 +19,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.kaist.orz.models.StudentAssignment;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
 
@@ -42,6 +45,9 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         time_for_assignment.add("Add more time");
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
+
+        Intent intent = getIntent();
+        StudentAssignment assignment = (StudentAssignment) intent.getExtras().getSerializable("assignment");
 
         ListView listview1 = findViewById(R.id.listView_notification);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
@@ -87,17 +93,18 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         setListViewHeightBasedOnChildren(listview2);
 
         TextView subject_assignment = findViewById(R.id.textView_subject_assignment);
-        subject_assignment.setText("Computer Architecture\nHomework 4");
+        subject_assignment.setText(assignment.getCourseName()+"\n"+assignment.getName());
 
         Button due = findViewById(R.id.button_due);
-        due.setText("11:59 PM, April 5th");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+        due.setText(sdf.format(assignment.getDue().getTime()));
         due.setEnabled(false);
 
         Button estimated_time = findViewById(R.id.button_estimated_time);
-        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated 4.6 hours"));
+        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated "+String.valueOf(assignment.getAverageTimeEstimate())+" hours"));
 
         TextView description = findViewById(R.id.textView_description);
-        description.setText("P. 3-11, 3-17, 3-19, 3-20, 3-21");
+        description.setText(assignment.getDescription());
     }
 
     public void selectAlarm() {

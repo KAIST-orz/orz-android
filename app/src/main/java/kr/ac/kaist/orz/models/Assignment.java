@@ -1,12 +1,13 @@
 package kr.ac.kaist.orz.models;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class Assignment {
+public class Assignment implements Serializable {
     private int id;
     private String name;
     private String description;

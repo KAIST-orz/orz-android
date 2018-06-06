@@ -1,10 +1,11 @@
 package kr.ac.kaist.orz.models;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
-public class StudentAssignment extends Assignment {
+public class StudentAssignment extends Assignment implements Serializable {
     private int timeEstimation;
     //private List<TimeForAssignment> timeForAssignments;
     private float timeForAssignmentsSum;
