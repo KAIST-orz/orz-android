@@ -38,10 +38,11 @@ public class Assignment implements Serializable {
     }
 
     public Calendar getDue() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.KOREA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.KOREA);
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(sdf.parse(due));
+            calendar.add(Calendar.HOUR, 9);
         }
         catch (ParseException e) {}
         return calendar;
