@@ -22,8 +22,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import kr.ac.kaist.orz.models.StudentAssignment;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
 
@@ -76,6 +81,9 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
+        Intent intent = getIntent();
+        StudentAssignment assignment = (StudentAssignment) intent.getExtras().getSerializable("assignment");
+
         ListView listview1 = findViewById(R.id.listView_notification);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
         listview1.setAdapter(adapter);
@@ -119,15 +127,19 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         setListViewHeightBasedOnChildren(listview1);
         setListViewHeightBasedOnChildren(listview2);
 
+        TextView subject_assignment = findViewById(R.id.textView_subject_assignment);
+        subject_assignment.setText(assignment.getCourseName()+"\n"+assignment.getName());
+      
         Button due = findViewById(R.id.button_due);
-        due.setText("11:59 PM, April 5th");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+        due.setText(sdf.format(assignment.getDue().getTime()));
         due.setEnabled(false);
 
         Button estimated_time = findViewById(R.id.button_estimated_time);
-        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated 4.6 hours"));
+        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated "+String.valueOf(assignment.getAverageTimeEstimate())+" hours"));
 
         TextView description = findViewById(R.id.textView_description);
-        description.setText("P. 3-11, 3-17, 3-19, 3-20, 3-21");
+        description.setText(assignment.getDescription());
     }
 
     public void selectAlarm() {
@@ -174,6 +186,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                     @Override
                                                                     public void onClick(DialogInterface dialog, int which) {
                                                                         //Toast.makeText(getApplicationContext(), "test4", Toast.LENGTH_LONG).show();
+                                                                        Calendar startCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp1.getYear(), dp1.getMonth(), dp1.getDayOfMonth(), tp1.getCurrentHour(), tp1.getCurrentMinute());
+                                                                        Date startDate = startCalendar.getTime();
+
+                                                                        Calendar endCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
+                                                                        Date endDate = endCalendar.getTime();
+
                                                                         Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                                                     }
                                                                 });

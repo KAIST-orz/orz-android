@@ -1,5 +1,21 @@
 package kr.ac.kaist.orz.models;
 
-public class TimeForAssignment {
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.List;
+
+public class TimeForAssignment extends Schedule implements Serializable {
     int assignmentID;
+    public String assignmentName;
+    public String courseName;
+
+    public TimeForAssignment(int id, int studentID, String start, String end, List<Integer> alarms,int assignmentID, String assignmentName, String courseName) {
+        super(id, studentID, start, end, alarms);
+        this.assignmentID = assignmentID;
+        this.assignmentName = assignmentName;
+        this.courseName = courseName;
+    }
+
+    public String getAssignmentName() { return assignmentName; }
+    public String getCourseName() { return courseName; }
 }

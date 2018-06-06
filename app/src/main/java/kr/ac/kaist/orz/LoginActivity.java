@@ -41,11 +41,17 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if(response.isSuccessful()) {
+                if(response.isSuccessful() && response.code()==200) {
                     Toast.makeText(LoginActivity.this, "signin success", Toast.LENGTH_LONG).show();
                     ApplicationController.getInstance().setUser(response.body());
-                    Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
-                    startActivity(intent);
+                    if(ApplicationController.getInstance().getUser().getUserType() == 2) {
+                        Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
+                        startActivity(intent);
+                    }
+                    else {
+                        Intent intent = new Intent(getApplicationContext(), LecturerCoursesActivity.class);
+                        startActivity(intent);
+                    }
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Wrong id or password", Toast.LENGTH_LONG).show();

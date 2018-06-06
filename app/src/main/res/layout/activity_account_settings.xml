@@ -69,5 +69,12 @@
             android:text="@string/update"
             android:onClick="update" />
 
+        <Button
+            android:id="@+id/button_unregister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unregister"
+            android:onClick="unregister" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
