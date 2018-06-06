@@ -64,4 +64,32 @@ public interface OrzApi {
             @Path("userID") int userID,
             @Body Map<String, String> body
     );
+
+    // My Courses 에 있는 삭제 버튼을 누를 시, DB에 있는 해당 코스를 삭제함
+    //(Used in myCourseViewAdapter)
+    @DELETE("api/v1/students/{userID}/courses/{courseID}")
+    Call<Void> deleteStudentCourses(
+            @Path("userID") int userID,
+            @Path("courseID") int courseID
+    );
+
+    // Open Courses 에 있는 구독 버튼을 누를 시, DB에 있는 해당 코스를 유저가 구독할 수 있게 함
+    //(Used in openCourseViewAdapter)
+    @POST("api/v1/students/{userID}/courses/{courseID}")
+    Call<List<Course>> subscribeCourses(
+            @Path("userID") int userID,
+            @Path("courseID") int courseID
+    );
+
+    @GET("api/v1/lecturers/{userID}/courses")
+    Call<List<Course>> getLecturerCourses(
+            @Path("userID") int userID
+    );
+
+    // Open Courses 에 있는 구독 버튼을 누를 시, DB에 있는 해당 코스를 유저가 구독할 수 있게 함
+    //(Used in openCourseViewAdapter)
+    @POST("api/v1/courses/{courseID}/assignments")
+    Call<List<Assignment>> addAssignmentToCourse(
+            @Path("courseID") int courseID
+    );
 }
