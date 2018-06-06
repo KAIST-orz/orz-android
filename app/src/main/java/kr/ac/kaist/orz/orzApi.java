@@ -10,7 +10,7 @@ import kr.ac.kaist.orz.models.myCourseInformation;
 
 
 public interface orzApi {
-    @GET("api/schools/{schoolID}/courses")
+    @GET("api/v1/schools/{schoolID}/courses")
     Call<List<myCourseInformation>> getSchoolCourses(
             @Path("schoolID") int schoolID
     );
