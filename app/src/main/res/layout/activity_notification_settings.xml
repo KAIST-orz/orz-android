@@ -16,7 +16,6 @@
         android:layout_marginTop="8dp"
         android:text="@string/notification_settings_personal_schedule"
         android:gravity="center_vertical"
-        android:onClick="choose_personal_schedule_notification_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +30,6 @@
         android:layout_marginTop="8dp"
         android:text="@string/notification_settings_time_for_assignment"
         android:gravity="center_vertical"
-        android:onClick="choose_time_for_assignment_notification_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_personal_schedule" />
@@ -47,7 +45,6 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:text="@string/notification_settings_assignment_due"
-        android:onClick="choose_assignment_due_notification_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_time_for_assignment" />

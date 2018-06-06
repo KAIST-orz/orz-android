@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.text.DateFormat;
@@ -41,14 +43,14 @@ public class CalendarTabFragment extends Fragment
     private Button pickDate;
 
     // Keep the date information which the user has chosen
-    private Calendar current;
+    private Calendar calendar;
 
     // The layout onto which the schedule views are placed.
     private ConstraintLayout scheduleLayout;
 
     // TODO: Tracks the number of schedules being displayed currently.
     // TODO: Might keep the list of schedules later on, thus may override this.
-    private int numOfViews;
+    private int numOfCurrentSchedules;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -75,14 +77,14 @@ public class CalendarTabFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         // When this fragment is first created, instantiate a new Calendar object.
-        current = Calendar.getInstance();
-        numOfViews = -1;     // Initialize to -1 to indicate the initiation.
+        calendar = Calendar.getInstance();
+        numOfCurrentSchedules = -1;     // Initialize to -1 to indicate the initiation.
     }
 
-    // Formats the date held by current to "MMM DD, YYYY" format.
+    // Formats the date held by calendar to "MMM DD, YYYY" format.
     public String formatDateOfCalendar() {
         DateFormat formatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        return formatter.format(current.getTime());
+        return formatter.format(calendar.getTime());
     }
 
     @Override
@@ -98,6 +100,8 @@ public class CalendarTabFragment extends Fragment
         // The layout to draw schedules onto.
         scheduleLayout = (ConstraintLayout) view.findViewById(R.id.schedule_layout);
 
+        // TODO: Dummy schedule for test display
+
         // Set onClick listeners as the methods in this class.
         pickDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,22 +113,22 @@ public class CalendarTabFragment extends Fragment
         toPreviousDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                current.add(Calendar.DATE, -1);
+                calendar.add(Calendar.DATE, -1);
                 pickDate.setText(formatDateOfCalendar());
 
                 // TODO: Communicate with the server and draw schedules on the layout.
-                displayCurrentDate(getSchedules(), getAssignments());
+                displaySchedules(getSchedules());
             }
         });
 
         toNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                current.add(Calendar.DATE, 1);
+                calendar.add(Calendar.DATE, 1);
                 pickDate.setText(formatDateOfCalendar());
 
                 // TODO: Communicate with the server and draw schedules on the layout.
-                displayCurrentDate(getSchedules(), getAssignments());
+                displaySchedules(getSchedules());
             }
         });
 
@@ -132,7 +136,7 @@ public class CalendarTabFragment extends Fragment
         pickDate.setText(formatDateOfCalendar());
 
         // Display the schedules.
-        displayCurrentDate(getSchedules(), getAssignments());
+        displaySchedules(getSchedules());
 
         // Inflate the layout for this fragment
         return view;
@@ -152,9 +156,9 @@ public class CalendarTabFragment extends Fragment
 
         // Putting currently picked (being shown) date as arguments.
         Bundle args = new Bundle();
-        args.putInt("year", current.get(Calendar.YEAR));
-        args.putInt("month", current.get(Calendar.MONTH));
-        args.putInt("day", current.get(Calendar.DAY_OF_MONTH));
+        args.putInt("year", calendar.get(Calendar.YEAR));
+        args.putInt("month", calendar.get(Calendar.MONTH));
+        args.putInt("day", calendar.get(Calendar.DAY_OF_MONTH));
         dialog.setArguments(args);
 
         // Show to the user. fragment manager is OrzMainActivity's manager.
@@ -163,61 +167,52 @@ public class CalendarTabFragment extends Fragment
 
     // Listener for the date picker's DateSet event.
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Change where the current is pointing.
-        current.set(year, month, day);
+        // Change where the calendar is pointing.
+        calendar.set(year, month, day);
         pickDate.setText(formatDateOfCalendar());
 
         // Get schedules (possibly from the server) and display onto screen.
-        displayCurrentDate(getSchedules(), getAssignments());
+        displaySchedules(getSchedules());
     }
 
     // TODO: Communicates with the server to acquire the schedules for this day.
     public Schedule[] getSchedules() {
-        return createDummySchedules(6);
-    }
-
-    public Assignment[] getAssignments() {
-        return createDummyAssignments(6);
-    }
-
-    // Displays everything (schedules and assignment dues) of the current day.
-    private void displayCurrentDate(Schedule[] schedules, Assignment[] assignments) {
-        if (numOfViews > 0) {
-            clearLayout();
-        } else {
-            numOfViews = 0;
-        }
-
-        displaySchedules(schedules);
-        displayDeadlines(assignments);
-    }
-
-    // Remove anything (schedule, assignment) displayed on the scheduleLayout.
-    private void clearLayout() {
-        if (numOfViews > 0) {
-            scheduleLayout.removeViews(scheduleLayout.getChildCount() - numOfViews,
-                    numOfViews);
-        }
-        numOfViews = 0;
+        return createDummySchedules(4);
     }
 
     // Displays the schedules of the date the user has picked.
     private void displaySchedules(Schedule[] schedules) {
+        // If this is not the first time to be called, clear the schedules currently being shown.
+        if (numOfCurrentSchedules != -1) {
+            clearSchedules();
+        } else {
+            numOfCurrentSchedules = 0;
+        }
+
         for (Schedule schedule : schedules) {
             // TODO: these schedules should be first filtered before being passed to this method.
-            if ((schedule.end.get(Calendar.YEAR) < current.get(Calendar.YEAR)
-                    || schedule.end.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
-                    || schedule.start.get(Calendar.YEAR) > current.get(Calendar.YEAR)
-                    || schedule.start.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
-                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
+            if ((schedule.end.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)
+                    || schedule.end.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)
+                    || schedule.start.get(Calendar.YEAR) > calendar.get(Calendar.YEAR)
+                    || schedule.start.get(Calendar.DAY_OF_YEAR) > calendar.get(Calendar.DAY_OF_YEAR))
+                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
                         && schedule.end.get(Calendar.HOUR_OF_DAY) == 0
                         && schedule.end.get(Calendar.MINUTE) == 0)) {
                 continue;
             }
             // Display only when the view is for today.
             createScheduleView(schedule);
-            numOfViews++;    // Count only the displayed ones.
+            numOfCurrentSchedules++;    // Count only the displayed ones.
         }
+    }
+
+    // Removes the schedules from the screen.
+    private void clearSchedules() {
+        if (numOfCurrentSchedules > 0) {
+            scheduleLayout.removeViews(scheduleLayout.getChildCount() - numOfCurrentSchedules,
+                                        numOfCurrentSchedules);
+        }
+        numOfCurrentSchedules = 0;
     }
 
     /*
@@ -227,29 +222,46 @@ public class CalendarTabFragment extends Fragment
      * 2. Layout does not change: I used some hard-coded values for the height of the view.
      */
     private void createScheduleView(final Schedule schedule) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        LayoutInflater inflater = activity.getLayoutInflater();
+
         // Calculate the height of the view and determine which layout resource to use.
-        ScheduleView scheduleView;
+        View scheduleView;
         int height = calculateScheduleViewHeight(schedule.start, schedule.end);
+        int numOfTextViews = 1;     // Number of TextViews in the layout.
 
         // There are four resources we can make use of according to the height.
         if (schedule.description != null
                 && height >= getResources().getInteger(R.integer.schedule_view_large_height)) {
             // With description (assignment schedule), and it is large enough.
-            scheduleView = new ScheduleViewLarge(getContext());
+            scheduleView = inflater.inflate(R.layout.schedule_view_large, null);
+            numOfTextViews = 2;
         } else if (height >= getResources().getInteger(R.integer.schedule_view_medium_height)) {
-            scheduleView = new ScheduleViewMedium(getContext());
+            scheduleView = inflater.inflate(R.layout.schedule_view_medium, null);
         } else if (height >= getResources().getInteger(R.integer.schedule_view_small_height)) {
-            scheduleView = new ScheduleViewSmall(getContext());
+            scheduleView = inflater.inflate(R.layout.schedule_view_small, null);
         } else {
-            scheduleView = new ScheduleView(getContext());
+            scheduleView = new View(activity);
+            numOfTextViews = 0;
         }
 
         // Fill in the title and description of the schedule.
-        scheduleView.setTitle(schedule.title);
-        scheduleView.setDescription(schedule.description);
+        switch (numOfTextViews) {
+            case 2:
+                TextView description = scheduleView.findViewById(R.id.schedule_description);
+                description.setText(schedule.description);
+            case 1:
+                TextView title = scheduleView.findViewById(R.id.schedule_title);
+                title.setText(schedule.title);
+            default:
+                break;
+        }
 
         // TODO: Fill appropriate background and font color.
-        scheduleView.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        scheduleView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
 
         // Assign a unique ID to setup constraints of the view.
         int viewId = View.generateViewId();
@@ -259,15 +271,15 @@ public class CalendarTabFragment extends Fragment
         scheduleLayout.addView(scheduleView);
 
         // Get the width of the screen and set it as minimum width (the view then expands as desired).
-        WindowManager wm = getActivity().getWindowManager();
+        WindowManager wm = activity.getWindowManager();
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int windowWidth = size.x;
 
         // Set width and height of the scheduleView.
-        scheduleView.setHeight((int) dpToPx(height));
-        scheduleView.setWidth(windowWidth);
+        scheduleView.setMinimumHeight((int) dpToPx(height));
+        scheduleView.setMinimumWidth(windowWidth);
 
         // Constrain the top and the left side of the view.
         ConstraintSet constraintSet = new ConstraintSet();
@@ -276,11 +288,11 @@ public class CalendarTabFragment extends Fragment
         // Constrain the left to the delimiter in the layout.
         int leftMarginInPx = (int) getResources().getDimension(R.dimen.schedule_view_left_margin);
         constraintSet.connect(scheduleView.getId(), ConstraintSet.START,
-                            R.id.delimiter, ConstraintSet.END, leftMarginInPx);
+                            R.id.delimiter, ConstraintSet.END, (int) leftMarginInPx);
 
         // Constrain the top of the view to appropriate place.
-        if (schedule.start.get(Calendar.YEAR) < current.get(Calendar.YEAR)
-                || schedule.start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
+        if (schedule.start.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)
+                || schedule.start.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)) {
             // If the schedule started before the day, it should seem like continuing from the day before.
             constraintSet.connect(scheduleView.getId(), ConstraintSet.TOP,
                                 scheduleLayout.getId(), ConstraintSet.TOP, 0);
@@ -295,19 +307,17 @@ public class CalendarTabFragment extends Fragment
                                 ConstraintSet.BOTTOM, (int) marginFromTimeLineInPx);
         }
 
-        // Apply the constraints.
-        constraintSet.applyTo(scheduleLayout);
-
         // Add onClickListener to the view to change to the appropriate activity.
         scheduleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ScheduleDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), ScheduleDetailsActivity.class);
                 intent.putExtra("schedule_id", schedule.scheduleId);    // Pass schedule ID.
                 startActivity(intent);
             }
         });
 
+        constraintSet.applyTo(scheduleLayout);
     }
 
     // Calculates the height of a view for a schedule in dp units.
@@ -319,9 +329,8 @@ public class CalendarTabFragment extends Fragment
         int endHour;        // The hour the schedule starts in the current day.
         int endMinute;      // The minute in an hour the schedule starts in the current day.
 
-        // TODO: Handle the case when year is different.
         // Adding top margin in case the schedule starts before the current day.
-        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
+        if (start.get(Calendar.DAY_OF_YEAR) < calendar.get(Calendar.DAY_OF_YEAR)) {
             height += getResources().getInteger(R.integer.timeline_margin_top) + 2;
             startHour = 0;
             startMinute = 0;
@@ -331,7 +340,7 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Adding bottom margin in case the schedule
-        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
+        if (end.get(Calendar.DAY_OF_YEAR) > calendar.get(Calendar.DAY_OF_YEAR)) {
             if (end.get(Calendar.HOUR_OF_DAY) != 0 || end.get(Calendar.MINUTE) != 0) {
                 height += getResources().getInteger(R.integer.timeline_margin_bottom) + 2;
             }
@@ -343,7 +352,7 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Schedules are in 5 minute units, thus one slot corresponds to 5 minutes.
-        // 5 minutes in the current tab corresponds to @integer/timeline_5min dp.
+        // 5 minutes in the calendar tab corresponds to @integer/timeline_5min dp.
         int slotSize = getResources().getInteger(R.integer.timeline_5min);
         int numOfSlots = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) / 5;
 
@@ -363,129 +372,18 @@ public class CalendarTabFragment extends Fragment
         return height;
     }
 
-
-
     // Displays the deadlines of assignments whose deadlines are in the middle of today.
     public void displayDeadlines(Assignment[] assignments) {
-        // TODO: assignments should be sorted by deadline and significance. If deadlines are the same,
-        // TODO: Should display higher deadline assignment on top.
-        // TODO: When displaying assignments of same deadlines, should deal with them exclusively.
-        for (Assignment assignment : assignments) {
-            // TODO: these deadlines should be filtered before being passed to this method.
-            if ((assignment.deadline.get(Calendar.YEAR) < current.get(Calendar.YEAR))
-                    || assignment.deadline.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
-                    || assignment.deadline.get(Calendar.YEAR) > current.get(Calendar.YEAR)
-                    || assignment.deadline.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
-                if (!(assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR) + 1
-                        && assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                        && assignment.deadline.get(Calendar.MINUTE) == 0)) {
-                    continue;
-                }
-            } else if (assignment.deadline.get(Calendar.YEAR) == current.get(Calendar.YEAR)
-                        && assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
-                        && assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                        && assignment.deadline.get(Calendar.MINUTE) == 0) {
-                continue;
-            }
-            // Display only when the deadline is for today.
-            createDeadlineView(assignment);
-            numOfViews++;
-        }
+
+    }
+
+    // Clears the deadline views.
+    public void clearDeadlines() {
+
     }
 
     public void createDeadlineView(final Assignment assignment) {
-        DeadlineView deadlineView = new DeadlineView(getContext());
-        int topMargin = calculateDeadlineViewTopMargin(assignment.deadline);
 
-        deadlineView.setCourseName(assignment.courseName);
-
-        // TODO: Fill appropriate color.
-        deadlineView.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-
-        // Assign a unique ID to setup constraints.
-        int viewId = View.generateViewId();
-        deadlineView.setId(viewId);
-
-        // Add view to the scheduleLayout.
-        scheduleLayout.addView(deadlineView);
-
-        // Constrain the top and right side of the view.
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(scheduleLayout);
-
-        // Constrain the top of the view to the hour lines.
-        int resourceId;     // The resource ID to which the view is constrained.
-        int toWhere;        // The ConstraintSet.*** value of the resource to connect the view to.
-        int topMarginInPx = (int) dpToPx((float) calculateDeadlineViewTopMargin(assignment.deadline));
-
-        // Determine which hour line is directly above the view.
-        if (assignment.deadline.get(Calendar.MINUTE) < 20) {
-            if (assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                    && assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
-                resourceId = scheduleLayout.getId();
-                toWhere = ConstraintSet.TOP;
-            } else {
-                String line_num = "line_";
-                if (assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0) {
-                    line_num += "23";
-                } else {
-                    line_num += assignment.deadline.get(Calendar.HOUR_OF_DAY) - 1;
-                }
-                resourceId = getResources().getIdentifier(line_num, "id", "kr.ac.kaist.orz");
-                toWhere = ConstraintSet.BOTTOM;
-            }
-        }
-        else {
-            String line_num = "line_" + assignment.deadline.get(Calendar.HOUR_OF_DAY);
-            resourceId = getResources().getIdentifier(line_num, "id", "kr.ac.kaist.orz");
-            toWhere = ConstraintSet.BOTTOM;
-        }
-
-        // Constrain the view to the appropriate resource.
-        constraintSet.connect(deadlineView.getId(), ConstraintSet.TOP, resourceId, toWhere, topMarginInPx);
-
-        // Constraint the right of the view to the parent.
-        constraintSet.connect(deadlineView.getId(), ConstraintSet.END,
-                            scheduleLayout.getId(), ConstraintSet.END);
-
-        constraintSet.applyTo(scheduleLayout);
-
-        // Set onClickListener to the view.
-        deadlineView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), AssignmentDetailsActivity.class);
-                intent.putExtra("assignment_id", assignment.assignmentId);
-                startActivity(intent);
-            }
-        });
-    }
-
-    // Calculate the top margin (in dp units) of a deadline view from the hour line directly above it.
-    private int calculateDeadlineViewTopMargin(Calendar deadline) {
-        int minute = deadline.get(Calendar.MINUTE);
-        int margin;
-
-        int slotSize = getResources().getInteger(R.integer.timeline_5min) + 1;
-        int numOfSlots;
-
-        if (minute >= 20) {
-            numOfSlots = minute / 5;
-            margin = slotSize * numOfSlots - getResources().getInteger(R.integer.deadline_view_arrow_position);
-        } else {
-            if (deadline.get(Calendar.HOUR_OF_DAY) == 0
-                    && deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
-                numOfSlots = minute / 5;
-                margin = 23;
-            } else {
-                numOfSlots = (60 + minute) / 5;
-                margin = 0;
-            }
-            margin += slotSize * numOfSlots - getResources().getInteger(R.integer.deadline_view_arrow_position);
-            margin += 2;
-        }
-
-        return margin;
     }
 
     public static class DatePickerFragment extends DialogFragment {
@@ -558,7 +456,7 @@ public class CalendarTabFragment extends Fragment
         Schedule[] schedules = new Schedule[num];
 
         int i;
-        for (i = 0; i < num; i++) {
+        for (i = 0; i < num-1; i++) {
             Calendar start = Calendar.getInstance();
             start.set(Calendar.HOUR_OF_DAY, num * i);
             start.set(Calendar.MINUTE, 0);
@@ -570,6 +468,16 @@ public class CalendarTabFragment extends Fragment
             schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i, num * i);
         }
 
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.HOUR_OF_DAY, num * i);
+        start.set(Calendar.MINUTE, 0);
+
+        Calendar end = Calendar.getInstance();
+        end.add(Calendar.DATE, 1);
+        end.set(Calendar.HOUR_OF_DAY, 0);
+        end.set(Calendar.MINUTE, 0);
+
+        schedules[i] = new Schedule(start, end, "Assignment " + i, "Description " + i, num * i);
         return schedules;
     }
 
@@ -579,18 +487,13 @@ public class CalendarTabFragment extends Fragment
         int i;
         for (i = 0; i < num; i++) {
             Calendar deadline = Calendar.getInstance();
-            deadline.set(Calendar.HOUR_OF_DAY, num*i);
+            deadline.set(Calendar.HOUR_OF_DAY, num * i);
             deadline.set(Calendar.MINUTE, 30);
-            String courseName;
-            if (i % 2 == 1) {
-                courseName = "Logical writing";
-            } else {
-                courseName = "Computer Science";
-            }
 
-            assignments[i] = new Assignment(num * i, courseName, "Hi", deadline);
+            assignments[i] = new Assignment(num * i, "Computer science", "Hi", deadline);
         }
 
         return assignments;
     }
+
 }

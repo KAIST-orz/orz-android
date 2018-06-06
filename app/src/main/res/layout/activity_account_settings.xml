@@ -19,12 +19,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
+        <TextView
             android:id="@+id/editText_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/id_hint" />
+            android:hint="@string/id_hint"
+            android:textColor="#000"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editText_password"
@@ -59,8 +61,7 @@
             android:id="@+id/checkBox_lecturer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/check_lecturer"
-            android:clickable="false"/>
+            android:text="@string/check_lecturer" />
 
         <Button
             android:id="@+id/button_update"
