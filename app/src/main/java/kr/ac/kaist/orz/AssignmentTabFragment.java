@@ -1,39 +1,57 @@
 package kr.ac.kaist.orz;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.User;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AssignmentTabFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link AssignmentTabFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AssignmentTabFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class AssignmentTabFragment extends Fragment implements DialogInterface.OnClickListener {
+    private ListView assignmentListView;    // The ListView to display items on.
+    private AssignmentListViewAdapter listViewAdapter;      // The listViewAdapter that provides data to the ListView.
+    private ArrayList<Assignment> assignmentList;   // The list of assignment data.
 
-    private OnFragmentInteractionListener mListener;
+    // The item names to show on the dialog for picking sorting criteria.
+    private static final String SORT_DUE = "Due";
+    private static final String SORT_COURSE = "Course";
+    private static final String SORT_SIGNIFICANCE = "Significance";
+    private static final String SORT_ESTIMATE = "Average time estimate";
+
+    // Current sorting criteria. Initially sort by due date.
+    private String sortingCriteria = SORT_DUE;
+
+    ListView m_ListView;
+    assignmentTabViewAdapter m_Adapter;
 
     public AssignmentTabFragment() {
         // Required empty public constructor
@@ -49,10 +67,6 @@ public class AssignmentTabFragment extends Fragment {
     public static AssignmentTabFragment newInstance() {
         AssignmentTabFragment fragment = new AssignmentTabFragment();
         Bundle args = new Bundle();
-        /*
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        */
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,29 +75,48 @@ public class AssignmentTabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        }
+        assignmentList = new ArrayList<>();
+        listViewAdapter = new AssignmentListViewAdapter(getContext(), assignmentList);
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate layout for this fragment.
         View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
+        assignmentListView = (ListView) view.findViewById(R.id.listview_assignment);
 
-        ListView m_ListView;
-        ListAdapter m_Adapter;
-        int assignment_id=123; //각 assignment 마다 unique 하게 부여되며, assignment들을 구별하고 파악하는데 사용됨.
-                           //DB에서 값을 받아서, AssignmentTabFragment의 버튼 클릭시, Intent를 통해 'AssignmentDetailsActivity.java'로 전달될 것임.
 
+        // TODO: get the list of assignments from server.
+        getAssignments();
+        Collections.sort(assignmentList, Assignment.DUE_COMPARATOR);
+        listViewAdapter.notifyDataSetChanged();
+
+        // Set adapter to the ListView.
+        assignmentListView.setAdapter(listViewAdapter);
 
         //데이터를 저장하게 되는 리스트
-        final List<assignmentTab> list = new ArrayList<>();
+        final List<Assignment> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new assignmentTab("Logical Writing", "Writing Assignment 1", 1));
-        list.add(new assignmentTab("Computer Architecture", "Homework 1", 2));
-        list.add(new assignmentTab("Computer Architecture", "Homework 2", 3));
-        list.add(new assignmentTab("Computer Architecture", "Homework 3", 4));
-        list.add(new assignmentTab("Computer Architecture", "Homework 4", 5));
-        list.add(new assignmentTab("Introduction to Software Engineering", "Homework 1", 6));
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Assignment>> call = api.getStudentAssignments(user.getID());
+        call.enqueue(new Callback<List<Assignment>>() {
+            @Override
+            public void onResponse(Call<List<Assignment>> call, Response<List<Assignment>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Assignment>> call, Throwable t) {
+            }
+        });
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)view.findViewById(R.id.listview_assignment);
@@ -121,53 +154,75 @@ public class AssignmentTabFragment extends Fragment {
             }
         });
 
-        // Inflate the layout for this fragment
         return view;
     }
 
-/*
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private void getAssignments() {
+        assignmentList.clear();
+        createDummyAssignments(10);
+    }
+
+    private void createDummyAssignments(int num) {
+        for (int i = 0; i < num; i++) {
+            Calendar due = Calendar.getInstance();
+            due.set(Calendar.HOUR_OF_DAY, i);
+
+            Assignment ass = new Assignment(i, "Assignment " + i, "Dumb undergraduates",
+                                            "Discrete mathematics ddddddddddddddddddddddddddddddddddddddddddddddddd" + (i%3), due, (float) i, i%5);
+            assignmentList.add(ass);
         }
     }
 
-    /*
+    // Shows a dialog that lets the user pick a sorting criteria.
+    public void showSortingCriteriaDialog(Context context) {
+        final String[] criteria = new String[]{SORT_DUE, SORT_COURSE, SORT_SIGNIFICANCE, SORT_ESTIMATE};
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle("Set sorting criteria");
+
+        // Show the current sorting criteria as checked.
+        int checkedItem;
+        for (checkedItem = 0; checkedItem < criteria.length; checkedItem++) {
+            if (sortingCriteria.equals(criteria[checkedItem])) {
+                break;
+            }
+        }
+
+        adb.setSingleChoiceItems(criteria, checkedItem, null);
+        adb.setPositiveButton("close", this);
+        adb.show();
+    }
+
     @Override
-<<<<<<< .merge_file_a19328
-=======
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onClick(DialogInterface dialogInterface, int i) {
+        ListView listView = ((AlertDialog) dialogInterface).getListView();
+        Object checkedItem = listView.getAdapter().getItem(listView.getCheckedItemPosition());
+
+        // The comparator to sort assignmentList with according to the picked one.
+        Comparator<Assignment> assignmentComparator;
+        // Set current sorting criteria.
+        sortingCriteria = checkedItem.toString();
+
+        switch (sortingCriteria) {
+            case SORT_DUE:
+                assignmentComparator = Assignment.DUE_COMPARATOR;
+                break;
+            case SORT_COURSE:
+                assignmentComparator = Assignment.COURSE_COMPARATOR;
+                break;
+            case SORT_SIGNIFICANCE:
+                assignmentComparator = Assignment.SIGNIFICANCE_COMPARATOR;
+                break;
+            case SORT_ESTIMATE:
+                assignmentComparator = Assignment.ESTIMATE_COMPARATOR;
+                break;
+            default:
+                assignmentComparator = null;
+        }
+
+        // Sort the assignmentList with picked sorting criteria, then notify assignmentListViewAdapter.
+        if (assignmentComparator != null) {
+            Collections.sort(assignmentList, assignmentComparator);
+            listViewAdapter.notifyDataSetChanged();
         }
     }
-*/
-    @Override
-
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 }
