@@ -2,15 +2,23 @@ package kr.ac.kaist.orz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.kaist.orz.models.Course;
+
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class OpenCoursesActivity extends AppCompatActivity {
     private ListView m_ListView;
-    private ListAdapter m_Adapter;
+    private myCourseViewAdapter m_Adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +26,27 @@ public class OpenCoursesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_open_courses);
 
         //데이터를 저장하게 되는 리스트
-        List<myCourseInformation> list = new ArrayList<>();
+        final List<Course> list = new ArrayList<>();
+
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(A)","Sumgwon Kang"));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(B)","Park Jinah"));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(C)","Martin ZIEGLER"));
-        list.add(new myCourseInformation("Data Structure", "CS206(A)","Keeung Kin"));
-        list.add(new myCourseInformation("Data Structure", "CS206(B)","Alice Oh"));
-        list.add(new myCourseInformation("Data Structure", "CS206(C)","Duksan Ryu"));
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Course>> call = api.getSchoolCourses(user.getSchoolID());
+        call.enqueue(new Callback<List<Course>>() {
+            @Override
+            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Course>> call, Throwable t) {
+            }
+        });
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_openCourse);
