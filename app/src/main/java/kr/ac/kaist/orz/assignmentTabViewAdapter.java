@@ -33,7 +33,7 @@ public class assignmentTabViewAdapter extends ArrayAdapter {
         //Button p1_button = (Button)customView.findViewById(R.id.assignment_button2);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        String assignCourse = aItem.getCourse();
+        String assignCourse = aItem.getCourseName();
         String assignName = aItem.getName();
         assignmentName.setText(assignCourse.concat("\n").concat(assignName));
 

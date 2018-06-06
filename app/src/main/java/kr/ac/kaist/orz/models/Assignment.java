@@ -1,23 +1,27 @@
 package kr.ac.kaist.orz.models;
 
 public class Assignment {
-    private String assignmentCourse;
-    private String assignmentName;
-    private int assignmentID;
+    private int id;
+    private int courseID;
+    private String courseName;
+    private String name;
+
+    private float averageTimeEstimation;
+    private String Description;
 
     public Assignment(String input_course, String input_name, int input_ID){
-        assignmentCourse = input_course;
-        assignmentName = input_name;
-        assignmentID = input_ID;
+        courseName = input_course;
+        name = input_name;
+        id = input_ID;
     }
 
-    public String getCourse() {
-        return assignmentCourse;
+    public String getCourseName() {
+        return courseName;
     }
 
     public String getName() {
-        return assignmentName;
+        return name;
     }
 
-    public int getID(){return assignmentID;}
+    public int getID(){return id;}
 }
