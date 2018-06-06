@@ -7,9 +7,11 @@ import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 import java.util.List;
@@ -25,6 +27,17 @@ public interface OrzApi {
     @POST("api/v1/signup")
     Call<Void> signup(
             @Body Map<String, Object> body
+    );
+
+    @PUT("api/v1/users/{userID}")
+    Call<Void> updateUserAccount(
+            @Path("userID") int userID,
+            @Body Map<String, Object> body
+    );
+
+    @DELETE("api/v1/users/{userID}")
+    Call<Void> deleteUserAccount(
+            @Path("userID") int userID
     );
 
     @GET("api/v1/schools")
