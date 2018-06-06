@@ -60,7 +60,6 @@ public class SettingsTabFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();

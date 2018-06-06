@@ -37,18 +37,4 @@
         android:text="CourseID"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CourseName" />
-
-    <Button
-        android:id="@+id/myCourse_AddDelete"
-        android:layout_width="45dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="?attr/colorBackgroundFloating"
-        android:text="+/-"
-        app:layout_constraintBottom_toBottomOf="@+id/CourseLecturer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/CourseName"
-        app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
