@@ -2,9 +2,12 @@ package kr.ac.kaist.orz;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.SubtitleCollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,36 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment_details);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // CollapsingToolbarLayout
+        SubtitleCollapsingToolbarLayout collapsingToolbarLayout = (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
+
+        // Set text colors.
+        int titleColor = ContextCompat.getColor(this, R.color.colorBackgroundLight);
+        int subtitleColor = ContextCompat.getColor(this, R.color.colorButtonNormal);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setCollapsedSubtitleTextColor(subtitleColor);
+        collapsingToolbarLayout.setExpandedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setExpandedSubtitleTextColor(subtitleColor);
+
+        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        // TODO: Set appropriate color.
+        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
+        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
+
+        // TODO: Set course name and homework.
+        collapsingToolbarLayout.setTitle("Computer architecture");
+        collapsingToolbarLayout.setSubtitle("Homework 4");
 
         notification_time.add("5 minute before (Default)");
         notification_time.add("10 minute before");
@@ -85,9 +118,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         setListViewHeightBasedOnChildren(listview1);
         setListViewHeightBasedOnChildren(listview2);
-
-        TextView subject_assignment = findViewById(R.id.textView_subject_assignment);
-        subject_assignment.setText("Computer Architecture\nHomework 4");
 
         Button due = findViewById(R.id.button_due);
         due.setText("11:59 PM, April 5th");
