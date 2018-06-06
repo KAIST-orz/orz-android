@@ -6,4 +6,57 @@
     android:layout_height="match_parent"
     tools:context=".ScheduleDetailsActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:dividerHorizontal"
+            android:showDividers="middle" >
+
+            <TextView
+                android:id="@+id/textView_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="text" />
+
+            <Button
+                android:id="@+id/button_start_time"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="start time"
+                android:textAllCaps="false"
+                android:onClick="selectTime" />
+
+            <Button
+                android:id="@+id/button_end_time"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="end time"
+                android:textAllCaps="false"
+                android:onClick="selectTime" />
+
+            <ListView
+                android:id="@+id/listView_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="#00000000" />
+
+            <Button
+                android:id="@+id/button_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:onClick="delete" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>
