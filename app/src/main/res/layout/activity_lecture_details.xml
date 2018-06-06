@@ -4,44 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AssignmentDetailsActivity">
+    tools:context=".LectureDetailsActivity">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="219dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:divider="?android:dividerHorizontal"
-            android:showDividers="middle" >
+            android:orientation="vertical"
+            android:showDividers="middle">
 
-            <TextView
-                android:id="@+id/textView_subject_assignment"
+            <EditText
+                android:id="@+id/editText_lecture_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Subject\nAssignment" />
+                android:ems="10"
+                android:hint="lecture name"
+                android:inputType="text" />
 
-            <Button
-                android:id="@+id/button_due"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <EditText
+                android:id="@+id/editText_lecture_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Due"
-                android:gravity="center_vertical"
-                android:textAllCaps="false"
-                android:textColor="#000000" />
+                android:ems="10"
+                android:hint="lecture code"
+                android:inputType="text" />
 
-            <Button
-                android:id="@+id/button_estimated_time"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <EditText
+                android:id="@+id/editText_professor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estimated Time"
-                android:gravity="center_vertical"
-                android:textAllCaps="false"
-                android:onClick="enter_expected_time" />
+                android:ems="10"
+                android:hint="professor"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/editText_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="description"
+                android:inputType="text" />
 
             <ListView
                 android:id="@+id/listView_notification"
@@ -49,17 +57,13 @@
                 android:layout_height="wrap_content"
                 android:divider="#00000000" />
 
-            <ListView
-                android:id="@+id/listView_time_for_assignment"
+            <Button
+                android:id="@+id/button_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="#00000000" />
+                android:onClick="delete"
+                android:text="@string/delete" />
 
-            <TextView
-                android:id="@+id/textView_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="description" />
         </LinearLayout>
     </ScrollView>
 

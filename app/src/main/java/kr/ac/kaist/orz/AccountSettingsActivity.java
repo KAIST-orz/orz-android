@@ -23,11 +23,15 @@ public class AccountSettingsActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         schoolsSpinner.setAdapter(adapter);
 
-        TextView idView = findViewById(R.id.editText_id);
+        EditText idView = findViewById(R.id.editText_id);
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
         EditText emailView = findViewById(R.id.editText_email);
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
+
+        idView.setEnabled(false);
+        emailView.setEnabled(false);
+        schoolsSpinner.setEnabled(false);
 
         idView.setText(" ".concat(getUserID()));
         passView.setText(getUserPassword());
@@ -88,7 +92,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         else {
             Toast.makeText(this, "update success", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
             startActivity(intent);
         }
     }
