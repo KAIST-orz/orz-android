@@ -41,7 +41,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
         courseCode.setText(courseCodeStr);
         courseLecturer.setText(courseLecturerStr);
 
-        
+
         assignments.add("Assignment 1");
         assignments.add("Assignment 2");
         assignments.add("Add new assignment");

@@ -77,16 +77,15 @@ public class LecturerCoursesActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext() , "Success!",Toast.LENGTH_LONG).show();
-                /*
+                //For Testing
+                //Toast.makeText(getApplicationContext() , "Success!",Toast.LENGTH_LONG).show();
+
                 Intent intent = new Intent(
                         getApplicationContext(), // 현재화면의 제어권자
-                        LecturerCourseModifyActivity.class); // 다음넘어갈 화면
+                        RegisterLectureActivity.class); // 다음넘어갈 화면
 
                 startActivity(intent); //다음 화면으로 넘어감
-                */
         }});
-
     }
 
     //Activity가 사용자와 상호작용을 하기 직전에 호출되는 부분

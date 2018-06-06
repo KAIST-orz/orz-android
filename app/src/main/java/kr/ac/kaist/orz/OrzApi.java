@@ -67,4 +67,11 @@ public interface OrzApi {
     Call<List<Course>> getLecturerCourses(
             @Path("userID") int userID
     );
+
+    // Open Courses 에 있는 구독 버튼을 누를 시, DB에 있는 해당 코스를 유저가 구독할 수 있게 함
+    //(Used in openCourseViewAdapter)
+    @POST("api/v1/courses/{courseID}/assignments")
+    Call<List<Assignment>> addAssignmentToCourse(
+            @Path("courseID") int courseID
+    );
 }
