@@ -11,6 +11,10 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class RegisterAssignmentActivity extends AppCompatActivity {
 
     @Override
@@ -35,9 +39,13 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //Toast.makeText(getApplicationContext(), "test2", Toast.LENGTH_LONG).show();
-                                        String s = String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + " " + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute());
-                                        ((Button)v).setText(s);
-                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                        Calendar startCalendar = Calendar.getInstance();
+                                        startCalendar.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth(), tp.getCurrentHour(), tp.getCurrentMinute());
+                                        Date date = startCalendar.getTime();
+
+                                        SimpleDateFormat parser = new SimpleDateFormat("hh:mm a, MMMM:d ");
+
+                                        ((Button)v).setText(parser.format(date));
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
