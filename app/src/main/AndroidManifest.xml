@@ -52,6 +52,7 @@
         <activity android:name=".NotificationSettingsActivity" />
         <activity android:name=".RegisterLectureActivity" />
         <activity android:name=".LectureDetailsActivity" />
+        <activity android:name=".LecturerCoursesActivity"/>
         <activity android:name=".AssignmentDetailsLecturerActivity"></activity>
     </application>
 

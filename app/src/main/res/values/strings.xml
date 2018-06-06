@@ -20,6 +20,7 @@
     <string name="label_update_account">Update an orz account</string>
     <string name="delete">Delete</string>
     <string name="create">Create</string>
+    <string name="unregister">Unregister</string>
 
     <string name="settings_account">Account</string>
     <string name="settings_notification">Notification</string>

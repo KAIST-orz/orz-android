@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,6 +26,22 @@ public class LectureDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lecture_details);
+
+        //LecturerCoursesActivity 에서 선택한 Course의 정보를 Intent에 담아 불러온다
+        Intent intent = getIntent();
+        String courseNameStr = intent.getExtras().getString("courseName");
+        String courseCodeStr = intent.getExtras().getString("courseCode");
+        String courseLecturerStr = intent.getExtras().getString("courseLecturer");
+        int courseID = intent.getExtras().getInt("courseID");
+
+        //Course 정보를 보여주는 TextView를 setText 해준다.
+        TextView courseName = (TextView) findViewById(R.id.editText_lecture_name);
+        TextView courseCode = (TextView) findViewById(R.id.editText_lecture_code);
+        TextView courseLecturer = (TextView) findViewById(R.id.editText_professor);
+        courseName.setText(courseNameStr);
+        courseCode.setText(courseCodeStr);
+        courseLecturer.setText(courseLecturerStr);
+
 
         assignments.add("Assignment 1");
         assignments.add("Assignment 2");
