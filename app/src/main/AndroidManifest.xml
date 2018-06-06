@@ -47,6 +47,8 @@
                 android:value=".MyCoursesActivity" />
         </activity>
         <activity android:name=".NotificationSettingsActivity" />
+        <activity android:name=".RegisterLectureActivity" />
+        <activity android:name=".LectureDetailsActivity"></activity>
     </application>
 
 </manifest>

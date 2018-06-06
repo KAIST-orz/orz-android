@@ -1,6 +1,7 @@
 package kr.ac.kaist.orz;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,14 +41,28 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         time_for_assignment.add("7:00PM ~ 11:00PM, April 5th");
         time_for_assignment.add("Add more time");
 
+        final AlertDialog.Builder adb = new AlertDialog.Builder(this);
+
         ListView listview1 = findViewById(R.id.listView_notification);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
         listview1.setAdapter(adapter);
         listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(notification_time.get(position).equals("Add more notification")) {
                     selectAlarm();
+                }
+                else {
+                    adb.setTitle("remove notification?");
+                    adb.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplicationContext(), "remove alarm #" + String.valueOf(position), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                    adb.setNegativeButton("No", null);
+                    adb.show();
                 }
             }
         });
@@ -60,6 +75,10 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(time_for_assignment.get(position).equals("Add more time")) {
                     selectDuration();
+                }
+                else {
+                    Intent intent = new Intent(getApplicationContext(), ScheduleDetailsActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -100,11 +119,11 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
     public void selectDuration() {
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        final DatePicker dp = new DatePicker(this);
+        final DatePicker dp1 = new DatePicker(this);
         final TimePicker tp1 = new TimePicker(this);
+        final DatePicker dp2 = new DatePicker(this);
         final TimePicker tp2 = new TimePicker(this);
 
-        adb.setView(dp);
         adb.setPositiveButton("set",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -120,42 +139,35 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         //Toast.makeText(getApplicationContext(), "test3", Toast.LENGTH_LONG).show();
-                                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                                        adb.setPositiveButton("set",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        //Toast.makeText(getApplicationContext(), "test4", Toast.LENGTH_LONG).show();
+                                                                        Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                        adb.setNegativeButton("cancel", null);
+                                                        adb.setView(tp2);
+                                                        adb.show();
                                                     }
                                                 });
-                                        adb.setNegativeButton("cancel",
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                        adb.setView(tp2);
+                                        adb.setNegativeButton("cancel", null);
+                                        adb.setView(dp2);
                                         adb.show();
                                     }
                                 });
-                        adb.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        adb.setNegativeButton("cancel", null);
                         adb.setView(tp1);
                         adb.show();
                     }
                 });
-        adb.setNegativeButton("cancel",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+        adb.setNegativeButton("cancel", null);
+        adb.setView(dp1);
         adb.show();
     }
 
-    public void selectDate() {
+    public void selectTime() {
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
         final DatePicker dp = new DatePicker(this);
         final TimePicker tp = new TimePicker(this);
@@ -174,45 +186,13 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                     }
                                 });
-                        adb.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        adb.setNegativeButton("cancel", null);
                         adb.setView(tp);
                         adb.show();
                     }
                 });
-        adb.setNegativeButton("cancel",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+        adb.setNegativeButton("cancel", null);
         adb.show();
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
     }
 
     public void enter_expected_time(View v) {
@@ -233,13 +213,28 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        alert.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        alert.setNegativeButton("cancel", null);
 
         alert.show();
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 }

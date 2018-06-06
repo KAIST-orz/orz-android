@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
         if(checkLogin(id, pass)) {
             Toast.makeText(this, "signin success", Toast.LENGTH_LONG).show();
             //Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
-            Intent intent = new Intent(getApplicationContext(), AssignmentDetailsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), LectureDetailsActivity.class);
             startActivity(intent);
         }
         else
@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         if(id.equals("asdf"))
             return "asdf";
         else
-            return "zxcv";
+            return "";
     }
 
     public void registerAccount(View v) {
