@@ -16,4 +16,7 @@ public class User {
 
     public int getID() { return id; }
     public int getSchoolID() { return schoolID; }
+    public String getUserName() { return username; }
+    public String getUserEmail() { return email; }
+    public int getUserType() { return type; }
 }

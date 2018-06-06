@@ -11,9 +11,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import kr.ac.kaist.orz.models.School;
 import kr.ac.kaist.orz.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,16 +24,43 @@ import retrofit2.Response;
 
 public class RegisterAccountActivity extends AppCompatActivity {
 
+    List<String> name_list = new ArrayList<String>();
+    List<Integer> id_list = new ArrayList<Integer>();
+    ArrayAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_account);
 
+        OrzApi api = ApplicationController.getInstance().getApi();
+
         Spinner spinner = findViewById(R.id.spinner_schools);
-        // TODO: fetch schools from server
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.schools_array, R.layout.support_simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, name_list);
         spinner.setAdapter(adapter);
+
+        final List<School> list = new ArrayList<School>();
+        Call<List<School>> call = api.getSchools();
+        call.enqueue(new Callback<List<School>>() {
+            @Override
+            public void onResponse(Call<List<School>> call, Response<List<School>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+
+                    for(School school : list) {
+                        name_list.add(school.getName());
+                        id_list.add(school.getId());
+                    }
+
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<School>> call, Throwable t) {
+                Toast.makeText(RegisterAccountActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void register(View v) {
@@ -45,7 +75,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
         String pass = passView.getText().toString();
         String verify = verifyView.getText().toString();
         String email = emailView.getText().toString();
-        int schoolID = Integer.parseInt(schoolsSpinner.getSelectedItem().toString());
+        int schoolID = id_list.get(schoolsSpinner.getSelectedItemPosition());
         boolean isLecturer = lecturerCheckBox.isChecked();
 
         if(id.length() == 0)

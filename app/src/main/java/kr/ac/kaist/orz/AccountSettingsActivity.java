@@ -11,17 +11,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.ac.kaist.orz.models.School;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AccountSettingsActivity extends AppCompatActivity {
+
+    List<String> name_list = new ArrayList<String>();
+    List<Integer> id_list = new ArrayList<Integer>();
+    ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_settings);
-
-        Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.schools_array, R.layout.support_simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        schoolsSpinner.setAdapter(adapter);
 
         EditText idView = findViewById(R.id.editText_id);
         EditText passView = findViewById(R.id.editText_password);
@@ -31,34 +39,43 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         idView.setEnabled(false);
         emailView.setEnabled(false);
-        schoolsSpinner.setEnabled(false);
 
-        idView.setText(" ".concat(getUserID()));
-        passView.setText(getUserPassword());
-        verifyView.setText(getUserPassword());
-        emailView.setText(getUserEmail());
-        schoolsSpinner.setSelection(getUserSchool());
-        lecturerCheckBox.setChecked(isUserLecturer());
-    }
+        final User user = ApplicationController.getInstance().getUser();
 
-    public String getUserID() {
-        return "asdf";
-    }
+        idView.setText(" ".concat(user.getUserName()));
+        emailView.setText(user.getUserEmail());
+        lecturerCheckBox.setChecked(user.getUserType() == 1);
 
-    public String getUserPassword() {
-        return "asdf";
-    }
+        OrzApi api = ApplicationController.getInstance().getApi();
 
-    public String getUserEmail() {
-        return "asdf@asdf";
-    }
+        final Spinner spinner = findViewById(R.id.spinner_schools);
+        spinner.setEnabled(false);
+        adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, name_list);
+        spinner.setAdapter(adapter);
 
-    public int getUserSchool() {
-        return 1;
-    }
+        final List<School> list = new ArrayList<School>();
+        Call<List<School>> call = api.getSchools();
+        call.enqueue(new Callback<List<School>>() {
+            @Override
+            public void onResponse(Call<List<School>> call, Response<List<School>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
 
-    public boolean isUserLecturer() {
-        return false;
+                    for(School school : list) {
+                        name_list.add(school.getName());
+                        id_list.add(school.getId());
+                    }
+
+                    spinner.setSelection(user.getSchoolID());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<School>> call, Throwable t) {
+                Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void update(View v) {
