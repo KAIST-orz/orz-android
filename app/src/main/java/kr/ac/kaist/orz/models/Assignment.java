@@ -1,13 +1,18 @@
 package kr.ac.kaist.orz.models;
 
+import java.time.LocalDateTime;
+
 public class Assignment {
     private int id;
     private int courseID;
     private String courseName;
     private String name;
-
+    private LocalDateTime due;
     private float averageTimeEstimation;
     private String Description;
+
+    public Assignment() {
+    }
 
     public Assignment(String input_course, String input_name, int input_ID){
         courseName = input_course;
