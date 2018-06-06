@@ -105,7 +105,7 @@ public class CalendarTabFragment extends Fragment
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
 
-        Call<List<StudentAssignment>> call = api.getStudentAssignments2(user.getID());
+        Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
         call.enqueue(new Callback<List<StudentAssignment>>() {
             @Override
             public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {

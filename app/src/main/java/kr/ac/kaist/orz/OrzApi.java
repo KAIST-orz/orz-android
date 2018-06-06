@@ -38,13 +38,7 @@ public interface OrzApi {
     );
 
     @GET("api/v1/students/{userID}/assignments")
-    Call<List<Assignment>> getStudentAssignments(
-            @Path("userID") int userID
-    );
-
-    // Merge with upper one
-    @GET("api/v1/students/{userID}/assignments")
-    Call<List<StudentAssignment>> getStudentAssignments2(
+    Call<List<StudentAssignment>> getStudentAssignments(
             @Path("userID") int userID
     );
 }
