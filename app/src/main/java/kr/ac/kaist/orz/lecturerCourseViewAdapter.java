@@ -11,12 +11,14 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import kr.ac.kaist.orz.models.Course;
+
 public class lecturerCourseViewAdapter extends ArrayAdapter {
     private Context mainactivity_context;
-    List<myCourseInformation> list;
+    List<Course> list;
 
     // ListViewAdapter의 생성자
-    public lecturerCourseViewAdapter(Context context, List<myCourseInformation> courses) {
+    public lecturerCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
         mainactivity_context = context;
         list = courses;
@@ -28,8 +30,8 @@ public class lecturerCourseViewAdapter extends ArrayAdapter {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View customView = inflater.inflate(R.layout.lecturer_course, parent, false);
 
-        //화면에 뿌려줄 정보 (myCourseInformation)
-        myCourseInformation aItem = (myCourseInformation) getItem(position);
+        //화면에 뿌려줄 정보 (Course)
+        Course aItem = (Course) getItem(position);
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
         TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
@@ -37,9 +39,9 @@ public class lecturerCourseViewAdapter extends ArrayAdapter {
         TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        courseNameView.setText(aItem.getCourseName());
-        courseCodeView.setText(aItem.getCourseCode());
-        courseLecturerView.setText(aItem.getCourseLecturer());
+        courseNameView.setText(aItem.getName());
+        courseCodeView.setText(aItem.getCode());
+        courseLecturerView.setText(aItem.getProfessor());
 
         return customView;
     }

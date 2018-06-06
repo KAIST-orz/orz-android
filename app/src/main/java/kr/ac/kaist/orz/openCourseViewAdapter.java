@@ -18,12 +18,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
-public class myCourseViewAdapter extends ArrayAdapter {
+public class openCourseViewAdapter extends ArrayAdapter {
     private Context mainactivity_context;
     List<Course> list;
 
     // ListViewAdapter의 생성자
-    public myCourseViewAdapter(Context context, List<Course> courses) {
+    public openCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
         mainactivity_context = context;
         list = courses;
@@ -54,30 +54,21 @@ public class myCourseViewAdapter extends ArrayAdapter {
         addDel_button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 int position=(Integer)view.getTag();
-                int courseID_toDelete = list.get(position).getID();
+                int courseID_toAdd = list.get(position).getID();
 
                 //삭제 혹은 구독하려고 클릭한 course의 ID 출력 (for testing)
-                //Toast.makeText(mainactivity_context, Integer.toString(courseID_toDelete),Toast.LENGTH_LONG).show();
+                //Toast.makeText(mainactivity_context, Integer.toString(courseID_toAdd),Toast.LENGTH_LONG).show();
 
-                //Intent에 삭제 혹은 구독할 course의 ID를 담아 다른 activity로 전달할 수 있다. (아래 코드 부분에 해당됨)
-                /*
-                Intent intent = new Intent(
-                        mainactivity_context, // 현재화면의 제어권자
-                        OrzMainActivity.class); // 다음넘어갈 화면
-                intent.putExtra("ID of course-to-be-modified", courseID_toModify);
-
-                mainactivity_context.startActivity(intent); //다음 화면으로 넘어감
-                */
 
                 OrzApi api = ApplicationController.getInstance().getApi();
                 User user = ApplicationController.getInstance().getUser();
-                Call<Void> call = api.deleteStudentCourses(user.getID(),courseID_toDelete);
+                Call<List<Course>> call = api.subscribeCourses(user.getID(), courseID_toAdd);
 
-                Toast.makeText(mainactivity_context, "Course deletion successful!",Toast.LENGTH_LONG).show();
+                Toast.makeText(mainactivity_context, "Course subscription successful!",Toast.LENGTH_LONG).show();
 
-                call.enqueue(new Callback<Void>() {
+                call.enqueue(new Callback<List<Course>>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                         if(response.isSuccessful()) {
                             //Adapter에서 mainActivity의 메소드 부르기 (화면 refresh)
                             //[Ref] https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter
@@ -90,7 +81,7 @@ public class myCourseViewAdapter extends ArrayAdapter {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(Call<List<Course>> call, Throwable t) {
                     }
                 });
 
@@ -103,3 +94,4 @@ public class myCourseViewAdapter extends ArrayAdapter {
 
 
 //Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic
+

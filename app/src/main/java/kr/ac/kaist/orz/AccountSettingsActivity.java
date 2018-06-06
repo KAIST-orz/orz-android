@@ -1,8 +1,12 @@
 package kr.ac.kaist.orz;
 
+import android.accounts.Account;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -11,17 +15,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import kr.ac.kaist.orz.models.School;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AccountSettingsActivity extends AppCompatActivity {
+
+    List<String> name_list = new ArrayList<String>();
+    List<Integer> id_list = new ArrayList<Integer>();
+    ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_settings);
-
-        Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.schools_array, R.layout.support_simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        schoolsSpinner.setAdapter(adapter);
 
         EditText idView = findViewById(R.id.editText_id);
         EditText passView = findViewById(R.id.editText_password);
@@ -30,58 +44,55 @@ public class AccountSettingsActivity extends AppCompatActivity {
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
         idView.setEnabled(false);
-        emailView.setEnabled(false);
-        schoolsSpinner.setEnabled(false);
 
-        idView.setText(" ".concat(getUserID()));
-        passView.setText(getUserPassword());
-        verifyView.setText(getUserPassword());
-        emailView.setText(getUserEmail());
-        schoolsSpinner.setSelection(getUserSchool());
-        lecturerCheckBox.setChecked(isUserLecturer());
-    }
+        final User user = ApplicationController.getInstance().getUser();
 
-    public String getUserID() {
-        return "asdf";
-    }
+        idView.setText(" ".concat(user.getUserName()));
+        emailView.setText(user.getUserEmail());
+        lecturerCheckBox.setChecked(user.getUserType() == 1);
 
-    public String getUserPassword() {
-        return "asdf";
-    }
+        OrzApi api = ApplicationController.getInstance().getApi();
 
-    public String getUserEmail() {
-        return "asdf@asdf";
-    }
+        final Spinner spinner = findViewById(R.id.spinner_schools);
+        spinner.setEnabled(false);
+        adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, name_list);
+        spinner.setAdapter(adapter);
 
-    public int getUserSchool() {
-        return 1;
-    }
+        final List<School> list = new ArrayList<School>();
+        Call<List<School>> call = api.getSchools();
+        call.enqueue(new Callback<List<School>>() {
+            @Override
+            public void onResponse(Call<List<School>> call, Response<List<School>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
 
-    public boolean isUserLecturer() {
-        return false;
+                    for(School school : list) {
+                        name_list.add(school.getName());
+                        id_list.add(school.getId());
+                    }
+
+                    spinner.setSelection(id_list.indexOf(user.getSchoolID()));
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<School>> call, Throwable t) {
+                Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void update(View v) {
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
         EditText emailView = findViewById(R.id.editText_email);
-        Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
-        CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
         String pass = passView.getText().toString();
         String verify = verifyView.getText().toString();
-        String email = emailView.getText().toString();
-        String school = schoolsSpinner.getSelectedItem().toString();
-        boolean isLecturer = lecturerCheckBox.isChecked();
+        final String email = emailView.getText().toString();
 
-
-        if(pass.length() == 0)
-            Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
-
-        else if(verify.length() == 0)
-            Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
-
-        else if(email.length() == 0)
+        if(email.length() == 0)
             Toast.makeText(this, "The email is empty", Toast.LENGTH_LONG).show();
 
         else if(!checkPassword(pass, verify))
@@ -91,10 +102,67 @@ public class AccountSettingsActivity extends AppCompatActivity {
             Toast.makeText(this, "Inappropriate email format", Toast.LENGTH_LONG).show();
 
         else {
-            Toast.makeText(this, "update success", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
-            startActivity(intent);
+
+            OrzApi api = ApplicationController.getInstance().getApi();
+            final User user = ApplicationController.getInstance().getUser();
+            Map<String, Object> body = new HashMap<>();
+            body.put("email", email);
+            if(pass.length() != 0)
+                body.put("password", pass);
+            Call<Void> call = api.updateUserAccount(user.getID(), body);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if(response.isSuccessful() && response.code()==200) {
+                        user.setUserEmail(email);
+                        Toast.makeText(AccountSettingsActivity.this, "update success", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                    else {
+                        Toast.makeText(AccountSettingsActivity.this, "update failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                }
+            });
         }
+    }
+
+    public void unregister(View v) {
+        final OrzApi api = ApplicationController.getInstance().getApi();
+        final User user = ApplicationController.getInstance().getUser();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Are you sure to unregister?");
+        adb.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Call<Void> call = api.deleteUserAccount(user.getID());
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            Toast.makeText(AccountSettingsActivity.this, "successfully unregistered", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(AccountSettingsActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(AccountSettingsActivity.this, "unregister failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        adb.setNegativeButton("no", null);
+        adb.show();
     }
 
     public boolean checkPassword(String pass, String verify) {
