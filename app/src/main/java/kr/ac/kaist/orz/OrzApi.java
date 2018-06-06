@@ -62,4 +62,9 @@ public interface OrzApi {
             @Path("userID") int userID,
             @Path("courseID") int courseID
     );
+
+    @GET("api/v1/lecturers/{userID}/courses")
+    Call<List<Course>> getLecturerCourses(
+            @Path("userID") int userID
+    );
 }

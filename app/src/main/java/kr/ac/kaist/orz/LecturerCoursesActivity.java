@@ -16,17 +16,23 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.kaist.orz.models.Course;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LecturerCoursesActivity extends AppCompatActivity {
-    private ListView m_ListView;
-    private ListAdapter m_Adapter;
+        private ListView m_ListView;
+        private lecturerCourseViewAdapter m_Adapter;
 
-    //데이터를 저장하게 되는 리스트
-    private List<myCourseInformation> list = new ArrayList<>();
+        //데이터를 저장하게 되는 리스트
+        private List<Course> list = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lecturer_courses);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_lecturer_courses);
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.lecturer_listview);
@@ -44,24 +50,24 @@ public class LecturerCoursesActivity extends AppCompatActivity {
                                     int position, long id) {
 
                 //--For testing : 버튼 클릭 시 courseID 출력
-                Toast.makeText(getApplicationContext() , Integer.toString(list.get(position).getCourseID()),Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext() , Integer.toString(list.get(position).getID()),Toast.LENGTH_LONG).show();
 
-                /*
                 // 상세정보 화면으로 이동하기(인텐트 날리기)
                 // 1. 다음화면을 만든다 (생략)
                 // 2. AndroidManifest.xml 에 화면을 등록한다 (생략)
                 // 3. Intent 객체를 생성하여 날린다
                 Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자 (fragment의 경우 getActivity, activity의 경우 getApplicationContext 함수 사용)
+                        getApplicationContext(), // 현재화면의 제어권자 (fragment의 경우 getActivity, activity의 경우 getApplicationContext 함수 사용)
                         AssignmentDetailsActivity.class); // 다음넘어갈 화면
 
                 // intent 객체에 데이터를 실어서 보내기
                 // 리스트뷰 클릭시 인텐트 (Intent) 생성하고 position 값을 이용하여 인텐트로 넘길값들을 넘긴다
                 // 데이터 주고 받는 법 : http://pds0819.tistory.com/entry/%EC%9D%B8%ED%85%90%ED%8A%B8Intent%EB%A1%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EB%8B%ACputExtra-getExtras-%EA%B7%B8%EB%A6%AC%EA%B3%A0-TapHost%EC%97%90%EC%84%9C-%EB%8B%A4%EB%A5%B8-%EC%97%91%ED%8B%B0%EB%B9%84%ED%8B%B0%EB%A1%9C-%EB%B3%80%EC%88%98%EA%B0%92-%EC%A0%84%EB%8B%AC
-                intent.putExtra("Assignment ID", list.get(position).getID());
+                intent.putExtra("courseName", list.get(position).getName());
+                intent.putExtra("courseCode", list.get(position).getCode());
+                intent.putExtra("courseLecturer", list.get(position).getProfessor());
 
                 startActivity(intent);
-                */
             }
         });
 
@@ -96,16 +102,39 @@ public class LecturerCoursesActivity extends AppCompatActivity {
         addData();
     }
 
+
     //리스트뷰에 보여질 아이템을 list에 추가
     //DB에서 전달받은 값을 list에 add하면 될 듯.
     private void addData()
     {
+
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Course>> call = api.getLecturerCourses(user.getID());
+        call.enqueue(new Callback<List<Course>>() {
+            @Override
+            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Course>> call, Throwable t) {
+            }
+        });
+
+        /*
         list.add(new myCourseInformation("Discrete Mathematics", "CS204(A)","Sumgwon Kang",0));
         list.add(new myCourseInformation("Discrete Mathematics", "CS204(B)","Park Jinah", 1));
         list.add(new myCourseInformation("Discrete Mathematics", "CS204(C)","Martin ZIEGLER", 2));
         list.add(new myCourseInformation("Data Structure", "CS206(A)","Keeung Kin", 3));
         list.add(new myCourseInformation("Data Structure", "CS206(B)","Alice Oh", 4));
         list.add(new myCourseInformation("Data Structure", "CS206(C)","Duksan Ryu", 5));
+        */
     }
 
 }
