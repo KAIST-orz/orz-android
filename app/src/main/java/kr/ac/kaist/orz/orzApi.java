@@ -6,12 +6,12 @@ import retrofit2.http.Path;
 
 import java.util.List;
 
-import kr.ac.kaist.orz.models.myCourseInformation;
+import kr.ac.kaist.orz.models.Course;
 
 
 public interface orzApi {
     @GET("api/v1/schools/{schoolID}/courses")
-    Call<List<myCourseInformation>> getSchoolCourses(
+    Call<List<Course>> getSchoolCourses(
             @Path("schoolID") int schoolID
     );
 }

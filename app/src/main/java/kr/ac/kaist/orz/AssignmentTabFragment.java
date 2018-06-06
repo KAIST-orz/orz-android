@@ -14,7 +14,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.kaist.orz.models.assignmentTab;
+import kr.ac.kaist.orz.models.Assignment;
 
 
 /**
@@ -74,14 +74,14 @@ public class AssignmentTabFragment extends Fragment {
 
 
         //데이터를 저장하게 되는 리스트
-        final List<assignmentTab> list = new ArrayList<>();
+        final List<Assignment> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new assignmentTab("Logical Writing", "Writing Assignment 1", 1));
-        list.add(new assignmentTab("Computer Architecture", "Homework 1", 2));
-        list.add(new assignmentTab("Computer Architecture", "Homework 2", 3));
-        list.add(new assignmentTab("Computer Architecture", "Homework 3", 4));
-        list.add(new assignmentTab("Computer Architecture", "Homework 4", 5));
-        list.add(new assignmentTab("Introduction to Software Engineering", "Homework 1", 6));
+        list.add(new Assignment("Logical Writing", "Writing Assignment 1", 1));
+        list.add(new Assignment("Computer Architecture", "Homework 1", 2));
+        list.add(new Assignment("Computer Architecture", "Homework 2", 3));
+        list.add(new Assignment("Computer Architecture", "Homework 3", 4));
+        list.add(new Assignment("Computer Architecture", "Homework 4", 5));
+        list.add(new Assignment("Introduction to Software Engineering", "Homework 1", 6));
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)view.findViewById(R.id.listview_assignment);

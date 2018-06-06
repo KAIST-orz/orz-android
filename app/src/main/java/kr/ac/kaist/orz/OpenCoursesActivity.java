@@ -7,7 +7,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.kaist.orz.models.myCourseInformation;
+import kr.ac.kaist.orz.models.Course;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +25,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_open_courses);
 
         //데이터를 저장하게 되는 리스트
-        final List<myCourseInformation> list = new ArrayList<>();
+        final List<Course> list = new ArrayList<>();
 
         //리스트뷰에 보여질 아이템을 추가
         Retrofit retrofit = new Retrofit.Builder()
@@ -33,10 +33,10 @@ public class OpenCoursesActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         orzApi api = retrofit.create(orzApi.class);
-        Call<List<myCourseInformation>> call = api.getSchoolCourses(1); // TODO: Use user's school ID
-        call.enqueue(new Callback<List<myCourseInformation>>() {
+        Call<List<Course>> call = api.getSchoolCourses(1); // TODO: Use user's school ID
+        call.enqueue(new Callback<List<Course>>() {
             @Override
-            public void onResponse(Call<List<myCourseInformation>> call, Response<List<myCourseInformation>> response) {
+            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                 if(response.isSuccessful()) {
                     list.addAll(response.body());
                     m_Adapter.notifyDataSetChanged();
@@ -46,7 +46,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<myCourseInformation>> call, Throwable t) {
+            public void onFailure(Call<List<Course>> call, Throwable t) {
             }
         });
 

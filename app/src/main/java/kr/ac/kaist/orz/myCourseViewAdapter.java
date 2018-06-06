@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import kr.ac.kaist.orz.models.myCourseInformation;
+import kr.ac.kaist.orz.models.Course;
 
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class myCourseViewAdapter extends ArrayAdapter {
 
     // ListViewAdapter의 생성자
-    public myCourseViewAdapter(Context context, List<myCourseInformation> courses) {
+    public myCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
     }
 
@@ -25,8 +25,8 @@ public class myCourseViewAdapter extends ArrayAdapter {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View customView = inflater.inflate(R.layout.mycourse, parent, false);
 
-        //화면에 뿌려줄 정보 (myCourseInformation)
-        myCourseInformation aItem = (myCourseInformation) getItem(position);
+        //화면에 뿌려줄 정보 (Course)
+        Course aItem = (Course) getItem(position);
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
         TextView courseNameView = (TextView) customView.findViewById(R.id.myCourseName);

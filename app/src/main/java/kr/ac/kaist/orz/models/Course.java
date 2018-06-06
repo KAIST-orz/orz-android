@@ -1,13 +1,13 @@
 package kr.ac.kaist.orz.models;
 
-//myCourseInformation 자바 클래스는 값을 저장해줄 공간의 틀을 짜는 것
+//Course 자바 클래스는 값을 저장해줄 공간의 틀을 짜는 것
 
-public class myCourseInformation {
+public class Course {
     private String name;
     private String id;
     private String professor;
 
-    public myCourseInformation(String input_name, String input_id, String input_professor){
+    public Course(String input_name, String input_id, String input_professor){
         name = input_name;
         id = input_id;
         professor = input_professor;
