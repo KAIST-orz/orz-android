@@ -1,5 +1,13 @@
 package kr.ac.kaist.orz.models;
 
+import java.util.Calendar;
+import java.util.List;
+
 public class PersonalSchedule extends Schedule {
-    private String name;
+    public String name;
+
+    public PersonalSchedule(int id, int studentID, Calendar start, Calendar end, List<Integer> alarms, String name) {
+        super(id, studentID, start, end, alarms);
+        this.name = name;
+    }
 }

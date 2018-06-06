@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
@@ -100,10 +101,10 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         //리스트뷰에 보여질 아이템을 추가
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
-        Call<List<Assignment>> call = api.getStudentAssignments(user.getID());
-        call.enqueue(new Callback<List<Assignment>>() {
+        Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
+        call.enqueue(new Callback<List<StudentAssignment>>() {
             @Override
-            public void onResponse(Call<List<Assignment>> call, Response<List<Assignment>> response) {
+            public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
                 if(response.isSuccessful()) {
                     list.addAll(response.body());
                     m_Adapter.notifyDataSetChanged();
@@ -113,7 +114,7 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
             }
 
             @Override
-            public void onFailure(Call<List<Assignment>> call, Throwable t) {
+            public void onFailure(Call<List<StudentAssignment>> call, Throwable t) {
             }
         });
 

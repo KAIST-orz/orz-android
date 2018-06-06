@@ -60,7 +60,7 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
     public void create(View v) {
         EditText schedule_name = findViewById(R.id.editText_assignment_name);
         Button due_date = findViewById(R.id.button_due_date);
-        
+
 
         if(schedule_name.length() == 0)
             Toast.makeText(this, "assignment name can not be empty", Toast.LENGTH_LONG).show();

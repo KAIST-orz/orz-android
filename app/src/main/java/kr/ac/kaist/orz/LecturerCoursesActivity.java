@@ -58,7 +58,7 @@ public class LecturerCoursesActivity extends AppCompatActivity {
                 // 3. Intent 객체를 생성하여 날린다
                 Intent intent = new Intent(
                         getApplicationContext(), // 현재화면의 제어권자 (fragment의 경우 getActivity, activity의 경우 getApplicationContext 함수 사용)
-                        AssignmentDetailsActivity.class); // 다음넘어갈 화면
+                        LectureDetailsActivity.class); // 다음넘어갈 화면
 
                 // intent 객체에 데이터를 실어서 보내기
                 // 리스트뷰 클릭시 인텐트 (Intent) 생성하고 position 값을 이용하여 인텐트로 넘길값들을 넘긴다
@@ -66,6 +66,8 @@ public class LecturerCoursesActivity extends AppCompatActivity {
                 intent.putExtra("courseName", list.get(position).getName());
                 intent.putExtra("courseCode", list.get(position).getCode());
                 intent.putExtra("courseLecturer", list.get(position).getProfessor());
+                intent.putExtra("courseID", list.get(position).getID());
+
 
                 startActivity(intent);
             }

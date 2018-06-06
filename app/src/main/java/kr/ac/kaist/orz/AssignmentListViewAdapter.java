@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.StudentAssignment;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class AssignmentListViewAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data at the position.
-        final Assignment assignment = (Assignment) getItem(position);
+        final StudentAssignment assignment = (StudentAssignment) getItem(position);
 
         // Check if an existing view is being reused.
         ViewHolder viewHolder;
@@ -65,7 +66,7 @@ public class AssignmentListViewAdapter extends ArrayAdapter {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AssignmentDetailsActivity.class);
-                intent.putExtra("assignment_id", assignment.getID());
+                intent.putExtra("assignment", assignment);
                 view.getContext().startActivity(intent);
             }
         });
