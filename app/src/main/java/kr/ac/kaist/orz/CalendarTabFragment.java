@@ -410,7 +410,7 @@ public class CalendarTabFragment extends Fragment
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ScheduleDetailsActivity.class);
-                intent.putExtra("schedule_id", schedule.id);    // Pass schedule ID.
+                intent.putExtra("schedule", schedule);    // Pass schedule ID.
                 startActivity(intent);
             }
         });

@@ -1,12 +1,13 @@
 package kr.ac.kaist.orz.models;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class Schedule {
+public abstract class Schedule implements Serializable {
     public int id;
     private int studentID;
     private String start;

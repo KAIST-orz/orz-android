@@ -1,6 +1,8 @@
 package kr.ac.kaist.orz;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.icu.text.ScientificNumberFormatter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,11 +14,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.kaist.orz.models.PersonalSchedule;
+import kr.ac.kaist.orz.models.Schedule;
+import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.TimeForAssignment;
 
 public class ScheduleDetailsActivity extends AppCompatActivity {
 
@@ -32,6 +41,9 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
         notification_time.add("Add more notification");
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
+
+        Intent intent = getIntent();
+        Schedule schedule = (Schedule) intent.getExtras().getSerializable("schedule");
 
         ListView listview1 = findViewById(R.id.listView_notification);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
@@ -58,11 +70,20 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
         });
         setListViewHeightBasedOnChildren(listview1);
 
+        TextView title = findViewById(R.id.textView_text);
+        if (PersonalSchedule.class.isInstance(schedule)) {
+            title.setText(((PersonalSchedule)schedule).getName() + "\n" + "Custom schedule");
+        }
+        else if (TimeForAssignment.class.isInstance(schedule)) {
+            title.setText(((TimeForAssignment)schedule).getCourseName() + "\n" + ((TimeForAssignment)schedule).getAssignmentName());
+        }
+
         Button start_time = findViewById(R.id.button_start_time);
         Button end_time = findViewById(R.id.button_end_time);
 
-        start_time.setText("7:00 PM, April 5th");
-        end_time.setText("11:00 PM, April 5th");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+        start_time.setText(sdf.format(schedule.getStart().getTime()));
+        end_time.setText(sdf.format(schedule.getEnd().getTime()));
     }
 
     public void selectAlarm() {
