@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import kr.ac.kaist.orz.models.Assignment;
 
 import java.util.List;
 
@@ -57,14 +58,14 @@ public class AssignmentListViewAdapter extends ArrayAdapter {
         viewHolder.arrowHead.getDrawable().setTint(color);
         viewHolder.textLayout.setBackgroundColor(color);
         viewHolder.courseNameText.setText(assignment.getCourseName());
-        viewHolder.assignmentNameText.setText(assignment.getAssignmentName());
+        viewHolder.assignmentNameText.setText(assignment.getName());
 
         // Set OnClickListner to change to assignment details screen.
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AssignmentDetailsActivity.class);
-                intent.putExtra("assignment_id", assignment.getId());
+                intent.putExtra("assignment_id", assignment.getID());
                 view.getContext().startActivity(intent);
             }
         });
