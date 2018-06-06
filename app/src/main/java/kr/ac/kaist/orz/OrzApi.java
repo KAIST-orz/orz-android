@@ -2,6 +2,7 @@ package kr.ac.kaist.orz;
 
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.School;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
@@ -25,6 +26,10 @@ public interface OrzApi {
     @POST("api/v1/signup")
     Call<Void> signup(
             @Body Map<String, Object> body
+    );
+
+    @GET("api/v1/schools")
+    Call<List<School>> getSchools(
     );
 
     @GET("api/v1/schools/{schoolID}/courses")
