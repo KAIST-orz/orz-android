@@ -43,7 +43,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
-                    Intent intent = new Intent(getApplicationContext(), AssignmentDetailsActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), AssignmentDetailsLecturerActivity.class);
                     startActivity(intent);
                 }
             }
