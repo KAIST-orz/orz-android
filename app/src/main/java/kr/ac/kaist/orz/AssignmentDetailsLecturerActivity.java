@@ -1,6 +1,7 @@
 package kr.ac.kaist.orz;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,12 +12,19 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment_details_lecturer);
+
+        Intent intent = getIntent();
+        int courseID = intent.getExtras().getInt("assignmentID");
     }
 
     public void selectTime(final View v) {
@@ -35,9 +43,12 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //Toast.makeText(getApplicationContext(), "test2", Toast.LENGTH_LONG).show();
-                                        String s = String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + " " + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute());
-                                        ((Button)v).setText(s);
-                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                        Calendar startCalendar = Calendar.getInstance();
+                                        startCalendar.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth(), tp.getCurrentHour(), tp.getCurrentMinute());
+                                        Date date = startCalendar.getTime();
+
+                                        SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+                                        ((Button)v).setText(parser.format(date));
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
