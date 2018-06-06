@@ -5,13 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyCoursesActivity extends AppCompatActivity {
     private ListView m_ListView;
@@ -24,12 +19,12 @@ public class MyCoursesActivity extends AppCompatActivity {
 
         /*
         //데이터를 저장하게 되는 리스트
-        final List<myCourseInformation> list = new ArrayList<>();
+        final List<Course> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh"));
-        list.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee"));
-        list.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon"));
-        list.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
+        list.add(new Course("Logical Writing", "HSS001(K)","Jaeun Oh"));
+        list.add(new Course("Interactive Product Design", "ID301(A)","Woohun Lee"));
+        list.add(new Course("Computer Organization", "CS311","Hyunsoo Yoon"));
+        list.add(new Course("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview);
@@ -87,10 +82,10 @@ public class MyCoursesActivity extends AppCompatActivity {
         */
 
         /*
-        m_Adapter.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh"));
-        m_Adapter.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee"));
-        m_Adapter.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon"));
-        m_Adapter.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
+        m_Adapter.add(new Course("Logical Writing", "HSS001(K)","Jaeun Oh"));
+        m_Adapter.add(new Course("Interactive Product Design", "ID301(A)","Woohun Lee"));
+        m_Adapter.add(new Course("Computer Organization", "CS311","Hyunsoo Yoon"));
+        m_Adapter.add(new Course("Introduction to Software Engineering", "CS350","Doo-Hwan Bae"));
         */
     }
 }
