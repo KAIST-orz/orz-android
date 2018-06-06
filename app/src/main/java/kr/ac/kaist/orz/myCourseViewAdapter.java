@@ -1,14 +1,11 @@
 package kr.ac.kaist.orz;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +33,9 @@ public class myCourseViewAdapter extends ArrayAdapter {
         myCourseInformation aItem = (myCourseInformation) getItem(position);
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
-        TextView courseNameView = (TextView) customView.findViewById(R.id.myCourseName);
-        TextView courseCodeView = (TextView) customView.findViewById(R.id.myCourseCode);
-        TextView courseLecturerView = (TextView) customView.findViewById(R.id.myCourseLecturer);
+        TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
+        TextView courseCodeView = (TextView) customView.findViewById(R.id.CourseCode);
+        TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
         courseNameView.setText(aItem.getCourseName());
