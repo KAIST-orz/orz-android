@@ -522,7 +522,7 @@ public class CalendarTabFragment extends Fragment
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AssignmentDetailsActivity.class);
-                intent.putExtra("assignment_id", assignment.getID());
+                intent.putExtra("assignment", assignment);
                 startActivity(intent);
             }
         });
