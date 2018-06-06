@@ -15,6 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.User;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -32,6 +37,9 @@ public class AssignmentTabFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private OnFragmentInteractionListener mListener;
+
+    ListView m_ListView;
+    assignmentTabViewAdapter m_Adapter;
 
     public AssignmentTabFragment() {
         // Required empty public constructor
@@ -67,8 +75,6 @@ public class AssignmentTabFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
 
-        ListView m_ListView;
-        ListAdapter m_Adapter;
         int assignment_id=123; //각 assignment 마다 unique 하게 부여되며, assignment들을 구별하고 파악하는데 사용됨.
                            //DB에서 값을 받아서, AssignmentTabFragment의 버튼 클릭시, Intent를 통해 'AssignmentDetailsActivity.java'로 전달될 것임.
 
@@ -76,12 +82,24 @@ public class AssignmentTabFragment extends Fragment {
         //데이터를 저장하게 되는 리스트
         final List<Assignment> list = new ArrayList<>();
         //리스트뷰에 보여질 아이템을 추가
-        list.add(new Assignment("Logical Writing", "Writing Assignment 1", 1));
-        list.add(new Assignment("Computer Architecture", "Homework 1", 2));
-        list.add(new Assignment("Computer Architecture", "Homework 2", 3));
-        list.add(new Assignment("Computer Architecture", "Homework 3", 4));
-        list.add(new Assignment("Computer Architecture", "Homework 4", 5));
-        list.add(new Assignment("Introduction to Software Engineering", "Homework 1", 6));
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Assignment>> call = api.getStudentAssignments(user.getID());
+        call.enqueue(new Callback<List<Assignment>>() {
+            @Override
+            public void onResponse(Call<List<Assignment>> call, Response<List<Assignment>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Assignment>> call, Throwable t) {
+            }
+        });
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)view.findViewById(R.id.listview_assignment);
