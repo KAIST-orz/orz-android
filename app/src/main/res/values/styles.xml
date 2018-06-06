@@ -6,8 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:datePickerMode">spinner</item>
-        <item name="android:timePickerMode">spinner</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

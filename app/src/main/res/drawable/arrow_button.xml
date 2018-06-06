@@ -18,7 +18,6 @@
         android:top="-60dp"
         android:bottom="65dp"
         android:right="-30dp">
-
         <rotate
             android:fromDegrees="25">
 
