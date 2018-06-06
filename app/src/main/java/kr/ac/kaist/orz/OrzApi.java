@@ -58,4 +58,10 @@ public interface OrzApi {
     Call<List<Assignment>> getStudentAssignments(
             @Path("userID") int userID
     );
+
+    @POST("api/v1/lecturers/{userID}/courses")
+    Call<Void> registerLecture(
+            @Path("userID") int userID,
+            @Body Map<String, String> body
+    );
 }
