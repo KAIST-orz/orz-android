@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.text.DateFormat;
 
+import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.Schedule;
 import kr.ac.kaist.orz.models.TimeForAssignment;
@@ -185,12 +186,12 @@ public class CalendarTabFragment extends Fragment
         return createDummyTimeForAssignments(6);
     }
 
-    public Assignment[] getAssignments() {
+    public StudentAssignment[] getAssignments() {
         return createDummyAssignments(6);
     }
 
     // Displays everything (schedules and assignment dues) of the current day.
-    private void displayCurrentDate(PersonalSchedule[] personalSchedules, TimeForAssignment[] timeForAssignments, Assignment[] assignments) {
+    private void displayCurrentDate(PersonalSchedule[] personalSchedules, TimeForAssignment[] timeForAssignments, StudentAssignment[] assignments) {
         if (numOfViews > 0) {
             clearLayout();
         } else {
@@ -405,25 +406,25 @@ public class CalendarTabFragment extends Fragment
 
 
     // Displays the deadlines of assignments whose deadlines are in the middle of today.
-    public void displayDeadlines(Assignment[] assignments) {
+    public void displayDeadlines(StudentAssignment[] assignments) {
         // TODO: assignments should be sorted by deadline and significance. If deadlines are the same,
         // TODO: Should display higher deadline assignment on top.
         // TODO: When displaying assignments of same deadlines, should deal with them exclusively.
-        for (Assignment assignment : assignments) {
+        for (StudentAssignment assignment : assignments) {
             // TODO: these deadlines should be filtered before being passed to this method.
-            if ((assignment.deadline.get(Calendar.YEAR) < current.get(Calendar.YEAR))
-                    || assignment.deadline.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
-                    || assignment.deadline.get(Calendar.YEAR) > current.get(Calendar.YEAR)
-                    || assignment.deadline.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
-                if (!(assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR) + 1
-                        && assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                        && assignment.deadline.get(Calendar.MINUTE) == 0)) {
+            if ((assignment.getDue().get(Calendar.YEAR) < current.get(Calendar.YEAR))
+                    || assignment.getDue().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                    || assignment.getDue().get(Calendar.YEAR) > current.get(Calendar.YEAR)
+                    || assignment.getDue().get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
+                if (!(assignment.getDue().get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR) + 1
+                        && assignment.getDue().get(Calendar.HOUR_OF_DAY) == 0
+                        && assignment.getDue().get(Calendar.MINUTE) == 0)) {
                     continue;
                 }
-            } else if (assignment.deadline.get(Calendar.YEAR) == current.get(Calendar.YEAR)
-                        && assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
-                        && assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                        && assignment.deadline.get(Calendar.MINUTE) == 0) {
+            } else if (assignment.getDue().get(Calendar.YEAR) == current.get(Calendar.YEAR)
+                        && assignment.getDue().get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
+                        && assignment.getDue().get(Calendar.HOUR_OF_DAY) == 0
+                        && assignment.getDue().get(Calendar.MINUTE) == 0) {
                 continue;
             }
             // Display only when the deadline is for today.
@@ -432,11 +433,11 @@ public class CalendarTabFragment extends Fragment
         }
     }
 
-    public void createDeadlineView(final Assignment assignment) {
+    public void createDeadlineView(final StudentAssignment assignment) {
         DeadlineView deadlineView = new DeadlineView(getContext());
-        int topMargin = calculateDeadlineViewTopMargin(assignment.deadline);
+        int topMargin = calculateDeadlineViewTopMargin(assignment.getDue());
 
-        deadlineView.setCourseName(assignment.courseName);
+        deadlineView.setCourseName(assignment.getCourseName());
 
         // TODO: Fill appropriate color.
         deadlineView.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
@@ -455,27 +456,27 @@ public class CalendarTabFragment extends Fragment
         // Constrain the top of the view to the hour lines.
         int resourceId;     // The resource ID to which the view is constrained.
         int toWhere;        // The ConstraintSet.*** value of the resource to connect the view to.
-        int topMarginInPx = (int) dpToPx((float) calculateDeadlineViewTopMargin(assignment.deadline));
+        int topMarginInPx = (int) dpToPx((float) calculateDeadlineViewTopMargin(assignment.getDue()));
 
         // Determine which hour line is directly above the view.
-        if (assignment.deadline.get(Calendar.MINUTE) < 20) {
-            if (assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0
-                    && assignment.deadline.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
+        if (assignment.getDue().get(Calendar.MINUTE) < 20) {
+            if (assignment.getDue().get(Calendar.HOUR_OF_DAY) == 0
+                    && assignment.getDue().get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
                 resourceId = scheduleLayout.getId();
                 toWhere = ConstraintSet.TOP;
             } else {
                 String line_num = "line_";
-                if (assignment.deadline.get(Calendar.HOUR_OF_DAY) == 0) {
+                if (assignment.getDue().get(Calendar.HOUR_OF_DAY) == 0) {
                     line_num += "23";
                 } else {
-                    line_num += assignment.deadline.get(Calendar.HOUR_OF_DAY) - 1;
+                    line_num += assignment.getDue().get(Calendar.HOUR_OF_DAY) - 1;
                 }
                 resourceId = getResources().getIdentifier(line_num, "id", "kr.ac.kaist.orz");
                 toWhere = ConstraintSet.BOTTOM;
             }
         }
         else {
-            String line_num = "line_" + assignment.deadline.get(Calendar.HOUR_OF_DAY);
+            String line_num = "line_" + assignment.getDue().get(Calendar.HOUR_OF_DAY);
             resourceId = getResources().getIdentifier(line_num, "id", "kr.ac.kaist.orz");
             toWhere = ConstraintSet.BOTTOM;
         }
@@ -494,7 +495,7 @@ public class CalendarTabFragment extends Fragment
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AssignmentDetailsActivity.class);
-                intent.putExtra("assignment_id", assignment.assignmentId);
+                intent.putExtra("assignment_id", assignment.getID());
                 startActivity(intent);
             }
         });
@@ -560,21 +561,6 @@ public class CalendarTabFragment extends Fragment
         void onFragmentInteraction();
     }
 
-    // TODO: Temporary assignment class. Replace with actual assignment from server.
-    class Assignment {
-        int assignmentId;
-        String courseName;
-        String description; // Not needed, but defined anyway.
-        Calendar deadline;
-
-        Assignment(int id, String courseName, String description, Calendar deadline) {
-            this.assignmentId = id;
-            this.courseName = courseName;
-            this.description = description;
-            this.deadline = deadline;
-        }
-    }
-
     // Creates dummy schedules.
     private PersonalSchedule[] createDummyPersonalSchedules(int num) {
         PersonalSchedule[] schedules = new PersonalSchedule[num];
@@ -616,8 +602,8 @@ public class CalendarTabFragment extends Fragment
     }
 
 
-    private Assignment[] createDummyAssignments(int num) {
-        Assignment[] assignments = new Assignment[num];
+    private StudentAssignment[] createDummyAssignments(int num) {
+        StudentAssignment[] assignments = new StudentAssignment[num];
 
         int i;
         for (i = 0; i < num; i++) {
@@ -631,7 +617,7 @@ public class CalendarTabFragment extends Fragment
                 courseName = "Computer Science";
             }
 
-            assignments[i] = new Assignment(num * i, courseName, "Hi", deadline);
+            assignments[i] = new StudentAssignment(i, "Assignment "+i,"Hi", "Course "+i, deadline, 0, 1);
         }
 
         return assignments;
