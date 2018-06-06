@@ -8,7 +8,7 @@ public class TimeForAssignment extends Schedule {
     public String assignmentName;
     public String courseName;
 
-    public TimeForAssignment(int id, int studentID, Calendar start, Calendar end, List<Integer> alarms,int assignmentID, String assignmentName, String courseName) {
+    public TimeForAssignment(int id, int studentID, String start, String end, List<Integer> alarms,int assignmentID, String assignmentName, String courseName) {
         super(id, studentID, start, end, alarms);
         this.assignmentID = assignmentID;
         this.assignmentName = assignmentName;

@@ -2,7 +2,9 @@ package kr.ac.kaist.orz;
 
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.TimeForAssignment;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
@@ -39,6 +41,16 @@ public interface OrzApi {
 
     @GET("api/v1/students/{userID}/assignments")
     Call<List<StudentAssignment>> getStudentAssignments(
+            @Path("userID") int userID
+    );
+
+    @GET("api/v1/students/{userID}/personal-schedules")
+    Call<List<PersonalSchedule>> getStudentPersonalSchedules(
+            @Path("userID") int userID
+    );
+
+    @GET("api/v1/students/{userID}/time-for-assignments")
+    Call<List<TimeForAssignment>> getStudentTimeForAssignments(
             @Path("userID") int userID
     );
 }

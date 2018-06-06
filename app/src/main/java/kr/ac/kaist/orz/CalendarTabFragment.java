@@ -123,6 +123,46 @@ public class CalendarTabFragment extends Fragment
                 Log.e("123", t.getMessage());
             }
         });
+
+        Call<List<PersonalSchedule>> call2 = api.getStudentPersonalSchedules(user.getID());
+        call2.enqueue(new Callback<List<PersonalSchedule>>() {
+            @Override
+            public void onResponse(Call<List<PersonalSchedule>> call, Response<List<PersonalSchedule>> response) {
+                if(response.isSuccessful()) {
+                    personalSchedules.addAll(response.body());
+                    Log.d("123", response.body().toString());
+                    displayCurrentDate();
+                }
+                else {
+                    Log.e("CalendarTabFragment2", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PersonalSchedule>> call, Throwable t) {
+                Log.e("123", t.getMessage());
+            }
+        });
+
+        Call<List<TimeForAssignment>> call3 = api.getStudentTimeForAssignments(user.getID());
+        call3.enqueue(new Callback<List<TimeForAssignment>>() {
+            @Override
+            public void onResponse(Call<List<TimeForAssignment>> call, Response<List<TimeForAssignment>> response) {
+                if(response.isSuccessful()) {
+                    timeForAssignments.addAll(response.body());
+                    Log.d("123", response.body().toString());
+                    displayCurrentDate();
+                }
+                else {
+                    Log.e("CalendarTabFragment3", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TimeForAssignment>> call, Throwable t) {
+                Log.e("123", t.getMessage());
+            }
+        });
     }
 
     // Formats the date held by current to "MMM DD, YYYY" format.
@@ -243,13 +283,13 @@ public class CalendarTabFragment extends Fragment
     private void displayPersonalSchedules(List<PersonalSchedule> schedules) {
         for (PersonalSchedule schedule : schedules) {
             // TODO: these schedules should be first filtered before being passed to this method.
-            if ((schedule.end.get(Calendar.YEAR) < current.get(Calendar.YEAR)
-                    || schedule.end.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
-                    || schedule.start.get(Calendar.YEAR) > current.get(Calendar.YEAR)
-                    || schedule.start.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
-                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
-                        && schedule.end.get(Calendar.HOUR_OF_DAY) == 0
-                        && schedule.end.get(Calendar.MINUTE) == 0)) {
+            if ((schedule.getEnd().get(Calendar.YEAR) < current.get(Calendar.YEAR)
+                    || schedule.getEnd().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                    || schedule.getStart().get(Calendar.YEAR) > current.get(Calendar.YEAR)
+                    || schedule.getStart().get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
+                    || (schedule.getEnd().get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
+                        && schedule.getEnd().get(Calendar.HOUR_OF_DAY) == 0
+                        && schedule.getEnd().get(Calendar.MINUTE) == 0)) {
                 continue;
             }
             // Display only when the view is for today.
@@ -262,13 +302,13 @@ public class CalendarTabFragment extends Fragment
     private void displayTimeForAssignments(List<TimeForAssignment> schedules) {
         for (TimeForAssignment schedule : schedules) {
             // TODO: these schedules should be first filtered before being passed to this method.
-            if ((schedule.end.get(Calendar.YEAR) < current.get(Calendar.YEAR)
-                    || schedule.end.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
-                    || schedule.start.get(Calendar.YEAR) > current.get(Calendar.YEAR)
-                    || schedule.start.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
-                    || (schedule.end.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
-                    && schedule.end.get(Calendar.HOUR_OF_DAY) == 0
-                    && schedule.end.get(Calendar.MINUTE) == 0)) {
+            if ((schedule.getEnd().get(Calendar.YEAR) < current.get(Calendar.YEAR)
+                    || schedule.getEnd().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                    || schedule.getStart().get(Calendar.YEAR) > current.get(Calendar.YEAR)
+                    || schedule.getStart().get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR))
+                    || (schedule.getEnd().get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)
+                    && schedule.getEnd().get(Calendar.HOUR_OF_DAY) == 0
+                    && schedule.getEnd().get(Calendar.MINUTE) == 0)) {
                 continue;
             }
             // Display only when the view is for today.
@@ -286,7 +326,7 @@ public class CalendarTabFragment extends Fragment
     private void createScheduleView(final Schedule schedule) {
         // Calculate the height of the view and determine which layout resource to use.
         ScheduleView scheduleView;
-        int height = calculateScheduleViewHeight(schedule.start, schedule.end);
+        int height = calculateScheduleViewHeight(schedule.getStart(), schedule.getEnd());
         String title = "title";
         String description = "description";
         if (PersonalSchedule.class.isInstance(schedule)) {
@@ -346,16 +386,16 @@ public class CalendarTabFragment extends Fragment
                             R.id.delimiter, ConstraintSet.END, leftMarginInPx);
 
         // Constrain the top of the view to appropriate place.
-        if (schedule.start.get(Calendar.YEAR) < current.get(Calendar.YEAR)
-                || schedule.start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
+        if (schedule.getStart().get(Calendar.YEAR) < current.get(Calendar.YEAR)
+                || schedule.getStart().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
             // If the schedule started before the day, it should seem like continuing from the day before.
             constraintSet.connect(scheduleView.getId(), ConstraintSet.TOP,
                                 scheduleLayout.getId(), ConstraintSet.TOP, 0);
         } else {
             // Else connect to the appropriate hour line.
-            String line_num = "line_" + schedule.start.get(Calendar.HOUR_OF_DAY);   // The identifier of the line.
+            String line_num = "line_" + schedule.getStart().get(Calendar.HOUR_OF_DAY);   // The identifier of the line.
             float marginFromTimeLineInPx    // The top margin from the hour line.
-                    = dpToPx(4 * (schedule.start.get(Calendar.MINUTE) / 5) + 1);
+                    = dpToPx(4 * (schedule.getStart().get(Calendar.MINUTE) / 5) + 1);
 
             constraintSet.connect(scheduleView.getId(), ConstraintSet.TOP,
                                 getResources().getIdentifier(line_num, "id", "kr.ac.kaist.orz"),
