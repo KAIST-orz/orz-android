@@ -18,5 +18,6 @@ public class User {
     public int getSchoolID() { return schoolID; }
     public String getUserName() { return username; }
     public String getUserEmail() { return email; }
+    public void setUserEmail(String newEmail) { email = newEmail; }
     public int getUserType() { return type; }
 }

@@ -1,8 +1,12 @@
 package kr.ac.kaist.orz;
 
+import android.accounts.Account;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -12,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.ac.kaist.orz.models.School;
 import kr.ac.kaist.orz.models.User;
@@ -38,7 +44,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
         idView.setEnabled(false);
-        emailView.setEnabled(false);
 
         final User user = ApplicationController.getInstance().getUser();
 
@@ -66,7 +71,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
                         id_list.add(school.getId());
                     }
 
-                    spinner.setSelection(user.getSchoolID());
+                    spinner.setSelection(id_list.indexOf(user.getSchoolID()));
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -82,23 +87,12 @@ public class AccountSettingsActivity extends AppCompatActivity {
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
         EditText emailView = findViewById(R.id.editText_email);
-        Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
-        CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
         String pass = passView.getText().toString();
         String verify = verifyView.getText().toString();
-        String email = emailView.getText().toString();
-        String school = schoolsSpinner.getSelectedItem().toString();
-        boolean isLecturer = lecturerCheckBox.isChecked();
+        final String email = emailView.getText().toString();
 
-
-        if(pass.length() == 0)
-            Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
-
-        else if(verify.length() == 0)
-            Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
-
-        else if(email.length() == 0)
+        if(email.length() == 0)
             Toast.makeText(this, "The email is empty", Toast.LENGTH_LONG).show();
 
         else if(!checkPassword(pass, verify))
@@ -108,10 +102,67 @@ public class AccountSettingsActivity extends AppCompatActivity {
             Toast.makeText(this, "Inappropriate email format", Toast.LENGTH_LONG).show();
 
         else {
-            Toast.makeText(this, "update success", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
-            startActivity(intent);
+
+            OrzApi api = ApplicationController.getInstance().getApi();
+            final User user = ApplicationController.getInstance().getUser();
+            Map<String, Object> body = new HashMap<>();
+            body.put("email", email);
+            if(pass.length() != 0)
+                body.put("password", pass);
+            Call<Void> call = api.updateUserAccount(user.getID(), body);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if(response.isSuccessful() && response.code()==200) {
+                        user.setUserEmail(email);
+                        Toast.makeText(AccountSettingsActivity.this, "update success", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                    else {
+                        Toast.makeText(AccountSettingsActivity.this, "update failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                }
+            });
         }
+    }
+
+    public void unregister(View v) {
+        final OrzApi api = ApplicationController.getInstance().getApi();
+        final User user = ApplicationController.getInstance().getUser();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Are you sure to unregister?");
+        adb.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Call<Void> call = api.deleteUserAccount(user.getID());
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            Toast.makeText(AccountSettingsActivity.this, "successfully unregistered", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(AccountSettingsActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(AccountSettingsActivity.this, "unregister failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(AccountSettingsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        adb.setNegativeButton("no", null);
+        adb.show();
     }
 
     public boolean checkPassword(String pass, String verify) {

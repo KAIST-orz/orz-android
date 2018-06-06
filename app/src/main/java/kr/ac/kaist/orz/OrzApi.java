@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 import java.util.List;
@@ -26,6 +27,17 @@ public interface OrzApi {
     @POST("api/v1/signup")
     Call<Void> signup(
             @Body Map<String, Object> body
+    );
+
+    @PUT("api/v1/users/{userID}")
+    Call<Void> updateUserAccount(
+            @Path("userID") int userID,
+            @Body Map<String, Object> body
+    );
+
+    @DELETE("api/v1/users/{userID}")
+    Call<Void> deleteUserAccount(
+            @Path("userID") int userID
     );
 
     @GET("api/v1/schools")
@@ -47,31 +59,9 @@ public interface OrzApi {
             @Path("userID") int userID
     );
 
-    // My Courses 에 있는 삭제 버튼을 누를 시, DB에 있는 해당 코스를 삭제함
-    //(Used in myCourseViewAdapter)
-    @DELETE("api/v1/students/{userID}/courses/{courseID}")
-    Call<Void> deleteStudentCourses(
+    @POST("api/v1/lecturers/{userID}/courses")
+    Call<Void> registerLecture(
             @Path("userID") int userID,
-            @Path("courseID") int courseID
-    );
-
-    // Open Courses 에 있는 구독 버튼을 누를 시, DB에 있는 해당 코스를 유저가 구독할 수 있게 함
-    //(Used in openCourseViewAdapter)
-    @POST("api/v1/students/{userID}/courses/{courseID}")
-    Call<List<Course>> subscribeCourses(
-            @Path("userID") int userID,
-            @Path("courseID") int courseID
-    );
-
-    @GET("api/v1/lecturers/{userID}/courses")
-    Call<List<Course>> getLecturerCourses(
-            @Path("userID") int userID
-    );
-
-    // Open Courses 에 있는 구독 버튼을 누를 시, DB에 있는 해당 코스를 유저가 구독할 수 있게 함
-    //(Used in openCourseViewAdapter)
-    @POST("api/v1/courses/{courseID}/assignments")
-    Call<List<Assignment>> addAssignmentToCourse(
-            @Path("courseID") int courseID
+            @Body Map<String, String> body
     );
 }
