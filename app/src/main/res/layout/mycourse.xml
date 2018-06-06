@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/myCourseName"
+        android:id="@+id/CourseName"
         android:layout_width="370dp"
         android:layout_height="19dp"
         android:layout_marginStart="8dp"
@@ -19,24 +19,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/myCourseLecturer"
+        android:id="@+id/CourseLecturer"
         android:layout_width="269dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="CourseLecturer"
-        app:layout_constraintStart_toEndOf="@+id/myCourseCode"
-        app:layout_constraintTop_toBottomOf="@+id/myCourseName" />
+        app:layout_constraintStart_toEndOf="@+id/CourseCode"
+        app:layout_constraintTop_toBottomOf="@+id/CourseName" />
 
     <TextView
-        android:id="@+id/myCourseCode"
+        android:id="@+id/CourseCode"
         android:layout_width="91dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="CourseID"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myCourseName" />
+        app:layout_constraintTop_toBottomOf="@+id/CourseName" />
 
     <Button
         android:id="@+id/myCourse_AddDelete"
@@ -47,8 +47,8 @@
         android:layout_marginTop="8dp"
         android:backgroundTint="?attr/colorBackgroundFloating"
         android:text="+/-"
-        app:layout_constraintBottom_toBottomOf="@+id/myCourseLecturer"
+        app:layout_constraintBottom_toBottomOf="@+id/CourseLecturer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/myCourseName"
+        app:layout_constraintTop_toTopOf="@+id/CourseName"
         app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
