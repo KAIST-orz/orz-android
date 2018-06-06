@@ -34,9 +34,9 @@ public class myCourseViewAdapter extends ArrayAdapter {
         TextView courseLecturerView = (TextView) customView.findViewById(R.id.myCourseLecturer);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        courseNameView.setText(aItem.getCourseName());
-        courseIDView.setText(aItem.getCourseID());
-        courseLecturerView.setText(aItem.getCourseLecturer());
+        courseNameView.setText(aItem.getName());
+        courseIDView.setText(aItem.getCode());
+        courseLecturerView.setText(aItem.getProfessor());
 
         return customView;
     }
