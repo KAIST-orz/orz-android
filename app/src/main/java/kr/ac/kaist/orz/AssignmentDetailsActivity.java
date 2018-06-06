@@ -19,7 +19,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
@@ -144,6 +147,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                     @Override
                                                                     public void onClick(DialogInterface dialog, int which) {
                                                                         //Toast.makeText(getApplicationContext(), "test4", Toast.LENGTH_LONG).show();
+                                                                        Calendar startCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp1.getYear(), dp1.getMonth(), dp1.getDayOfMonth(), tp1.getCurrentHour(), tp1.getCurrentMinute());
+                                                                        Date startDate = startCalendar.getTime();
+
+                                                                        Calendar endCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
+                                                                        Date endDate = endCalendar.getTime();
+
                                                                         Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                                                     }
                                                                 });
