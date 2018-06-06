@@ -14,12 +14,21 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kr.ac.kaist.orz.models.Course;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MyCoursesActivity extends AppCompatActivity {
     private ListView m_ListView;
-    private ListAdapter m_Adapter;
+    private myCourseViewAdapter m_Adapter;
 
     //데이터를 저장하게 되는 리스트
-    private List<myCourseInformation> list = new ArrayList<>();
+    private List<Course> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +44,6 @@ public class MyCoursesActivity extends AppCompatActivity {
         m_Adapter = new myCourseViewAdapter(this, list);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
-
 
         //Floating Action Button을 누르면 OpenCourse 페이지로 넘어갈 수 있게.
         FloatingActionButton fab = findViewById(R.id.myCourse_fab);
@@ -70,10 +78,35 @@ public class MyCoursesActivity extends AppCompatActivity {
     //DB에서 전달받은 값을 list에 add하면 될 듯.
     private void addData()
     {
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<Course>> call = api.getStudentCourses(user.getID());
+        call.enqueue(new Callback<List<Course>>() {
+            @Override
+            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                if(response.isSuccessful()) {
+                    list.addAll(response.body());
+                    m_Adapter.notifyDataSetChanged();
+                }
+                else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Course>> call, Throwable t) {
+            }
+        });
+
+        /*
         list.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh", 100));
         list.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee", 200));
         list.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon", 301));
         list.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae", 404));
+        */
     }
 
+    public void refreshView(){
+        finish();
+        startActivity(getIntent());
+    }
 }

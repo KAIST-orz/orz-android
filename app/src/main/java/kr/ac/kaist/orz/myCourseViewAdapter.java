@@ -11,13 +11,19 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import kr.ac.kaist.orz.models.Course;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class myCourseViewAdapter extends ArrayAdapter {
     private Context mainactivity_context;
-    List<myCourseInformation> list;
+    List<Course> list;
 
     // ListViewAdapter의 생성자
-    public myCourseViewAdapter(Context context, List<myCourseInformation> courses) {
+    public myCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
         mainactivity_context = context;
         list = courses;
@@ -30,7 +36,7 @@ public class myCourseViewAdapter extends ArrayAdapter {
         View customView = inflater.inflate(R.layout.mycourse, parent, false);
 
         //화면에 뿌려줄 정보 (myCourseInformation)
-        myCourseInformation aItem = (myCourseInformation) getItem(position);
+        Course aItem = (Course) getItem(position);
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
         TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
@@ -38,9 +44,9 @@ public class myCourseViewAdapter extends ArrayAdapter {
         TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        courseNameView.setText(aItem.getCourseName());
-        courseCodeView.setText(aItem.getCourseCode());
-        courseLecturerView.setText(aItem.getCourseLecturer());
+        courseNameView.setText(aItem.getName());
+        courseCodeView.setText(aItem.getCode());
+        courseLecturerView.setText(aItem.getProfessor());
 
         //삭제 혹은 구독 버튼 클릭 시 나타날 이벤트 구현
         Button addDel_button = (Button) customView.findViewById(R.id.myCourse_AddDelete);
@@ -48,10 +54,10 @@ public class myCourseViewAdapter extends ArrayAdapter {
         addDel_button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 int position=(Integer)view.getTag();
-                int courseID_toModify = list.get(position).getCourseID();
+                int courseID_toDelete = list.get(position).getID();
 
                 //삭제 혹은 구독하려고 클릭한 course의 ID 출력 (for testing)
-                Toast.makeText(mainactivity_context, Integer.toString(courseID_toModify),Toast.LENGTH_LONG).show();
+                //Toast.makeText(mainactivity_context, Integer.toString(courseID_toDelete),Toast.LENGTH_LONG).show();
 
                 //Intent에 삭제 혹은 구독할 course의 ID를 담아 다른 activity로 전달할 수 있다. (아래 코드 부분에 해당됨)
                 /*
@@ -62,6 +68,32 @@ public class myCourseViewAdapter extends ArrayAdapter {
 
                 mainactivity_context.startActivity(intent); //다음 화면으로 넘어감
                 */
+
+                OrzApi api = ApplicationController.getInstance().getApi();
+                User user = ApplicationController.getInstance().getUser();
+                Call<Void> call = api.deleteStudentCourses(user.getID(),courseID_toDelete);
+
+                Toast.makeText(mainactivity_context, "Course deletion successful!",Toast.LENGTH_LONG).show();
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful()) {
+                            //Adapter에서 mainActivity의 메소드 부르기 (화면 refresh)
+                            //[Ref] https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter
+                            if(mainactivity_context instanceof MyCoursesActivity) {
+                                ((MyCoursesActivity) mainactivity_context).refreshView();
+                            }
+                        }
+                        else {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                    }
+                });
+
             }
         });
 
