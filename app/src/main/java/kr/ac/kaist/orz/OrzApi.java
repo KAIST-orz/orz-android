@@ -20,7 +20,11 @@ public interface OrzApi {
     Call<User> signin(
             @Body Map<String, String> body
     );
-    
+
+    @POST("api/v1/signup")
+    Call<Void> signup(
+            @Body Map<String, Object> body
+    );
 
     @GET("api/v1/schools/{schoolID}/courses")
     Call<List<Course>> getSchoolCourses(
