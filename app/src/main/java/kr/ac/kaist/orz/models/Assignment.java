@@ -1,18 +1,21 @@
 package kr.ac.kaist.orz.models;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class Assignment {
     private int id;
     private String name;
     private String description;
-    private Calendar due;
+    private String due;
     private String courseName;
     private float averageTimeEstimate;
 
     public Assignment(int id, String name, String description, String courseName,
-                      Calendar due, float averageTimeEstimate) {
+                      String due, float averageTimeEstimate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,7 +37,13 @@ public class Assignment {
     }
 
     public Calendar getDue() {
-        return due;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.KOREA);
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(due));
+        }
+        catch (ParseException e) {}
+        return calendar;
     }
 
     public String getCourseName() {

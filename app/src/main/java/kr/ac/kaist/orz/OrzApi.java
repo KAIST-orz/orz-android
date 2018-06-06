@@ -2,6 +2,7 @@ package kr.ac.kaist.orz;
 
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
@@ -38,6 +39,12 @@ public interface OrzApi {
 
     @GET("api/v1/students/{userID}/assignments")
     Call<List<Assignment>> getStudentAssignments(
+            @Path("userID") int userID
+    );
+
+    // Merge with upper one
+    @GET("api/v1/students/{userID}/assignments")
+    Call<List<StudentAssignment>> getStudentAssignments2(
             @Path("userID") int userID
     );
 }

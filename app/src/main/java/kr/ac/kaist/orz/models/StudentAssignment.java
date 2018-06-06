@@ -6,12 +6,12 @@ import java.util.List;
 
 public class StudentAssignment extends Assignment {
     private int timeEstimation;
-    private List<TimeForAssignment> timeForAssignments;
+    //private List<TimeForAssignment> timeForAssignments;
     private float timeForAssignmentsSum;
     private int significance;
 
     public StudentAssignment(int id, String assignmentName, String description, String courseName,
-                             Calendar due, float averageTimeEstimate, int significance) {
+                             String due, float averageTimeEstimate, int significance) {
         super(id, assignmentName, description, courseName, due, averageTimeEstimate);
         this.significance = significance;
     }
