@@ -11,12 +11,12 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class RegisterAssignmentActivity extends AppCompatActivity {
+public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_assignment);
+        setContentView(R.layout.activity_assignment_details_lecturer);
     }
 
     public void selectTime(final View v) {
@@ -49,7 +49,7 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
         adb.show();
     }
 
-    public void create(View v) {
+    public void update(View v) {
         EditText schedule_name = findViewById(R.id.editText_assignment_name);
         Button due_date = findViewById(R.id.button_due_date);
 
@@ -58,7 +58,7 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
         else if(due_date.getText().equals("start time"))
             Toast.makeText(this, "due date can not be empty", Toast.LENGTH_LONG).show();
         else {
-            Toast.makeText(this, "assignment created", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "assignment updated", Toast.LENGTH_LONG).show();
             finish();
         }
     }

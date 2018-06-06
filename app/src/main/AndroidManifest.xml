@@ -48,7 +48,8 @@
         </activity>
         <activity android:name=".NotificationSettingsActivity" />
         <activity android:name=".RegisterLectureActivity" />
-        <activity android:name=".LectureDetailsActivity"></activity>
+        <activity android:name=".LectureDetailsActivity" />
+        <activity android:name=".AssignmentDetailsLecturerActivity"></activity>
     </application>
 
 </manifest>
