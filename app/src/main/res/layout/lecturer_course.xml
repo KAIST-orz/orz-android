@@ -25,11 +25,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="CourseLecturer"
-        app:layout_constraintStart_toEndOf="@+id/CourseCode"
+        app:layout_constraintStart_toEndOf="@+id/CourseCodeProfessor"
         app:layout_constraintTop_toBottomOf="@+id/CourseName" />
 
     <TextView
-        android:id="@+id/CourseCode"
+        android:id="@+id/CourseCodeProfessor"
         android:layout_width="91dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"

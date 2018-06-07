@@ -19,74 +19,80 @@ import retrofit2.Response;
 
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
 public class openCourseViewAdapter extends ArrayAdapter {
-    private Context mainactivity_context;
-    List<Course> list;
+    private List<Course> openCourses;
+
+    private class ViewHolder {
+        TextView courseNameText;
+        TextView courseCodeProfessorText;
+        Button addDeleteButton;
+
+    }
 
     // ListViewAdapter의 생성자
     public openCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
-        mainactivity_context = context;
-        list = courses;
+        openCourses = courses;
     }
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View customView = inflater.inflate(R.layout.mycourse, parent, false);
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(R.layout.mycourse, parent, false);
 
-        //화면에 뿌려줄 정보 (myCourseInformation)
-        Course aItem = (Course) getItem(position);
+            viewHolder = new ViewHolder();
+            viewHolder.courseNameText = convertView.findViewById(R.id.CourseName);
+            viewHolder.courseCodeProfessorText = convertView.findViewById(R.id.CourseCodeProfessor);
+            viewHolder.addDeleteButton = convertView.findViewById(R.id.myCourse_AddDelete);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
-        //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
-        TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
-        TextView courseCodeView = (TextView) customView.findViewById(R.id.CourseCode);
-        TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
+        // The course data to fill this item of ListView.
+        Course courseItem = (Course) getItem(position);
 
-        //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        courseNameView.setText(aItem.getName());
-        courseCodeView.setText(aItem.getCode());
-        courseLecturerView.setText(aItem.getProfessor());
+        // Fill in the list item with the information.
+        viewHolder.courseNameText.setText(courseItem.getName());
+        viewHolder.courseCodeProfessorText.setText(courseItem.getCode() + " · " + courseItem.getProfessor());
+        viewHolder.addDeleteButton.setText("+");    // For Open Courses screen, user subscribes (adds) a course.
 
-        //삭제 혹은 구독 버튼 클릭 시 나타날 이벤트 구현
-        Button addDel_button = (Button) customView.findViewById(R.id.myCourse_AddDelete);
-        addDel_button.setTag(position);
-        addDel_button.setOnClickListener(new Button.OnClickListener() {
+        // The event listener for button click events.
+        viewHolder.addDeleteButton.setTag(position);
+        viewHolder.addDeleteButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
             public void onClick(View view) {
-                int position=(Integer)view.getTag();
-                int courseID_toAdd = list.get(position).getID();
+                int position = (Integer) view.getTag();
+                final Course courseToAdd = openCourses.get(position);
 
-                //삭제 혹은 구독하려고 클릭한 course의 ID 출력 (for testing)
-                //Toast.makeText(mainactivity_context, Integer.toString(courseID_toAdd),Toast.LENGTH_LONG).show();
-
-
+                // Communicate with the server to subscribe a course.
                 OrzApi api = ApplicationController.getInstance().getApi();
                 User user = ApplicationController.getInstance().getUser();
-                Call<List<Course>> call = api.subscribeCourses(user.getID(), courseID_toAdd);
-
-                Toast.makeText(mainactivity_context, "Course subscription successful!",Toast.LENGTH_LONG).show();
-
+                Call<List<Course>> call = api.subscribeCourses(user.getID(), courseToAdd.getID());
                 call.enqueue(new Callback<List<Course>>() {
                     @Override
                     public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                         if(response.isSuccessful()) {
+                            // Show a toast message notifying successful subscription.
+                            Toast.makeText(getContext(), "Successfully subscribed course " + courseToAdd.getName().toUpperCase(), Toast.LENGTH_LONG).show();
                         }
                         else {
+                            // Show a toast message notifying failure.
+                            Toast.makeText(getContext(), "Failed to subscribe the course. ", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<List<Course>> call, Throwable t) {
+                        Toast.makeText(getContext(), "Failed to delete the course. ", Toast.LENGTH_LONG).show();
                     }
                 });
 
             }
         });
 
-        return customView;
+        return convertView;
     }
 }
-
-
-//Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic
-
