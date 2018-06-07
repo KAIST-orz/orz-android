@@ -48,4 +48,8 @@ public class StudentAssignment extends Assignment implements Serializable {
     public void addAlarm(int alarm) { alarms.add(alarm); }
 
     public void removeAlarm(int index) { alarms.remove(index); }
+
+    public float getTimeForAssignmentsSum() {return timeForAssignmentsSum; }
+
+    public void setTimeForAssignmentsSum(float f) { timeForAssignmentsSum = f; }
 }

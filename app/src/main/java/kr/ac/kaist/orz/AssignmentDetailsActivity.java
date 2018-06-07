@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -273,6 +274,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                 });
             }
         });
+
+        TextView v = findViewById(R.id.textView_estimated_time_comparision);
+        ViewGroup.LayoutParams params = v.getLayoutParams();
+        if(assignment.getTimeEstimation() <= assignment.getTimeForAssignmentsSum())
+            params.height = 0;
+        else
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        v.setLayoutParams(params);
     }
 
     public void selectAlarm() {
@@ -351,7 +360,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                         startCalendar.set(dp1.getYear(), dp1.getMonth(), dp1.getDayOfMonth(), tp1.getCurrentHour(), tp1.getCurrentMinute());
                                                                         final Date startTime = startCalendar.getTime();
 
-                                                                        Calendar endCalendar = Calendar.getInstance();
+                                                                        final Calendar endCalendar = Calendar.getInstance();
                                                                         endCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
                                                                         final Date endTime = endCalendar.getTime();
 
@@ -373,6 +382,16 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                                     time_for_assignment.add(time_for_assignment.size() - 1, sdf.format(startTime) + "\n" + sdf.format(endTime));
                                                                                     adapter2.notifyDataSetChanged();
                                                                                     setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_time_for_assignment));
+
+                                                                                    assignment.setTimeForAssignmentsSum(assignment.getTimeForAssignmentsSum() + (float) (endTime.getTime() - startTime.getTime()) / 3600000);
+
+                                                                                    TextView v = findViewById(R.id.textView_estimated_time_comparision);
+                                                                                    ViewGroup.LayoutParams params = v.getLayoutParams();
+                                                                                    if(assignment.getTimeEstimation() <= assignment.getTimeForAssignmentsSum())
+                                                                                        params.height = 0;
+                                                                                    else
+                                                                                        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                                                                                    v.setLayoutParams(params);
                                                                                 }
                                                                                 else {
                                                                                     Toast.makeText(AssignmentDetailsActivity.this, "adding duration failed " + response.code(), Toast.LENGTH_LONG).show();
@@ -462,6 +481,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                             Toast.makeText(AssignmentDetailsActivity.this, "expected time set success", Toast.LENGTH_LONG).show();
                             TextView estimatedTime = findViewById(R.id.textView_estimated_time);
                             estimatedTime.setText(time.getText().toString() + " hours");
+
+                            TextView v = findViewById(R.id.textView_estimated_time_comparision);
+                            ViewGroup.LayoutParams params = v.getLayoutParams();
+                            if(assignment.getTimeEstimation() <= assignment.getTimeForAssignmentsSum())
+                                params.height = 0;
+                            else
+                                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            v.setLayoutParams(params);
                         }
                         else {
                             Toast.makeText(AssignmentDetailsActivity.this, "expected time set failed " + response.code(), Toast.LENGTH_LONG).show();
