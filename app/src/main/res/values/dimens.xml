@@ -14,4 +14,9 @@
 
     <!-- The following should be synchronized with @integer/timeline_gap -->
     <dimen name="timeline_gap">49dp</dimen>
+
+    <!-- The left side margin of contents of activity_schedule_details.xml and activity_assignment_details.xml -->
+    <dimen name="details_layout_margin_left">30dp</dimen>
+    <!-- The vertical margin between views of **_details.xml layouts. -->
+    <dimen name="details_layout_margin_vertical">20dp</dimen>
 </resources>

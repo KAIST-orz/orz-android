@@ -12,8 +12,6 @@ import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -45,16 +43,18 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // CollapsingToolbarLayout
-        SubtitleCollapsingToolbarLayout collapsingToolbarLayout = (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
+        SubtitleCollapsingToolbarLayout collapsingToolbarLayout =
+                (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
 
         // Set text colors.
-        int titleColor = ContextCompat.getColor(this, R.color.colorBackgroundLight);
+        int titleColor = ContextCompat.getColor(this, R.color.colorPrimary);
         int subtitleColor = ContextCompat.getColor(this, R.color.colorButtonNormal);
         collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
         collapsingToolbarLayout.setCollapsedSubtitleTextColor(subtitleColor);
         collapsingToolbarLayout.setExpandedTitleTextColor(titleColor);
         collapsingToolbarLayout.setExpandedSubtitleTextColor(subtitleColor);
 
+        // Display 'X' button on the toolbar.
         toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,15 +62,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        // TODO: Set appropriate color.
-        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
-        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
-        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
-
-        // TODO: Set course name and homework.
-        collapsingToolbarLayout.setTitle("Computer architecture");
-        collapsingToolbarLayout.setSubtitle("Homework 4");
 
         notification_time.add("5 minute before (Default)");
         notification_time.add("10 minute before");
@@ -84,10 +75,11 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         StudentAssignment assignment = (StudentAssignment) intent.getExtras().getSerializable("assignment");
 
-        ListView listview1 = findViewById(R.id.listView_notification);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
-        listview1.setAdapter(adapter);
-        listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView listView1 = findViewById(R.id.listView_notification);
+        TextArrayAdapter adapter = new TextArrayAdapter(this, notification_time);
+        listView1.setAdapter(adapter);
+
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(notification_time.get(position).equals("Add more notification")) {
@@ -108,10 +100,13 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        ListView listview2 = findViewById(R.id.listView_time_for_assignment);
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, time_for_assignment);
-        listview2.setAdapter(adapter);
-        listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView listView2 = findViewById(R.id.listView_time_for_assignment);
+        adapter = new TextArrayAdapter(this, time_for_assignment);
+        listView2.setAdapter(adapter);
+
+        // TODO: get appropriate time_for_assignment array (make it sorted), and need to pass as extra in the intent.
+
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(time_for_assignment.get(position).equals("Add more time")) {
@@ -124,19 +119,26 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        setListViewHeightBasedOnChildren(listview1);
-        setListViewHeightBasedOnChildren(listview2);
+        setListViewHeightBasedOnChildren(listView1);
+        setListViewHeightBasedOnChildren(listView2);
 
-        TextView subject_assignment = findViewById(R.id.textView_subject_assignment);
-        subject_assignment.setText(assignment.getCourseName()+"\n"+assignment.getName());
-      
-        Button due = findViewById(R.id.button_due);
+        collapsingToolbarLayout.setTitle(assignment.getCourseName());
+        collapsingToolbarLayout.setSubtitle(assignment.getName());
+
+        // TODO: Set appropriate color.
+        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
+        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
+
+        TextView due = findViewById(R.id.textView_due);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
         due.setText(sdf.format(assignment.getDue().getTime()));
-        due.setEnabled(false);
 
-        Button estimated_time = findViewById(R.id.button_estimated_time);
-        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated "+String.valueOf(assignment.getAverageTimeEstimate())+" hours"));
+        TextView estimatedTime = findViewById(R.id.textView_estimated_time);
+        estimatedTime.setText(String.valueOf(e_time) + " hours");
+
+        TextView estimatedTimeDesc = findViewById(R.id.textView_estimated_time_description);
+        estimatedTimeDesc.setText("Other students estimated " + String.valueOf(assignment.getAverageTimeEstimate()) + " hours");
 
         TextView description = findViewById(R.id.textView_description);
         description.setText(assignment.getDescription());
@@ -287,4 +289,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
+
+
 }

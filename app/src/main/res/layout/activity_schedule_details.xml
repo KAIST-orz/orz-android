@@ -1,62 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ScheduleDetailsActivity">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_height="192dp"
+        android:layout_width="match_parent">
+
+        <android.support.design.widget.SubtitleCollapsingToolbarLayout
+            android:id="@+id/subtitlecollapsingtoolbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"></android.support.v7.widget.Toolbar>
+        </android.support.design.widget.SubtitleCollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:divider="?android:dividerHorizontal"
-            android:showDividers="middle" >
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="text" />
+                android:divider="?android:attr/dividerHorizontal"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/details_layout_margin_left"
+                android:showDividers="middle">
 
-            <Button
-                android:id="@+id/button_start_time"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="start time"
-                android:textAllCaps="false"
-                android:onClick="selectTime" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-            <Button
-                android:id="@+id/button_end_time"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="end time"
-                android:textAllCaps="false"
-                android:onClick="selectTime" />
+                    <TextView
+                        android:id="@+id/textView_start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="selectTime"
+                        android:text="Start Time"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
 
-            <ListView
-                android:id="@+id/listView_notification"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="#00000000" />
+                    <TextView
+                        android:id="@+id/textView_end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                        android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="selectTime"
+                        android:text="End Time"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/listView_notification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                    android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="@dimen/details_layout_margin_vertical" />
+
+                <ListView
+                    android:id="@+id/listView_schedule_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                    android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="@dimen/details_layout_margin_vertical" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/button_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/delete"
-                android:onClick="delete" />
+                android:onClick="delete"
+                android:text="@string/delete" />
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>
