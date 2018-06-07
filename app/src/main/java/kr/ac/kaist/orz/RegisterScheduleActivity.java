@@ -232,6 +232,9 @@ public class RegisterScheduleActivity extends AppCompatActivity {
         else if(end_time.getText().equals("End Time")) {
             Toast.makeText(this, "End time can not be empty", Toast.LENGTH_LONG).show();
         }
+        else if(end_time.getText().toString().compareTo(start_time.getText().toString()) < 0) {
+            Toast.makeText(this, "End time should be after start time", Toast.LENGTH_LONG).show();
+        }
         else {
             // Post the new schedule.
             OrzApi api = ApplicationController.getInstance().getApi();
