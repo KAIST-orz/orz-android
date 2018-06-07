@@ -22,7 +22,7 @@ public class MyCoursesActivity extends AppCompatActivity {
     private myCourseViewAdapter m_Adapter;
 
     //데이터를 저장하게 되는 리스트
-    private List<Course> list = new ArrayList<>();
+    private List<Course> myCourses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_myCourses);
         //리스트뷰와 리스트를 연결하기 위해 사용되는 어댑터
-        m_Adapter = new myCourseViewAdapter(this, list);
+        m_Adapter = new myCourseViewAdapter(this, myCourses);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
 
@@ -61,7 +61,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         super.onResume();
 
         // List 초기화
-        list.clear();
+        myCourses.clear();
 
         // List에 데이터 입력
         addData();
@@ -79,7 +79,7 @@ public class MyCoursesActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                 if(response.isSuccessful()) {
-                    list.addAll(response.body());
+                    myCourses.addAll(response.body());
                     m_Adapter.notifyDataSetChanged();
                 }
                 else {

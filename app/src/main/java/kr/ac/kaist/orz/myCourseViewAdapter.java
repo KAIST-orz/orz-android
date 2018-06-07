@@ -66,6 +66,7 @@ public class myCourseViewAdapter extends ArrayAdapter<Course> {
                 int position= (Integer) view.getTag();
                 final Course myCourse = myCourses.get(position);
 
+                // Communicate with the server to delete (unsubscribe) the course.
                 OrzApi api = ApplicationController.getInstance().getApi();
                 User user = ApplicationController.getInstance().getUser();
                 Call<Void> call = api.deleteStudentCourses(user.getID(), myCourse.getID());
