@@ -2,6 +2,7 @@ package kr.ac.kaist.orz;
 
 import android.app.Application;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Retrofit;
@@ -11,6 +12,7 @@ public class ApplicationController extends Application {
     private static ApplicationController instance;
     private OrzApi orzApi;
     private User user;
+    private Alarms alarms;
 
 
     public static ApplicationController getInstance(){
@@ -40,4 +42,7 @@ public class ApplicationController extends Application {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Alarms getAlarms() { return alarms; }
+    public void setAlarms(Alarms alarms) { this.alarms = alarms; }
 }

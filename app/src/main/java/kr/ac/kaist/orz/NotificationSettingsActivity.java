@@ -32,25 +32,9 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
 
-        Call<Alarms> call = api.getStudentAlarms(user.getID());
-        call.enqueue(new Callback<Alarms>() {
-            @Override
-            public void onResponse(Call<Alarms> call, Response<Alarms> response) {
-                if(response.isSuccessful()) {
-                    Alarms a = response.body();
-                    alarms = new int[] {a.getAssignmentDueAlarm(), a.getPersonalScheduleAlarm(), a.getTimeForAssignmentAlarm()};
-                    updateText();
-                }
-                else {
-                    Log.e("orzApi", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Alarms> call, Throwable t) {
-                Log.e("orzApi", t.getMessage());
-            }
-        });
+        Alarms a = ApplicationController.getInstance().getAlarms();
+        alarms = new int[] {a.getAssignmentDueAlarm(), a.getPersonalScheduleAlarm(), a.getTimeForAssignmentAlarm()};
+        updateText();
     }
 
     public void choose_personal_schedule_notification_time(View v) {
@@ -105,6 +89,11 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     }
 
     private void alarmsUpdated() {
+        Alarms a = ApplicationController.getInstance().getAlarms();
+        a.setAssignmentDueAlarm(alarms[0]);
+        a.setPersonalScheduleAlarm(alarms[1]);
+        a.setTimeForAssignmentAlarm(alarms[2]);
+
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
         HashMap<String, String> body = new HashMap<>();
