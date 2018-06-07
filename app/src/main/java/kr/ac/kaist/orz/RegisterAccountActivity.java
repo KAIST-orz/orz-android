@@ -67,6 +67,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
         EditText idView = findViewById(R.id.editText_id);
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
+        EditText nameView = findViewById(R.id.editText_name);
         EditText emailView = findViewById(R.id.editText_email);
         Spinner schoolsSpinner = findViewById(R.id.spinner_schools);
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
@@ -74,6 +75,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
         String id = idView.getText().toString();
         String pass = passView.getText().toString();
         String verify = verifyView.getText().toString();
+        String name = nameView.getText().toString();
         String email = emailView.getText().toString();
         int schoolID = id_list.get(schoolsSpinner.getSelectedItemPosition());
         boolean isLecturer = lecturerCheckBox.isChecked();
@@ -86,6 +88,9 @@ public class RegisterAccountActivity extends AppCompatActivity {
 
         else if(verify.length() == 0)
             Toast.makeText(this, "The password is empty", Toast.LENGTH_LONG).show();
+
+        else if(name.length() == 0)
+            Toast.makeText(this, "The name is empty", Toast.LENGTH_LONG).show();
 
         else if(email.length() == 0)
             Toast.makeText(this, "The email is empty", Toast.LENGTH_LONG).show();
@@ -100,6 +105,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
             OrzApi api = ApplicationController.getInstance().getApi();
             Map<String, Object> body = new HashMap<>();
             body.put("username", id);
+            body.put("name", name);
             body.put("email", email);
             body.put("password", pass);
             body.put("isLecturer", isLecturer);
