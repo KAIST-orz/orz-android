@@ -131,6 +131,23 @@ public interface OrzApi {
             @Path("courseID") int courseID
     );
 
+    @GET("api/v1/courses/{courseID}/assignments")
+    Call<List<Assignment>> getCourseAssignment(
+            @Path("courseID") int courseID
+    );
+
+    //Lecturer에 의해 course 삭제시에 쓰임
+    @DELETE("api/v1/courses/{courseID}")
+    Call<Void> deleteCourse(
+            @Path("courseID") int courseID
+    );
+
+    //Lecturer에 의해 assignment 삭제시에 쓰임
+    @DELETE("api/v1/assignments/{assignmentID}")
+    Call<Void> deleteAssignment(
+            @Path("assignmentID") int assignmentID
+    );
+
     @GET("api/v1/students/{userID}/alarms")
     Call<Alarms> getStudentAlarms(
             @Path("userID") int userID
