@@ -97,9 +97,11 @@ public class myCourseViewAdapter extends ArrayAdapter {
             }
         });
 
+
         return customView;
     }
 }
 
 
 //Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic
+
