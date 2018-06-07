@@ -2,15 +2,16 @@ package kr.ac.kaist.orz;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.SubtitleCollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -19,8 +20,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import kr.ac.kaist.orz.models.StudentAssignment;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
 
@@ -33,6 +39,29 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment_details);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // CollapsingToolbarLayout
+        SubtitleCollapsingToolbarLayout collapsingToolbarLayout =
+                (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
+
+        // Set text colors.
+        int titleColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        int subtitleColor = ContextCompat.getColor(this, R.color.colorButtonNormal);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setCollapsedSubtitleTextColor(subtitleColor);
+        collapsingToolbarLayout.setExpandedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setExpandedSubtitleTextColor(subtitleColor);
+
+        // Display 'X' button on the toolbar.
+        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         notification_time.add("5 minute before (Default)");
         notification_time.add("10 minute before");
@@ -43,10 +72,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
-        ListView listview1 = findViewById(R.id.listView_notification);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
-        listview1.setAdapter(adapter);
-        listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Intent intent = getIntent();
+        StudentAssignment assignment = (StudentAssignment) intent.getExtras().getSerializable("assignment");
+
+        ListView listView1 = findViewById(R.id.listView_notification);
+        TextArrayAdapter adapter = new TextArrayAdapter(this, notification_time);
+        listView1.setAdapter(adapter);
+
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(notification_time.get(position).equals("Add more notification")) {
@@ -67,10 +100,13 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        ListView listview2 = findViewById(R.id.listView_time_for_assignment);
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, time_for_assignment);
-        listview2.setAdapter(adapter);
-        listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView listView2 = findViewById(R.id.listView_time_for_assignment);
+        adapter = new TextArrayAdapter(this, time_for_assignment);
+        listView2.setAdapter(adapter);
+
+        // TODO: get appropriate time_for_assignment array (make it sorted), and need to pass as extra in the intent.
+
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(time_for_assignment.get(position).equals("Add more time")) {
@@ -83,21 +119,29 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        setListViewHeightBasedOnChildren(listview1);
-        setListViewHeightBasedOnChildren(listview2);
+        setListViewHeightBasedOnChildren(listView1);
+        setListViewHeightBasedOnChildren(listView2);
 
-        TextView subject_assignment = findViewById(R.id.textView_subject_assignment);
-        subject_assignment.setText("Computer Architecture\nHomework 4");
+        collapsingToolbarLayout.setTitle(assignment.getCourseName());
+        collapsingToolbarLayout.setSubtitle(assignment.getName());
 
-        Button due = findViewById(R.id.button_due);
-        due.setText("11:59 PM, April 5th");
-        due.setEnabled(false);
+        // TODO: Set appropriate color.
+        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
+        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
 
-        Button estimated_time = findViewById(R.id.button_estimated_time);
-        estimated_time.setText(String.valueOf(e_time) .concat(" hours\nOther students estimated 4.6 hours"));
+        TextView due = findViewById(R.id.textView_due);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+        due.setText(sdf.format(assignment.getDue().getTime()));
+
+        TextView estimatedTime = findViewById(R.id.textView_estimated_time);
+        estimatedTime.setText(String.valueOf(e_time) + " hours");
+
+        TextView estimatedTimeDesc = findViewById(R.id.textView_estimated_time_description);
+        estimatedTimeDesc.setText("Other students estimated " + String.valueOf(assignment.getAverageTimeEstimate()) + " hours");
 
         TextView description = findViewById(R.id.textView_description);
-        description.setText("P. 3-11, 3-17, 3-19, 3-20, 3-21");
+        description.setText(assignment.getDescription());
     }
 
     public void selectAlarm() {
@@ -144,6 +188,14 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                     @Override
                                                                     public void onClick(DialogInterface dialog, int which) {
                                                                         //Toast.makeText(getApplicationContext(), "test4", Toast.LENGTH_LONG).show();
+                                                                        Calendar startCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp1.getYear(), dp1.getMonth(), dp1.getDayOfMonth(), tp1.getCurrentHour(), tp1.getCurrentMinute());
+                                                                        Date startDate = startCalendar.getTime();
+
+                                                                        Calendar endCalendar = Calendar.getInstance();
+                                                                        startCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
+                                                                        Date endDate = endCalendar.getTime();
+
                                                                         Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                                                     }
                                                                 });
@@ -237,4 +289,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
+
+
 }

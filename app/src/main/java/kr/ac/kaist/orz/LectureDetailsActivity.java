@@ -32,7 +32,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
         String courseNameStr = intent.getExtras().getString("courseName");
         String courseCodeStr = intent.getExtras().getString("courseCode");
         String courseLecturerStr = intent.getExtras().getString("courseLecturer");
-        int courseID = intent.getExtras().getInt("courseID");
+        final int courseID = intent.getExtras().getInt("courseID");
 
         //Course 정보를 보여주는 TextView를 setText 해준다.
         TextView courseName = (TextView) findViewById(R.id.editText_lecture_name);
@@ -57,6 +57,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(assignments.get(position).equals("Add new assignment")) {
                     Intent intent = new Intent(getApplicationContext(), RegisterAssignmentActivity.class);
+                    intent.putExtra("courseID", courseID);
                     startActivity(intent);
                 }
                 else {

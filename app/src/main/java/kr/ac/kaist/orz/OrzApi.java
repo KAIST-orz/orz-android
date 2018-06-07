@@ -2,7 +2,10 @@ package kr.ac.kaist.orz;
 
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.School;
+import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.TimeForAssignment;
 import kr.ac.kaist.orz.models.User;
 
 import retrofit2.Call;
@@ -55,13 +58,40 @@ public interface OrzApi {
     );
 
     @GET("api/v1/students/{userID}/assignments")
-    Call<List<Assignment>> getStudentAssignments(
+    Call<List<StudentAssignment>> getStudentAssignments(
             @Path("userID") int userID
     );
 
+    @GET("api/v1/students/{userID}/personal-schedules")
+    Call<List<PersonalSchedule>> getStudentPersonalSchedules(
+            @Path("userID") int userID
+    );
+
+    @GET("api/v1/students/{userID}/time-for-assignments")
+    Call<List<TimeForAssignment>> getStudentTimeForAssignments(
+            @Path("userID") int userID
+    );
+ 
     @POST("api/v1/lecturers/{userID}/courses")
     Call<Void> registerLecture(
             @Path("userID") int userID,
+            @Body Map<String, String> body
+    );
+
+    @POST("api/v1/courses/{courseID}/assignments")
+    Call<Void> registerAssignment(
+            @Path("courseID") int courseID,
+            @Body Map<String, String> body
+    );
+
+    @GET("api/v1/assignments/{assignmentID}")
+    Call<Map<String, String>> getAssignment(
+            @Path("assignmentID") int assignmentID
+    );
+
+    @PUT("api/v1/assignments/{assignmentID}")
+    Call<Void> updateAssignment(
+            @Path("assignmentID") int assignmentID,
             @Body Map<String, String> body
     );
 

@@ -3,4 +3,6 @@
     <color name="colorPrimary">@color/primary_material_light</color>
     <color name="colorPrimaryDark">@color/primary_dark_material_light</color>
     <color name="colorAccent">@color/accent_material_light</color>
+    <color name="colorBackgroundLight">@color/colorPrimary</color>
+    <color name="colorButtonNormal">@color/button_material_light</color>
 </resources>

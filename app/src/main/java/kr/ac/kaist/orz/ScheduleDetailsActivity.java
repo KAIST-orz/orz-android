@@ -1,9 +1,15 @@
 package kr.ac.kaist.orz;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.icu.text.ScientificNumberFormatter;
+import android.support.design.widget.SubtitleCollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,11 +18,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.kaist.orz.models.PersonalSchedule;
+import kr.ac.kaist.orz.models.Schedule;
+import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.TimeForAssignment;
 
 public class ScheduleDetailsActivity extends AppCompatActivity {
 
@@ -26,6 +39,29 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_details);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // CollapsingToolbarLayout
+        SubtitleCollapsingToolbarLayout collapsingToolbarLayout
+                = (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
+
+        // Set text colors.
+        int titleColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        int subtitleColor = ContextCompat.getColor(this, R.color.colorButtonNormal);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setCollapsedSubtitleTextColor(subtitleColor);
+        collapsingToolbarLayout.setExpandedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setExpandedSubtitleTextColor(subtitleColor);
+
+        // Display 'X' button on toolbar.
+        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         notification_time.add("5 minute before (Default)");
         notification_time.add("10 minute before");
@@ -33,10 +69,15 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
-        ListView listview1 = findViewById(R.id.listView_notification);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notification_time);
-        listview1.setAdapter(adapter);
-        listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Intent intent = getIntent();
+        Schedule schedule = (Schedule) intent.getExtras().getSerializable("schedule");
+
+        // The ListView to show notification times set.
+        ListView listView1 = findViewById(R.id.listView_notification);
+        TextArrayAdapter adapter = new TextArrayAdapter(this, notification_time);
+        listView1.setAdapter(adapter);
+
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(notification_time.get(position).equals("Add more notification")) {
@@ -56,13 +97,33 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        setListViewHeightBasedOnChildren(listview1);
+        setListViewHeightBasedOnChildren(listView1);
 
-        Button start_time = findViewById(R.id.button_start_time);
-        Button end_time = findViewById(R.id.button_end_time);
 
-        start_time.setText("7:00 PM, April 5th");
-        end_time.setText("11:00 PM, April 5th");
+        // TODO: The ListView to show which type of schedule this is.
+
+        // TODO: Set appropriate action bar color.
+        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
+        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
+
+        // Display the title of this page according to the schedule type.
+        if (PersonalSchedule.class.isInstance(schedule)) {
+            collapsingToolbarLayout.setTitle(((PersonalSchedule) schedule).getName());
+            collapsingToolbarLayout.setSubtitle("Custom Schedule");
+        }
+        else if (TimeForAssignment.class.isInstance(schedule)) {
+            collapsingToolbarLayout.setTitle(((TimeForAssignment) schedule).getCourseName());
+            collapsingToolbarLayout.setSubtitle(((TimeForAssignment) schedule).getAssignmentName());
+        }
+
+        // Display start and end time of the schedule.
+        TextView startText = findViewById(R.id.textView_start_time);
+        TextView endText = findViewById(R.id.textView_end_time);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+        startText.setText(sdf.format(schedule.getStart().getTime()));
+        endText.setText(sdf.format(schedule.getEnd().getTime()));
     }
 
     public void selectAlarm() {
