@@ -371,9 +371,9 @@ public class CalendarTabFragment extends Fragment
         int endHour;        // The hour the schedule starts in the current day.
         int endMinute;      // The minute in an hour the schedule starts in the current day.
 
-        // TODO: Handle the case when year is different.
         // Adding top margin in case the schedule starts before the current day.
-        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
+        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                || start.get(Calendar.YEAR) < current.get(Calendar.YEAR)) {
             height += getResources().getInteger(R.integer.timeline_margin_top) + 2;
             startHour = 0;
             startMinute = 0;
@@ -383,7 +383,8 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Adding bottom margin in case the schedule
-        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
+        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)
+                || end.get(Calendar.YEAR) > current.get(Calendar.YEAR)) {
             if (end.get(Calendar.HOUR_OF_DAY) != 0 || end.get(Calendar.MINUTE) != 0) {
                 height += getResources().getInteger(R.integer.timeline_margin_bottom) + 2;
             }
