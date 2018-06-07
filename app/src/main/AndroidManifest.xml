@@ -56,6 +56,17 @@
         <activity android:name=".LectureDetailsActivity" />
         <activity android:name=".LecturerCoursesActivity"/>
         <activity android:name=".AssignmentDetailsLecturerActivity"></activity>
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
+        <service
+            android:name=".AlarmIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

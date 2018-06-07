@@ -1,8 +1,10 @@
 package kr.ac.kaist.orz;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -30,6 +32,7 @@ import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
@@ -93,6 +96,8 @@ public class CalendarTabFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setAlarm();
 
         // When this fragment is first created, instantiate a new Calendar object.
         current = Calendar.getInstance();
@@ -626,5 +631,14 @@ public class CalendarTabFragment extends Fragment
     // Implement this interface to handle actions in activity.
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction();
+    }
+
+    public void setAlarm() {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        alarmIntent.putExtra("title", "tt");
+        alarmIntent.putExtra("message", "mm");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis()+2000, pendingIntent);
     }
 }
