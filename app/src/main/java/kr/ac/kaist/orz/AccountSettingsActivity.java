@@ -38,8 +38,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account_settings);
 
         EditText idView = findViewById(R.id.editText_id);
-        EditText passView = findViewById(R.id.editText_password);
-        EditText verifyView = findViewById(R.id.editText_verify);
+        EditText nameView = findViewById(R.id.editText_name);
         EditText emailView = findViewById(R.id.editText_email);
         CheckBox lecturerCheckBox = findViewById(R.id.checkBox_lecturer);
 
@@ -47,7 +46,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         final User user = ApplicationController.getInstance().getUser();
 
-        idView.setText(" ".concat(user.getUserName()));
+        idView.setText(user.getUserName());
+        nameView.setText(user.getName());
         emailView.setText(user.getUserEmail());
         lecturerCheckBox.setChecked(user.getUserType() == 1);
 
@@ -86,13 +86,18 @@ public class AccountSettingsActivity extends AppCompatActivity {
     public void update(View v) {
         EditText passView = findViewById(R.id.editText_password);
         EditText verifyView = findViewById(R.id.editText_verify);
+        EditText nameView = findViewById(R.id.editText_name);
         EditText emailView = findViewById(R.id.editText_email);
 
         String pass = passView.getText().toString();
         String verify = verifyView.getText().toString();
+        final String name = nameView.getText().toString();
         final String email = emailView.getText().toString();
 
-        if(email.length() == 0)
+        if(name.length() == 0)
+            Toast.makeText(this, "The name is empty", Toast.LENGTH_LONG).show();
+
+        else if(email.length() == 0)
             Toast.makeText(this, "The email is empty", Toast.LENGTH_LONG).show();
 
         else if(!checkPassword(pass, verify))
@@ -106,6 +111,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             OrzApi api = ApplicationController.getInstance().getApi();
             final User user = ApplicationController.getInstance().getUser();
             Map<String, Object> body = new HashMap<>();
+            body.put("name", name);
             body.put("email", email);
             if(pass.length() != 0)
                 body.put("password", pass);
@@ -114,6 +120,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if(response.isSuccessful() && response.code()==200) {
+                        user.setName(name);
                         user.setUserEmail(email);
                         Toast.makeText(AccountSettingsActivity.this, "update success", Toast.LENGTH_LONG).show();
                         finish();
