@@ -294,7 +294,7 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
                                                     ((TextView) v).setText(parser.format(date));
                                                 }
                                                 else {
-                                                    Toast.makeText(ScheduleDetailsActivity.this, "time set failed " + response.code(), Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(ScheduleDetailsActivity.this, "Please check your duration is valid and not overlapping", Toast.LENGTH_LONG).show();
                                                 }
                                             }
 

@@ -50,6 +50,8 @@ public class ScheduleView extends FrameLayout {
     }
 
     public void setHeight(int height) {
+        if (height < 32)
+            height = 32;
         setMinimumHeight(height);
         if (layout != null) {
             layout.setMinimumHeight(height);

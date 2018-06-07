@@ -232,6 +232,9 @@ public class RegisterScheduleActivity extends AppCompatActivity {
         else if(end_time.getText().equals("End Time")) {
             Toast.makeText(this, "End time can not be empty", Toast.LENGTH_LONG).show();
         }
+        else if(end_time.getText().toString().compareTo(start_time.getText().toString()) < 0) {
+            Toast.makeText(this, "End time should be after start time", Toast.LENGTH_LONG).show();
+        }
         else {
             // Post the new schedule.
             OrzApi api = ApplicationController.getInstance().getApi();
@@ -263,7 +266,7 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             setResult(RESULT_OK_PERSONAL_SCHEDULE, intent);
                             finish();
                         } else {
-                            Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterScheduleActivity.this, "Please check your duration is valid and not overlapping", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -289,10 +292,10 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra("schedule", response.body());
 
-                            setResult(RESULT_OK_PERSONAL_SCHEDULE, intent);
+                            setResult(RESULT_OK_TIME_FOR_ASSIGNMENT, intent);
                             finish();
                         } else {
-                            Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterScheduleActivity.this, "Please check your duration is valid and not overlapping", Toast.LENGTH_LONG).show();
                         }
                     }
 
