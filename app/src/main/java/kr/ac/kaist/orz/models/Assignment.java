@@ -13,16 +13,16 @@ public class Assignment implements Serializable {
     private String description;
     private String due;
     private String courseName;
-    private float averageTimeEstimate;
+    private float averageTimeEstimation;
 
     public Assignment(int id, String name, String description, String courseName,
-                      String due, float averageTimeEstimate) {
+                      String due, float averageTimeEstimation) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.due = due;
         this.courseName = courseName;
-        this.averageTimeEstimate = averageTimeEstimate;
+        this.averageTimeEstimation = averageTimeEstimation;
     }
 
     public int getID() {
@@ -52,8 +52,8 @@ public class Assignment implements Serializable {
         return courseName;
     }
 
-    public float getAverageTimeEstimate() {
-        return averageTimeEstimate;
+    public float getAverageTimeEstimation() {
+        return averageTimeEstimation;
     }
 
     public static final DueComparator DUE_COMPARATOR = new DueComparator();
@@ -78,7 +78,7 @@ public class Assignment implements Serializable {
     private static class EstimateComparator implements Comparator<Assignment> {
         @Override
         public int compare(Assignment a1, Assignment a2) {
-            return (int) (a1.getAverageTimeEstimate() - a2.getAverageTimeEstimate());
+            return (int) (a1.getAverageTimeEstimation() - a2.getAverageTimeEstimation());
         }
     }
 }

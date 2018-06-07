@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import android.app.ApplicationErrorReport;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.SubtitleCollapsingToolbarLayout;
@@ -24,16 +25,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AssignmentDetailsActivity extends AppCompatActivity {
 
     List<String> notification_time = new ArrayList<String>();
     List<String> time_for_assignment = new ArrayList<String>();
-
-    static int e_time = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +140,10 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         due.setText(sdf.format(assignment.getDue().getTime()));
 
         TextView estimatedTime = findViewById(R.id.textView_estimated_time);
-        estimatedTime.setText(String.valueOf(e_time) + " hours");
+        estimatedTime.setText(assignment.getTimeEstimation() + " hours");
 
         TextView estimatedTimeDesc = findViewById(R.id.textView_estimated_time_description);
-        estimatedTimeDesc.setText("Other students estimated " + String.valueOf(assignment.getAverageTimeEstimate()) + " hours");
+        estimatedTimeDesc.setText("Other students estimated " + String.valueOf(assignment.getAverageTimeEstimation()) + " hours");
 
         TextView description = findViewById(R.id.textView_description);
         description.setText(assignment.getDescription());
@@ -258,10 +263,32 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(), "time set to ".concat(time.getText().toString()).concat(String.valueOf(e_time)), Toast.LENGTH_LONG).show();
-                e_time = Integer.parseInt(time.getText().toString());
-                finish();
-                startActivity(getIntent());
+                Intent intent = getIntent();
+                StudentAssignment assignment = (StudentAssignment) intent.getExtras().getSerializable("assignment");
+                OrzApi api = ApplicationController.getInstance().getApi();
+                User user = ApplicationController.getInstance().getUser();
+                Map<String, Object> body = new HashMap<>();
+                body.put("timeEstimation", time.getText().toString());
+                body.put("significance", String.valueOf(assignment.getSignificance()));
+                body.put("alarms", assignment.getAlarms());
+                Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            Toast.makeText(AssignmentDetailsActivity.this, "expected time set success", Toast.LENGTH_LONG).show();
+                            startActivity(getIntent());
+                        }
+                        else {
+                            Toast.makeText(AssignmentDetailsActivity.this, "expected time set failed " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
 
