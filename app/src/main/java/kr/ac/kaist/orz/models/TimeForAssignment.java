@@ -6,6 +6,7 @@ import java.util.List;
 
 public class TimeForAssignment extends Schedule implements Serializable {
     int assignmentID;
+    int courseID;
     public String assignmentName;
     public String courseName;
 
@@ -19,4 +20,5 @@ public class TimeForAssignment extends Schedule implements Serializable {
     public String getAssignmentName() { return assignmentName; }
     public String getCourseName() { return courseName; }
     public int getAssignmentID() { return assignmentID; }
+    public int getCourseID() { return courseID; }
 }
