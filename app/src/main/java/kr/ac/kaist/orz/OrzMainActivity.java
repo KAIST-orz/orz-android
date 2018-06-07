@@ -16,6 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import kr.ac.kaist.orz.models.PersonalSchedule;
+import kr.ac.kaist.orz.models.Schedule;
+import kr.ac.kaist.orz.models.TimeForAssignment;
+
 
 public class OrzMainActivity extends AppCompatActivity {
 
@@ -36,8 +40,12 @@ public class OrzMainActivity extends AppCompatActivity {
 
     // The reference to AssignmentTabFragment to handle floating action button functionality.
     private AssignmentTabFragment assignmentTabFragment;
+    // The reference to CalendarTabFragment to handle updating schedules.
+    private CalendarTabFragment calendarTabFragment;
 
     private FloatingActionButton fab;
+
+    private final int registerScheduleRequestCode = 8943;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +79,8 @@ public class OrzMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (assignmentTabFragment != null) {
-                    System.out.println("Not null");
                     assignmentTabFragment.showSortingCriteriaDialog(OrzMainActivity.this);
                 }
-                System.out.println("Null");
             }
         });
     }
@@ -118,12 +124,12 @@ public class OrzMainActivity extends AppCompatActivity {
                 case 0:
                     // Keep the reference to the Assignment Tab so that we can handle
                     // floating action button function (show sorting criteria dialog).
-                    System.out.println("Do you reach here?");
                     assignmentTabFragment = AssignmentTabFragment.newInstance();
                     return assignmentTabFragment;
 
                 case 1:
-                    return CalendarTabFragment.newInstance();
+                    calendarTabFragment = CalendarTabFragment.newInstance();
+                    return calendarTabFragment;
 
                 case 2:
                     return SettingsTabFragment.newInstance();
@@ -140,6 +146,8 @@ public class OrzMainActivity extends AppCompatActivity {
             // reference to it.
             if (position == 0) {
                 assignmentTabFragment = null;
+            } else if (position == 1) {
+                calendarTabFragment = null;
             }
         }
 
@@ -201,7 +209,7 @@ public class OrzMainActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             // Start RegisterScheduleActivity.
                             Intent intent = new Intent(OrzMainActivity.this, RegisterScheduleActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, registerScheduleRequestCode);
                         }
                     });
                     return;
@@ -215,6 +223,23 @@ public class OrzMainActivity extends AppCompatActivity {
         @Override
         public void onPageScrollStateChanged(int state) {
             // Do nothing.
+        }
+    }
+
+    // Called when RegisterScheduleActivity finishes. Should add the schedule to the calendar tab.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == registerScheduleRequestCode) {
+            Schedule schedule = null;
+            if (resultCode == RegisterScheduleActivity.RESULT_OK_PERSONAL_SCHEDULE) {
+                schedule = (PersonalSchedule) data.getSerializableExtra("schedule");
+            } else if (resultCode == RegisterScheduleActivity.RESULT_OK_TIME_FOR_ASSIGNMENT) {
+                schedule = (TimeForAssignment) data.getSerializableExtra("schedule");
+            }
+
+            if (calendarTabFragment != null) {
+                calendarTabFragment.updateSchedules(schedule);
+            }
         }
     }
 }

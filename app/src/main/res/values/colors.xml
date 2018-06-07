@@ -5,4 +5,20 @@
     <color name="colorAccent">@color/accent_material_light</color>
     <color name="colorBackgroundLight">@color/colorPrimary</color>
     <color name="colorButtonNormal">@color/button_material_light</color>
+
+    <!-- Colors for courses. -->
+    <color name="course_color_0">@android:color/holo_red_light</color>
+    <color name="course_color_1">@android:color/holo_red_dark</color>
+    <color name="course_color_2">@android:color/holo_blue_bright</color>
+    <color name="course_color_3">@android:color/holo_blue_dark</color>
+    <color name="course_color_4">@android:color/holo_blue_light</color>
+    <color name="course_color_5">@android:color/holo_green_light</color>
+    <color name="course_color_6">@android:color/holo_green_dark</color>
+    <color name="course_color_7">@android:color/holo_orange_light</color>
+    <color name="course_color_8">@android:color/holo_orange_dark</color>
+    <color name="course_color_9">@android:color/holo_purple</color>
+    <color name="course_color_10">@color/colorAccent</color>
+
+    <!-- Color for personal schedule. -->
+    <color name="personal_schedule_color">@android:color/darker_gray</color>
 </resources>

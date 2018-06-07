@@ -167,19 +167,18 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-        // Display the title of this page according to the schedule type.
-        // TODO: Set appropriate color according to the schedule type.
-        if (PersonalSchedule.class.isInstance(schedule)) {
+        // Set page title according to the type of schedule (personal or time for assignment).
+        if (schedule instanceof PersonalSchedule) {
             collapsingToolbarLayout.setTitle(((PersonalSchedule) schedule).getName());
             collapsingToolbarLayout.setSubtitle("Custom Schedule");
         }
-        else if (TimeForAssignment.class.isInstance(schedule)) {
+        else if (schedule instanceof TimeForAssignment) {
             collapsingToolbarLayout.setTitle(((TimeForAssignment) schedule).getCourseName());
             collapsingToolbarLayout.setSubtitle(((TimeForAssignment) schedule).getAssignmentName());
         }
 
-        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        // Set the page color according to the type of schedule.
+        int backgroundColor = Colors.getScheduleColor(this, schedule);
         collapsingToolbarLayout.setContentScrimColor(backgroundColor);
         collapsingToolbarLayout.setBackgroundColor(backgroundColor);
 

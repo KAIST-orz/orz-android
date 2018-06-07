@@ -13,7 +13,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -24,12 +23,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.text.DateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -93,6 +90,10 @@ public class CalendarTabFragment extends Fragment
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void getCalendarEvents() {
+
     }
 
     @Override
@@ -278,6 +279,19 @@ public class CalendarTabFragment extends Fragment
         displayDeadlines(assignments);
     }
 
+    public void updateSchedules(Schedule schedule) {
+        if (schedule == null) {
+            return;
+        }
+
+        if (schedule instanceof PersonalSchedule) {
+            personalSchedules.add((PersonalSchedule) schedule);
+        } else if (schedule instanceof TimeForAssignment) {
+            timeForAssignments.add((TimeForAssignment) schedule);
+        }
+        displayCurrentDate();
+    }
+
     // Remove anything (schedule, assignment) displayed on the scheduleLayout.
     private void clearLayout() {
         if (numOfViews > 0) {
@@ -363,8 +377,8 @@ public class CalendarTabFragment extends Fragment
         scheduleView.setTitle(title);
         scheduleView.setDescription(description);
 
-        // TODO: Fill appropriate background and font color.
-        scheduleView.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        // Set color of the schedule.
+        scheduleView.setColor(Colors.getScheduleColor(getContext(), schedule));
 
         // Assign a unique ID to setup constraints of the view.
         int viewId = View.generateViewId();
@@ -513,9 +527,7 @@ public class CalendarTabFragment extends Fragment
         int topMargin = calculateDeadlineViewTopMargin(assignment.getDue());
 
         deadlineView.setCourseName(assignment.getCourseName());
-
-        // TODO: Fill appropriate color.
-        deadlineView.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+        deadlineView.setColor(Colors.getCourseColor(getContext(), assignment.getCourseID()));
 
         // Assign a unique ID to setup constraints.
         int viewId = View.generateViewId();

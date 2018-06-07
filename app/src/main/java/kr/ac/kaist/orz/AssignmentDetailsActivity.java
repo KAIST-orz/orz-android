@@ -224,8 +224,8 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         collapsingToolbarLayout.setTitle(assignment.getCourseName());
         collapsingToolbarLayout.setSubtitle(assignment.getName());
 
-        // TODO: Set appropriate color.
-        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        // Set the color of the assignment's course.
+        int backgroundColor = Colors.getCourseColor(this, assignment.getCourseID());
         collapsingToolbarLayout.setContentScrimColor(backgroundColor);
         collapsingToolbarLayout.setBackgroundColor(backgroundColor);
 
