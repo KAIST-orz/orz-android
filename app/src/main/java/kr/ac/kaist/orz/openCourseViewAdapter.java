@@ -84,7 +84,7 @@ public class openCourseViewAdapter extends ArrayAdapter {
 
                     @Override
                     public void onFailure(Call<List<Course>> call, Throwable t) {
-                        Toast.makeText(getContext(), "Failed to subscribe the course. ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Failed to connect the server.", Toast.LENGTH_LONG).show();
                     }
                 });
 
