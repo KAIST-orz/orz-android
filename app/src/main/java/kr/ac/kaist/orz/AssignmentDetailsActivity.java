@@ -30,9 +30,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.TimeForAssignment;
 import kr.ac.kaist.orz.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,8 +82,35 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        time_for_assignment.add("7:00PM ~ 11:00PM, April 5th");
+
         time_for_assignment.add("Add more time");
+
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        final List<TimeForAssignment> time_for_assignment_list = new ArrayList<>();
+        Call<List<TimeForAssignment>> call = api.getTimesForAssignment(user.getID(), assignment.getID());
+        call.enqueue(new Callback<List<TimeForAssignment>>() {
+            @Override
+            public void onResponse(Call<List<TimeForAssignment>> call, Response<List<TimeForAssignment>> response) {
+                if(response.isSuccessful() && response.code()==200) {
+                    //Toast.makeText(AssignmentDetailsActivity.this, "getting durations success", Toast.LENGTH_LONG).show();
+                    time_for_assignment_list.addAll(response.body());
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+                    for(TimeForAssignment tfa : time_for_assignment_list)
+                        time_for_assignment.add(time_for_assignment.size() - 1, sdf.format(tfa.getStart().getTime()) + "\n" + sdf.format(tfa.getEnd().getTime()));
+                    adapter2.notifyDataSetChanged();
+                    setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_time_for_assignment));
+                }
+                else {
+                    Toast.makeText(AssignmentDetailsActivity.this, "getting durations failed " + response.code(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TimeForAssignment>> call, Throwable t) {
+                Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+            }
+        });
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
@@ -112,14 +141,12 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-
                                     OrzApi api = ApplicationController.getInstance().getApi();
                                     User user = ApplicationController.getInstance().getUser();
                                     Map<String, Object> body = new HashMap<>();
                                     body.put("timeEstimation", String.valueOf(assignment.getTimeEstimation()));
                                     body.put("significance", String.valueOf(assignment.getSignificance()));
-                                    assignment.removeAlarm(position);
+                                    assignment.removeAlarm(position - 1);
                                     body.put("alarms", assignment.getAlarms());
                                     Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
                                     call.enqueue(new Callback<Void>() {
@@ -141,9 +168,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                             Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
                                         }
                                     });
-
-
-                                    Toast.makeText(getApplicationContext(), "remove alarm #" + String.valueOf(position), Toast.LENGTH_LONG).show();
                                 }
                             });
                     adb.setNegativeButton("No", null);
@@ -160,13 +184,36 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if(time_for_assignment.get(position).equals("Add more time")) {
                     selectDuration();
                 }
                 else {
-                    Intent intent = new Intent(getApplicationContext(), ScheduleDetailsActivity.class);
-                    startActivity(intent);
+                    OrzApi api = ApplicationController.getInstance().getApi();
+                    User user = ApplicationController.getInstance().getUser();
+                    final List<TimeForAssignment> time_for_assignment_list = new ArrayList<>();
+                    Call<List<TimeForAssignment>> call = api.getTimesForAssignment(user.getID(), assignment.getID());
+                    call.enqueue(new Callback<List<TimeForAssignment>>() {
+                        @Override
+                        public void onResponse(Call<List<TimeForAssignment>> call, Response<List<TimeForAssignment>> response) {
+                            if(response.isSuccessful() && response.code()==200) {
+                                //Toast.makeText(AssignmentDetailsActivity.this, "getting durations success", Toast.LENGTH_LONG).show();
+                                time_for_assignment_list.addAll(response.body());
+
+                                Intent intent = new Intent(AssignmentDetailsActivity.this, ScheduleDetailsActivity.class);
+                                intent.putExtra("schedule", time_for_assignment_list.get(position));
+                                startActivity(intent);
+                            }
+                            else {
+                                Toast.makeText(AssignmentDetailsActivity.this, "getting durations failed " + response.code(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<TimeForAssignment>> call, Throwable t) {
+                            Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         });
@@ -302,13 +349,43 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                                                         //Toast.makeText(getApplicationContext(), "test4", Toast.LENGTH_LONG).show();
                                                                         Calendar startCalendar = Calendar.getInstance();
                                                                         startCalendar.set(dp1.getYear(), dp1.getMonth(), dp1.getDayOfMonth(), tp1.getCurrentHour(), tp1.getCurrentMinute());
-                                                                        Date startDate = startCalendar.getTime();
+                                                                        final Date startTime = startCalendar.getTime();
 
                                                                         Calendar endCalendar = Calendar.getInstance();
-                                                                        startCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
-                                                                        Date endDate = endCalendar.getTime();
+                                                                        endCalendar.set(dp2.getYear(), dp2.getMonth(), dp2.getDayOfMonth(), tp2.getCurrentHour(), tp2.getCurrentMinute());
+                                                                        final Date endTime = endCalendar.getTime();
 
-                                                                        Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.KOREA);
+
+                                                                        OrzApi api = ApplicationController.getInstance().getApi();
+                                                                        User user = ApplicationController.getInstance().getUser();
+                                                                        Map<String, Object> body = new HashMap<String, Object>();
+                                                                        body.put("start", sdf.format(startTime));
+                                                                        body.put("end", sdf.format(endTime));
+                                                                        body.put("alarms", new ArrayList<Integer>());
+                                                                        Call<Void> call = api.addTimeForAssignment(user.getID(), assignment.getID(), body);
+                                                                        call.enqueue(new Callback<Void>() {
+                                                                            @Override
+                                                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                                                if(response.isSuccessful() && response.code()==200) {
+                                                                                    Toast.makeText(AssignmentDetailsActivity.this, "adding duration success", Toast.LENGTH_LONG).show();
+                                                                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+                                                                                    time_for_assignment.add(time_for_assignment.size() - 1, sdf.format(startTime) + "\n" + sdf.format(endTime));
+                                                                                    adapter2.notifyDataSetChanged();
+                                                                                    setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_time_for_assignment));
+                                                                                }
+                                                                                else {
+                                                                                    Toast.makeText(AssignmentDetailsActivity.this, "adding duration failed " + response.code(), Toast.LENGTH_LONG).show();
+                                                                                }
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                                                Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                                                                            }
+                                                                        });
+
+                                                                        //Toast.makeText(getApplicationContext(), String.valueOf(dp1.getYear()) + "-" + String.valueOf(dp1.getMonth() + 1) + "-" + String.valueOf(dp1.getDayOfMonth()) + "\n" + String.valueOf(tp1.getCurrentHour()) + ":" + String.valueOf(tp1.getCurrentMinute()) + "\n" + String.valueOf(dp2.getYear()) + "-" + String.valueOf(dp2.getMonth() + 1) + "-" + String.valueOf(dp2.getDayOfMonth()) + "\n" + String.valueOf(tp2.getCurrentHour()) + ":" + String.valueOf(tp2.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                                                     }
                                                                 });
                                                         adb.setNegativeButton("cancel", null);

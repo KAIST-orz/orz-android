@@ -43,7 +43,6 @@ public class Assignment implements Serializable {
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(sdf.parse(due));
-            calendar.add(Calendar.HOUR, 9);
         }
         catch (ParseException e) {}
         return calendar;

@@ -15,6 +15,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -178,5 +179,46 @@ public interface OrzApi {
     @DELETE("api/v1/assignments/{assignmentID}")
     Call<Void> deleteAssignment(
             @Path("assignmentID") int assignmentID
+    );
+
+    @GET("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
+    Call<List<TimeForAssignment>> getTimesForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID
+    );
+
+    @POST("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
+    Call<Void> addTimeForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Body Map<String, Object> body
+    );
+
+    @PUT("api/v1/students/{userID}/personal-schedules/{scheduleID}")
+    Call<Void> updatePersonalSchedule(
+            @Path("userID") int userID,
+            @Path("scheduleID") int scheduleID,
+            @Body Map<String, Object> body
+    );
+
+    @PUT("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments/{scheduleID}")
+    Call<Void> updateTimeForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Path("scheduleID") int scheduleID,
+            @Body Map<String, Object> body
+    );
+
+    @DELETE("api/v1/students/{userID}/personal-schedules/{scheduleID}")
+    Call<Void> deletePersonalSchedule(
+            @Path("userID") int userID,
+            @Path("scheduleID") int scheduleID
+    );
+
+    @DELETE("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments/{scheduleID}")
+    Call<Void> deleteTimeForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Path("scheduleID") int scheduleID
     );
 }

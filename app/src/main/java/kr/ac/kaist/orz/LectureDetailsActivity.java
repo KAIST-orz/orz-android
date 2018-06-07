@@ -161,8 +161,6 @@ public class LectureDetailsActivity extends AppCompatActivity {
         });
         adb.setNegativeButton("no", null);
         adb.show();
-
-        finish();
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {

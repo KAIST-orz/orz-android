@@ -1,8 +1,10 @@
 package kr.ac.kaist.orz;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
@@ -50,6 +54,8 @@ public class CalendarTabFragment extends Fragment
     private ImageButton toPreviousDay;
     private ImageButton toNextDay;
     private Button pickDate;
+
+    private int requestCode = 0;
 
     // Keep the date information which the user has chosen
     private Calendar current;
@@ -93,6 +99,9 @@ public class CalendarTabFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setAlarm();
+        setAlarm();
 
         // When this fragment is first created, instantiate a new Calendar object.
         current = Calendar.getInstance();
@@ -637,5 +646,31 @@ public class CalendarTabFragment extends Fragment
     // Implement this interface to handle actions in activity.
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction();
+    }
+
+    public void setAlarm() {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        for (int i=0; i<requestCode; i++) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), i, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        Calendar c1 = Calendar.getInstance();
+        c1.add(Calendar.SECOND, 4);
+        setSingleAlarm(c1, "1", "111");
+        Calendar c2 = Calendar.getInstance();
+        c2.add(Calendar.SECOND, 8);
+        setSingleAlarm(c2, "2", "222");
+
+    }
+
+    public void setSingleAlarm(Calendar calendar, String title, String message) {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        alarmIntent.putExtra("title", title);
+        alarmIntent.putExtra("message", message);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), requestCode++, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }

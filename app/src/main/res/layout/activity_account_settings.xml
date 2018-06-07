@@ -43,6 +43,13 @@
             android:inputType="textPassword" />
 
         <EditText
+            android:id="@+id/editText_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/name" />
+
+        <EditText
             android:id="@+id/editText_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,8 +73,15 @@
             android:id="@+id/button_update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/update"
-            android:onClick="update" />
+            android:onClick="update"
+            android:text="@string/update" />
+
+        <Button
+            android:id="@+id/button_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sign_out"
+            android:text="@string/sign_out" />
 
         <Button
             android:id="@+id/button_unregister"
