@@ -65,7 +65,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
      *
      * @return A new instance of fragment AssignmentTabFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AssignmentTabFragment newInstance() {
         AssignmentTabFragment fragment = new AssignmentTabFragment();
         Bundle args = new Bundle();
@@ -87,7 +86,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
         assignmentListView = (ListView) view.findViewById(R.id.listview_assignment);
 
-        // TODO: get the list of assignments from server.
         // listViewAdapter.notifyDataSetChanged();
 
         // Set adapter to the ListView.
