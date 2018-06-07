@@ -2,8 +2,8 @@ package kr.ac.kaist.orz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
     private openCourseViewAdapter m_Adapter;
 
     //데이터를 저장하게 되는 리스트
-    private List<Course> list = new ArrayList<>();
+    private List<Course> openCourses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_openCourse);
         //리스트뷰와 리스트를 연결하기 위해 사용되는 어댑터
-        m_Adapter = new openCourseViewAdapter(this, list);
+        m_Adapter = new openCourseViewAdapter(this, openCourses);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
     }
@@ -41,7 +41,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
         super.onResume();
 
         // List 초기화
-        list.clear();
+        openCourses.clear();
 
         // List에 데이터 입력
         addData();
@@ -59,7 +59,7 @@ public class OpenCoursesActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                 if(response.isSuccessful()) {
-                    list.addAll(response.body());
+                    openCourses.addAll(response.body());
                     m_Adapter.notifyDataSetChanged();
                 }
                 else {
@@ -68,16 +68,8 @@ public class OpenCoursesActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Course>> call, Throwable t) {
+                Toast.makeText(OpenCoursesActivity.this, "Failed load open courses. ", Toast.LENGTH_LONG).show();
             }
         });
-
-        /*
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(A)","Sumgwon Kang",0));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(B)","Park Jinah", 1));
-        list.add(new myCourseInformation("Discrete Mathematics", "CS204(C)","Martin ZIEGLER", 2));
-        list.add(new myCourseInformation("Data Structure", "CS206(A)","Keeung Kin", 3));
-        list.add(new myCourseInformation("Data Structure", "CS206(B)","Alice Oh", 4));
-        list.add(new myCourseInformation("Data Structure", "CS206(C)","Duksan Ryu", 5));
-        */
     }
 }

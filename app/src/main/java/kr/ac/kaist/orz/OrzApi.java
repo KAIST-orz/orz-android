@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
@@ -128,5 +129,16 @@ public interface OrzApi {
     @POST("api/v1/courses/{courseID}/assignments")
     Call<List<Assignment>> addAssignmentToCourse(
             @Path("courseID") int courseID
+    );
+
+    @GET("api/v1/students/{userID}/alarms")
+    Call<Alarms> getStudentAlarms(
+            @Path("userID") int userID
+    );
+
+    @PUT("api/v1/students/{userID}/alarms")
+    Call<Alarms> putStudentAlarms(
+            @Path("userID") int userID,
+            @Body Map<String, String> body
     );
 }
