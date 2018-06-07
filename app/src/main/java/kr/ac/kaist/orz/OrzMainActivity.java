@@ -169,7 +169,6 @@ public class OrzMainActivity extends AppCompatActivity {
                     fab.show();
                     fab.setImageResource(R.drawable.ic_swap_vert_black_24dp);
                     fab.setOnClickListener(new View.OnClickListener() {
-                        // TODO: Pop up dialog for selecting sorting criteria.
                         @Override
                         public void onClick(View view) {
                             if (assignmentTabFragment != null) {
