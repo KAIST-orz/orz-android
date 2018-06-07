@@ -38,20 +38,10 @@
             android:label="@string/label_update_account" />
         <activity
             android:name=".MyCoursesActivity"
-            android:label="@string/label_my_courses"
-            android:parentActivityName=".OrzMainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".OrzMainActivity" />
-        </activity>
+            android:label="@string/label_my_courses" />
         <activity
             android:name=".OpenCoursesActivity"
-            android:label="@string/label_open_courses"
-            android:parentActivityName=".MyCoursesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MyCoursesActivity" />
-        </activity>
+            android:label="@string/label_open_courses" />
         <activity android:name=".NotificationSettingsActivity" />
         <activity android:name=".RegisterLectureActivity" />
         <activity android:name=".LectureDetailsActivity" />

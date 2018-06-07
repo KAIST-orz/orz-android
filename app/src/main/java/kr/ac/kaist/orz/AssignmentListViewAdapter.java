@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.StudentAssignment;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class AssignmentListViewAdapter extends ArrayAdapter {
         ImageView arrowHead;
     }
 
-    public AssignmentListViewAdapter(Context context, List<Assignment> assignments) {
+    public AssignmentListViewAdapter(Context context, List<StudentAssignment> assignments) {
         super(context, R.layout.assignment_view, assignments);
     }
 

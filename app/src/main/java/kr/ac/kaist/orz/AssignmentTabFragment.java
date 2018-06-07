@@ -41,7 +41,7 @@ import retrofit2.Response;
 public class AssignmentTabFragment extends Fragment implements DialogInterface.OnClickListener {
     private ListView assignmentListView;    // The ListView to display items on.
     private AssignmentListViewAdapter listViewAdapter;      // The listViewAdapter that provides data to the ListView.
-    private ArrayList<Assignment> assignmentList;   // The list of assignment data.
+    private ArrayList<StudentAssignment> assignmentList;   // The list of assignment data.
 
     // The item names to show on the dialog for picking sorting criteria.
     private static final String SORT_DUE = "Due";
@@ -51,9 +51,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
 
     // Current sorting criteria. Initially sort by due date.
     private String sortingCriteria = SORT_DUE;
-
-    ListView m_ListView;
-    AssignmentListViewAdapter m_Adapter;
 
     public AssignmentTabFragment() {
         // Required empty public constructor
@@ -85,21 +82,16 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
-        assignmentListView = (ListView) view.findViewById(R.id.listview_assignment);
+        assignmentListView = view.findViewById(R.id.listview_assignment);
 
-        // TODO: get the list of assignments from server.
-        // listViewAdapter.notifyDataSetChanged();
+        // The list of assignments.
+        assignmentList = new ArrayList<>();
 
         // Set adapter to the ListView.
-        // assignmentListView.setAdapter(listViewAdapter);
+        listViewAdapter = new AssignmentListViewAdapter(getContext(), assignmentList);
+        assignmentListView.setAdapter(listViewAdapter);
 
-        //데이터를 저장하게 되는 리스트
-        final List<Assignment> list = new ArrayList<>();
-
-        m_Adapter = new AssignmentListViewAdapter(getContext(), list);
-        assignmentListView.setAdapter(m_Adapter);
-
-        //리스트뷰에 보여질 아이템을 추가
+        // Get the list of assignments from the orz server.
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
         Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
@@ -107,8 +99,8 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
             @Override
             public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
                 if(response.isSuccessful()) {
-                    list.addAll(response.body());
-                    m_Adapter.notifyDataSetChanged();
+                    assignmentList.addAll(response.body());
+                    listViewAdapter.notifyDataSetChanged();
                 }
                 else {
                 }
@@ -120,10 +112,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         });
 
         return view;
-    }
-
-    private void getAssignments() {
-        assignmentList.clear();
     }
 
     // Shows a dialog that lets the user pick a sorting criteria.
@@ -147,15 +135,13 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
 
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
+        // Get which sorting criteria has been selected.
         ListView listView = ((AlertDialog) dialogInterface).getListView();
         Object checkedItem = listView.getAdapter().getItem(listView.getCheckedItemPosition());
-
-        // The comparator to sort assignmentList with according to the picked one.
-        Comparator<Assignment> assignmentComparator;
-        // Set current sorting criteria.
         sortingCriteria = checkedItem.toString();
 
-        /*
+        // Get appropriate comparator for each sorting criteria.
+        Comparator<? super StudentAssignment> assignmentComparator;
         switch (sortingCriteria) {
             case SORT_DUE:
                 assignmentComparator = Assignment.DUE_COMPARATOR;
@@ -164,7 +150,7 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
                 assignmentComparator = Assignment.COURSE_COMPARATOR;
                 break;
             case SORT_SIGNIFICANCE:
-                assignmentComparator = Assignment.SIGNIFICANCE_COMPARATOR;
+                assignmentComparator = StudentAssignment.SIGNIFICANCE_COMPARATOR;
                 break;
             case SORT_ESTIMATE:
                 assignmentComparator = Assignment.ESTIMATE_COMPARATOR;
@@ -178,6 +164,5 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
             Collections.sort(assignmentList, assignmentComparator);
             listViewAdapter.notifyDataSetChanged();
         }
-        */
     }
 }
