@@ -70,11 +70,6 @@ public class openCourseViewAdapter extends ArrayAdapter {
                     @Override
                     public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                         if(response.isSuccessful()) {
-                            //Adapter에서 mainActivity의 메소드 부르기 (화면 refresh)
-                            //[Ref] https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter
-                            if(mainactivity_context instanceof MyCoursesActivity) {
-                                ((MyCoursesActivity) mainactivity_context).refreshView();
-                            }
                         }
                         else {
                         }

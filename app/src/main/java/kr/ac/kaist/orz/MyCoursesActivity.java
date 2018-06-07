@@ -65,12 +65,7 @@ public class MyCoursesActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
-
-        // List 초기화
-        list.clear();
-
-        // List에 데이터 입력
-        addData();
+        refreshView();
     }
 
 
@@ -106,7 +101,10 @@ public class MyCoursesActivity extends AppCompatActivity {
     }
 
     public void refreshView(){
-        finish();
-        startActivity(getIntent());
+        // List 초기화
+        list.clear();
+
+        // List에 데이터 입력
+        addData();
     }
 }
