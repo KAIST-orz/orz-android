@@ -165,4 +165,17 @@ public interface OrzApi {
     Call<Void> deleteAssignment(
             @Path("assignmentID") int assignmentID
     );
+
+    @GET("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
+    Call<List<TimeForAssignment>> getTimesForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID
+    );
+
+    @POST("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
+    Call<Void> addTimeForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Body Map<String, Object> body
+    );
 }

@@ -27,7 +27,6 @@ public abstract class Schedule implements Serializable {
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(sdf.parse(start));
-            calendar.add(Calendar.HOUR, 9);
         }
         catch (ParseException e) {}
         return calendar;
@@ -39,7 +38,6 @@ public abstract class Schedule implements Serializable {
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(sdf.parse(end));
-            calendar.add(Calendar.HOUR, 9);
         }
         catch (ParseException e) {}
         return calendar;
