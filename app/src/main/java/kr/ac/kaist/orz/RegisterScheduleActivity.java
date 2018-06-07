@@ -289,7 +289,7 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra("schedule", response.body());
 
-                            setResult(RESULT_OK_PERSONAL_SCHEDULE, intent);
+                            setResult(RESULT_OK_TIME_FOR_ASSIGNMENT, intent);
                             finish();
                         } else {
                             Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
