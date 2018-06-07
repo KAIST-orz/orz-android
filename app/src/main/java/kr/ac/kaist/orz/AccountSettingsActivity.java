@@ -138,6 +138,17 @@ public class AccountSettingsActivity extends AppCompatActivity {
         }
     }
 
+    public void sign_out(View v) {
+        finish();
+        ApplicationController.getInstance().setUser(null);
+
+        Intent i = getBaseContext().getPackageManager().
+                getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
     public void unregister(View v) {
         final OrzApi api = ApplicationController.getInstance().getApi();
         final User user = ApplicationController.getInstance().getUser();
