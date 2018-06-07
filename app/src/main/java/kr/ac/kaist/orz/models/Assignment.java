@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public class Assignment implements Serializable {
     private int id;
+    private int courseID;
     private String name;
     private String description;
     private String due;
