@@ -58,6 +58,8 @@ public class CalendarTabFragment extends Fragment
     private ImageButton toNextDay;
     private Button pickDate;
 
+    private int requestCode = 0;
+
     // Keep the date information which the user has chosen
     private Calendar current;
 
@@ -97,6 +99,7 @@ public class CalendarTabFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setAlarm();
         setAlarm();
 
         // When this fragment is first created, instantiate a new Calendar object.
@@ -635,10 +638,27 @@ public class CalendarTabFragment extends Fragment
 
     public void setAlarm() {
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        alarmIntent.putExtra("title", "tt");
-        alarmIntent.putExtra("message", "mm");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis()+2000, pendingIntent);
+        for (int i=0; i<requestCode; i++) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), i, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        Calendar c1 = Calendar.getInstance();
+        c1.add(Calendar.SECOND, 4);
+        setSingleAlarm(c1, "1", "111");
+        Calendar c2 = Calendar.getInstance();
+        c2.add(Calendar.SECOND, 8);
+        setSingleAlarm(c2, "2", "222");
+
+    }
+
+    public void setSingleAlarm(Calendar calendar, String title, String message) {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        alarmIntent.putExtra("title", title);
+        alarmIntent.putExtra("message", message);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), requestCode++, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }
