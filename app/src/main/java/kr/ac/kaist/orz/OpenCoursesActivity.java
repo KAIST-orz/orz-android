@@ -2,6 +2,7 @@ package kr.ac.kaist.orz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ public class OpenCoursesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_courses);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_openCourse);
@@ -68,8 +71,18 @@ public class OpenCoursesActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Course>> call, Throwable t) {
-                Toast.makeText(OpenCoursesActivity.this, "Failed load open courses. ", Toast.LENGTH_LONG).show();
+                Toast.makeText(OpenCoursesActivity.this, "Failed loading open courses. ", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -41,7 +41,7 @@ import retrofit2.Response;
 public class AssignmentTabFragment extends Fragment implements DialogInterface.OnClickListener {
     private ListView assignmentListView;    // The ListView to display items on.
     private AssignmentListViewAdapter listViewAdapter;      // The listViewAdapter that provides data to the ListView.
-    private ArrayList<Assignment> assignmentList;   // The list of assignment data.
+    private ArrayList<StudentAssignment> assignmentList;   // The list of assignment data.
 
     // The item names to show on the dialog for picking sorting criteria.
     private static final String SORT_DUE = "Due";
@@ -51,9 +51,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
 
     // Current sorting criteria. Initially sort by due date.
     private String sortingCriteria = SORT_DUE;
-
-    ListView m_ListView;
-    AssignmentListViewAdapter m_Adapter;
 
     public AssignmentTabFragment() {
         // Required empty public constructor
@@ -72,7 +69,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         return fragment;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,20 +80,16 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         View view = inflater.inflate(R.layout.fragment_assignment_tab, container, false);
-        assignmentListView = (ListView) view.findViewById(R.id.listview_assignment);
+        assignmentListView = view.findViewById(R.id.listview_assignment);
 
-        // listViewAdapter.notifyDataSetChanged();
+        // The list of assignments.
+        assignmentList = new ArrayList<>();
 
         // Set adapter to the ListView.
-        // assignmentListView.setAdapter(listViewAdapter);
+        listViewAdapter = new AssignmentListViewAdapter(getContext(), assignmentList);
+        assignmentListView.setAdapter(listViewAdapter);
 
-        //데이터를 저장하게 되는 리스트
-        final List<Assignment> list = new ArrayList<>();
-
-        m_Adapter = new AssignmentListViewAdapter(getContext(), list);
-        assignmentListView.setAdapter(m_Adapter);
-
-        //리스트뷰에 보여질 아이템을 추가
+        // Get the list of assignments from the orz server.
         OrzApi api = ApplicationController.getInstance().getApi();
         User user = ApplicationController.getInstance().getUser();
         Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
@@ -105,8 +97,10 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
             @Override
             public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
                 if(response.isSuccessful()) {
-                    list.addAll(response.body());
-                    m_Adapter.notifyDataSetChanged();
+                    // Add the assignments into the list and sort it by currently picked sorting criteria.
+                    assignmentList.addAll(response.body());
+                    Collections.sort(assignmentList, getComparator(sortingCriteria));
+                    listViewAdapter.notifyDataSetChanged();
                 }
                 else {
                 }
@@ -118,10 +112,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         });
 
         return view;
-    }
-
-    private void getAssignments() {
-        assignmentList.clear();
     }
 
     // Shows a dialog that lets the user pick a sorting criteria.
@@ -145,37 +135,29 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
 
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
+        // Get which sorting criteria has been selected.
         ListView listView = ((AlertDialog) dialogInterface).getListView();
         Object checkedItem = listView.getAdapter().getItem(listView.getCheckedItemPosition());
-
-        // The comparator to sort assignmentList with according to the picked one.
-        Comparator<Assignment> assignmentComparator;
-        // Set current sorting criteria.
         sortingCriteria = checkedItem.toString();
 
-        /*
-        switch (sortingCriteria) {
-            case SORT_DUE:
-                assignmentComparator = Assignment.DUE_COMPARATOR;
-                break;
-            case SORT_COURSE:
-                assignmentComparator = Assignment.COURSE_COMPARATOR;
-                break;
-            case SORT_SIGNIFICANCE:
-                assignmentComparator = Assignment.SIGNIFICANCE_COMPARATOR;
-                break;
-            case SORT_ESTIMATE:
-                assignmentComparator = Assignment.ESTIMATE_COMPARATOR;
-                break;
-            default:
-                assignmentComparator = null;
-        }
+        // Get appropriate comparator for the selected criteria and sort the list of assignments.
+        Collections.sort(assignmentList, getComparator(sortingCriteria));
+        listViewAdapter.notifyDataSetChanged();
+    }
 
-        // Sort the assignmentList with picked sorting criteria, then notify assignmentListViewAdapter.
-        if (assignmentComparator != null) {
-            Collections.sort(assignmentList, assignmentComparator);
-            listViewAdapter.notifyDataSetChanged();
+    // Returns the comparator for the sorting criteria passed by argument.
+    public static Comparator<? super StudentAssignment> getComparator(String SORT_CRITERIA) {
+        switch (SORT_CRITERIA) {
+            case SORT_COURSE:
+                return Assignment.COURSE_COMPARATOR;
+            case SORT_SIGNIFICANCE:
+                return StudentAssignment.SIGNIFICANCE_COMPARATOR;
+            case SORT_ESTIMATE:
+                return Assignment.ESTIMATE_COMPARATOR;
+            case SORT_DUE:
+            default:
+                // Default is to sort by due dates.
+                return Assignment.DUE_COMPARATOR;
         }
-        */
     }
 }

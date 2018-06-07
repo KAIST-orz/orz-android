@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,6 +29,8 @@ public class MyCoursesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //List에 정보 추가 (이 정보들이 listView로 보여짐)
         //addData();
@@ -95,5 +98,14 @@ public class MyCoursesActivity extends AppCompatActivity {
         // List에 데이터 입력
         addData();
     }
-}
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}
