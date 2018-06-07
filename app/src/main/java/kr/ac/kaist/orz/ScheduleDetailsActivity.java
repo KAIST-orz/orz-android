@@ -100,60 +100,7 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
         });
         setListViewHeightBasedOnChildren(listView1);
 
-        // TODO: Get list of assignments from the server.
-        // TODO: Sort by some criteria (e.g. due date).
-        ArrayList<StudentAssignment> assignments = null;
 
-        // Make a list of strings containing "<course name>\n<assignment name>
-        // with header "Custom schedule".
-        ArrayList<String> scheduleTypes = new ArrayList<>();
-        scheduleTypes.add("Custom schedule");
-
-        for (Assignment assignment : assignments) {
-            scheduleTypes.add(assignment.getCourseName() + "\n" + assignment.getName());
-        }
-
-        // Set which checkbox should be checked.
-        int currentType = 0;
-        if (schedule instanceof TimeForAssignment) {
-            for (int i = 0; i < assignments.size(); i++) {
-                if (assignments.get(i).getID() == ((TimeForAssignment) schedule).getAssignmentID()) {
-                    currentType = i + 1;
-                    break;
-                }
-            }
-        }
-
-        // The ListView to show which type (personal schedule or time for which assignment) of schedule this is.
-        ListView listView2 = findViewById(R.id.listView_schedule_type);
-        ArrayAdapter<String> scheduleTypeAdapter = new ArrayAdapter<>(this, R.layout.schedule_type_list_item, scheduleTypes);
-        listView2.setAdapter(scheduleTypeAdapter);
-        listView2.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-        // Check appropriate checkbox.
-        listView2.setItemChecked(currentType, true);
-
-        // Set OnItemSelectedListener.
-        final int[] currentTypeContainer = new int[]{currentType};
-        listView2.setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (currentTypeContainer[0] == position) {
-                    // Do nothing.
-                } else {
-                    // TODO: Send the server that change occurred on this schedule.
-                    // TODO: Set the background color of the action bar and modify fields of 'schedule'.
-                    // TODO: Might have to refresh this activity.
-                    currentTypeContainer[0] = position;
-                    finish();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // Not possible.
-            }
-        });
 
         // Display the title of this page according to the schedule type.
         // TODO: Set appropriate color according to the schedule type.

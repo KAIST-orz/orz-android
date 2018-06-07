@@ -31,7 +31,8 @@
         <activity android:name=".RegisterAssignmentActivity" />
         <activity android:name=".ScheduleDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegisterScheduleActivity" />
+        <activity android:name=".RegisterScheduleActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".AccountSettingsActivity"
             android:label="@string/label_update_account" />

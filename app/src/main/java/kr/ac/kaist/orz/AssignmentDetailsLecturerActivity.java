@@ -6,7 +6,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -45,7 +44,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                     Map<String, String> body = new HashMap<>();
                     body.putAll(response.body());
                     EditText assignment_name =  findViewById(R.id.editText_assignment_name);
-                    Button due_date =  findViewById(R.id.button_due_date);
+                    TextView due_date =  findViewById(R.id.button_due_date);
                     EditText description =  findViewById(R.id.editText_description);
                     assignment_name.setText(body.get("name"));
                     SimpleDateFormat parser1 = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
@@ -90,7 +89,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                                         Date date = startCalendar.getTime();
 
                                         SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
-                                        ((Button)v).setText(parser.format(date));
+                                        ((TextView) v).setText(parser.format(date));
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);

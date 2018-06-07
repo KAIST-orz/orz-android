@@ -1,51 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegisterScheduleActivity">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="192dp">
+
+        <android.support.design.widget.SubtitleCollapsingToolbarLayout
+            android:id="@+id/subtitlecollapsingtoolbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"></android.support.v7.widget.Toolbar>
+        </android.support.design.widget.SubtitleCollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
-        <EditText
-            android:id="@+id/editText_schedule_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="schedule name"
-            android:inputType="text" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_start_time"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:onClick="selectTime"
-            android:text="start time"
-            android:textAllCaps="false" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="?android:attr/dividerHorizontal"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/details_layout_margin_left"
+                android:showDividers="middle">
 
-        <Button
-            android:id="@+id/button_end_time"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:onClick="selectTime"
-            android:text="end time"
-            android:textAllCaps="false" />
+                <EditText
+                    android:id="@+id/editText_schedule_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                    android:ems="10"
+                    android:hint="Schedule Name"
+                    android:inputType="text"
+                    android:textColor="@android:color/black" />
 
-        <Button
-            android:id="@+id/button_create"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="create"
-            android:text="@string/create" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textView_start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="selectTime"
+                        android:text="Start Time"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
 
-</android.support.constraint.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textView_end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                        android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="selectTime"
+                        android:text="End Time"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/listView_schedule_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                    android:layout_marginTop="@dimen/details_layout_margin_vertical"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="@dimen/details_layout_margin_vertical" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="create"
+                android:text="@string/create" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

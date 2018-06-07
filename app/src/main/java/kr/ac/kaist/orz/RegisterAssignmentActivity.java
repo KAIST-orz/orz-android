@@ -82,7 +82,7 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
 
         if(schedule_name.length() == 0)
             Toast.makeText(this, "assignment name can not be empty", Toast.LENGTH_LONG).show();
-        else if(due_date.getText().equals("due date"))
+        else if(due_date.getText().equals("Select the due date"))
             Toast.makeText(this, "due date can not be empty", Toast.LENGTH_LONG).show();
         else if(description.length() == 0)
             description.setText("no description");

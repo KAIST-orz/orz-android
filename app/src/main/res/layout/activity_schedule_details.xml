@@ -85,15 +85,6 @@
                     android:divider="@android:color/transparent"
                     android:dividerHeight="@dimen/details_layout_margin_vertical" />
 
-                <ListView
-                    android:id="@+id/listView_schedule_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/details_layout_margin_vertical"
-                    android:layout_marginTop="@dimen/details_layout_margin_vertical"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="@dimen/details_layout_margin_vertical" />
-
             </LinearLayout>
 
             <Button

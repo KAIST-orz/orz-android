@@ -79,14 +79,12 @@ public class openCourseViewAdapter extends ArrayAdapter {
                             Toast.makeText(getContext(), "Successfully subscribed course " + courseToAdd.getName().toUpperCase(), Toast.LENGTH_LONG).show();
                         }
                         else {
-                            // Show a toast message notifying failure.
-                            Toast.makeText(getContext(), "Failed to subscribe the course. ", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<List<Course>> call, Throwable t) {
-                        Toast.makeText(getContext(), "Failed to delete the course. ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Failed to subscribe the course. ", Toast.LENGTH_LONG).show();
                     }
                 });
 
