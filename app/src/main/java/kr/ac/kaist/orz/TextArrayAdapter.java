@@ -33,6 +33,9 @@ public class TextArrayAdapter extends ArrayAdapter {
         if (position == getCount() - 1) {
             textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
         }
+        else {
+            textView.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
+        }
 
         return super.getView(position, convertView, parent);
     }
