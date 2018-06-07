@@ -64,8 +64,8 @@ public class CalendarTabFragment extends Fragment
     // The layout onto which the schedule views are placed.
     private ConstraintLayout scheduleLayout;
 
-    // TODO: Tracks the number of schedules being displayed currently.
-    // TODO: Might keep the list of schedules later on, thus may override this.
+    // Tracks the number of schedules being displayed currently.
+    // Might keep the list of schedules later on, thus may override this.
     private int numOfViews;
 
     List<PersonalSchedule> personalSchedules;
@@ -85,7 +85,6 @@ public class CalendarTabFragment extends Fragment
      *
      * @return A new instance of fragment CalendarTabFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CalendarTabFragment newInstance() {
         CalendarTabFragment fragment = new CalendarTabFragment();
         Bundle args = new Bundle();
@@ -109,70 +108,7 @@ public class CalendarTabFragment extends Fragment
         timeForAssignments = new ArrayList<TimeForAssignment>();
         assignments = new ArrayList<StudentAssignment>();
 
-        OrzApi api = ApplicationController.getInstance().getApi();
-        User user = ApplicationController.getInstance().getUser();
-
-        Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
-        call.enqueue(new Callback<List<StudentAssignment>>() {
-            @Override
-            public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
-                if(response.isSuccessful()) {
-                    assignments.addAll(response.body());
-                    displayCurrentDate();
-                    setAlarm();
-                }
-                else {
-                    Log.e("CalendarTabFragment", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<StudentAssignment>> call, Throwable t) {
-                Log.e("123", t.getMessage());
-            }
-        });
-
-        Call<List<PersonalSchedule>> call2 = api.getStudentPersonalSchedules(user.getID());
-        call2.enqueue(new Callback<List<PersonalSchedule>>() {
-            @Override
-            public void onResponse(Call<List<PersonalSchedule>> call, Response<List<PersonalSchedule>> response) {
-                if(response.isSuccessful()) {
-                    personalSchedules.addAll(response.body());
-                    Log.d("123", response.body().toString());
-                    displayCurrentDate();
-                    setAlarm();
-                }
-                else {
-                    Log.e("CalendarTabFragment2", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PersonalSchedule>> call, Throwable t) {
-                Log.e("123", t.getMessage());
-            }
-        });
-
-        Call<List<TimeForAssignment>> call3 = api.getStudentTimeForAssignments(user.getID());
-        call3.enqueue(new Callback<List<TimeForAssignment>>() {
-            @Override
-            public void onResponse(Call<List<TimeForAssignment>> call, Response<List<TimeForAssignment>> response) {
-                if(response.isSuccessful()) {
-                    timeForAssignments.addAll(response.body());
-                    Log.d("123", response.body().toString());
-                    displayCurrentDate();
-                    setAlarm();
-                }
-                else {
-                    Log.e("CalendarTabFragment3", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<TimeForAssignment>> call, Throwable t) {
-                Log.e("123", t.getMessage());
-            }
-        });
+        loadData();
     }
 
     // Formats the date held by current to "MMM DD, YYYY" format.
@@ -208,7 +144,6 @@ public class CalendarTabFragment extends Fragment
                 current.add(Calendar.DATE, -1);
                 pickDate.setText(formatDateOfCalendar());
 
-                // TODO: Communicate with the server and draw schedules on the layout.
                 displayCurrentDate();
             }
         });
@@ -219,7 +154,6 @@ public class CalendarTabFragment extends Fragment
                 current.add(Calendar.DATE, 1);
                 pickDate.setText(formatDateOfCalendar());
 
-                // TODO: Communicate with the server and draw schedules on the layout.
                 displayCurrentDate();
             }
         });
@@ -281,17 +215,6 @@ public class CalendarTabFragment extends Fragment
     }
 
     public void updateSchedules(Schedule schedule) {
-        if (schedule == null) {
-            return;
-        }
-
-        if (schedule instanceof PersonalSchedule) {
-            personalSchedules.add((PersonalSchedule) schedule);
-        } else if (schedule instanceof TimeForAssignment) {
-            timeForAssignments.add((TimeForAssignment) schedule);
-        }
-        displayCurrentDate();
-        setAlarm();
     }
 
     // Remove anything (schedule, assignment) displayed on the scheduleLayout.
@@ -306,7 +229,6 @@ public class CalendarTabFragment extends Fragment
     // Displays the schedules of the date the user has picked.
     private void displayPersonalSchedules(List<PersonalSchedule> schedules) {
         for (PersonalSchedule schedule : schedules) {
-            // TODO: these schedules should be first filtered before being passed to this method.
             if ((schedule.getEnd().get(Calendar.YEAR) < current.get(Calendar.YEAR)
                     || schedule.getEnd().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
                     || schedule.getStart().get(Calendar.YEAR) > current.get(Calendar.YEAR)
@@ -325,7 +247,6 @@ public class CalendarTabFragment extends Fragment
     // Displays the schedules of the date the user has picked.
     private void displayTimeForAssignments(List<TimeForAssignment> schedules) {
         for (TimeForAssignment schedule : schedules) {
-            // TODO: these schedules should be first filtered before being passed to this method.
             if ((schedule.getEnd().get(Calendar.YEAR) < current.get(Calendar.YEAR)
                     || schedule.getEnd().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
                     || schedule.getStart().get(Calendar.YEAR) > current.get(Calendar.YEAR)
@@ -450,9 +371,9 @@ public class CalendarTabFragment extends Fragment
         int endHour;        // The hour the schedule starts in the current day.
         int endMinute;      // The minute in an hour the schedule starts in the current day.
 
-        // TODO: Handle the case when year is different.
         // Adding top margin in case the schedule starts before the current day.
-        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)) {
+        if (start.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
+                || start.get(Calendar.YEAR) < current.get(Calendar.YEAR)) {
             height += getResources().getInteger(R.integer.timeline_margin_top) + 2;
             startHour = 0;
             startMinute = 0;
@@ -462,7 +383,8 @@ public class CalendarTabFragment extends Fragment
         }
 
         // Adding bottom margin in case the schedule
-        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)) {
+        if (end.get(Calendar.DAY_OF_YEAR) > current.get(Calendar.DAY_OF_YEAR)
+                || end.get(Calendar.YEAR) > current.get(Calendar.YEAR)) {
             if (end.get(Calendar.HOUR_OF_DAY) != 0 || end.get(Calendar.MINUTE) != 0) {
                 height += getResources().getInteger(R.integer.timeline_margin_bottom) + 2;
             }
@@ -498,11 +420,7 @@ public class CalendarTabFragment extends Fragment
 
     // Displays the deadlines of assignments whose deadlines are in the middle of today.
     public void displayDeadlines(List<StudentAssignment> assignments) {
-        // TODO: assignments should be sorted by deadline and significance. If deadlines are the same,
-        // TODO: Should display higher deadline assignment on top.
-        // TODO: When displaying assignments of same deadlines, should deal with them exclusively.
         for (StudentAssignment assignment : assignments) {
-            // TODO: these deadlines should be filtered before being passed to this method.
             if ((assignment.getDue().get(Calendar.YEAR) < current.get(Calendar.YEAR))
                     || assignment.getDue().get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR)
                     || assignment.getDue().get(Calendar.YEAR) > current.get(Calendar.YEAR)
@@ -720,5 +638,82 @@ public class CalendarTabFragment extends Fragment
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), requestCode++, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    private void loadData() {
+
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+
+        Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
+        call.enqueue(new Callback<List<StudentAssignment>>() {
+            @Override
+            public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
+                if(response.isSuccessful()) {
+                    assignments.clear();
+                    assignments.addAll(response.body());
+                    displayCurrentDate();
+                    setAlarm();
+                }
+                else {
+                    Log.e("CalendarTabFragment", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StudentAssignment>> call, Throwable t) {
+                Log.e("123", t.getMessage());
+            }
+        });
+
+        Call<List<PersonalSchedule>> call2 = api.getStudentPersonalSchedules(user.getID());
+        call2.enqueue(new Callback<List<PersonalSchedule>>() {
+            @Override
+            public void onResponse(Call<List<PersonalSchedule>> call, Response<List<PersonalSchedule>> response) {
+                if(response.isSuccessful()) {
+                    personalSchedules.clear();
+                    personalSchedules.addAll(response.body());
+                    Log.d("123", response.body().toString());
+                    displayCurrentDate();
+                    setAlarm();
+                }
+                else {
+                    Log.e("CalendarTabFragment2", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PersonalSchedule>> call, Throwable t) {
+                Log.e("123", t.getMessage());
+            }
+        });
+
+        Call<List<TimeForAssignment>> call3 = api.getStudentTimeForAssignments(user.getID());
+        call3.enqueue(new Callback<List<TimeForAssignment>>() {
+            @Override
+            public void onResponse(Call<List<TimeForAssignment>> call, Response<List<TimeForAssignment>> response) {
+                if(response.isSuccessful()) {
+                    timeForAssignments.clear();
+                    timeForAssignments.addAll(response.body());
+                    Log.d("123", response.body().toString());
+                    displayCurrentDate();
+                    setAlarm();
+                }
+                else {
+                    Log.e("CalendarTabFragment3", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TimeForAssignment>> call, Throwable t) {
+                Log.e("123", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 }

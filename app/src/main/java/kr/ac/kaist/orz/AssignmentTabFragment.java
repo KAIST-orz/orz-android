@@ -62,7 +62,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
      *
      * @return A new instance of fragment AssignmentTabFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AssignmentTabFragment newInstance() {
         AssignmentTabFragment fragment = new AssignmentTabFragment();
         Bundle args = new Bundle();
