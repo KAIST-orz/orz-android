@@ -39,7 +39,9 @@ public class StudentAssignment extends Assignment implements Serializable {
 
     public int getTimeEstimation() { return timeEstimation; }
 
-    public List<Integer> getAlarms() {
-        return alarms;
-    }
+    public void setTimeEstimation(int t) { timeEstimation = t; }
+
+    public List<Integer> getAlarms() { return alarms; }
+
+    public void addAlarm(int alarm) { alarms.add(alarm); }
 }
