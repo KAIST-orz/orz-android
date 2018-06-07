@@ -86,7 +86,7 @@ public interface OrzApi {
     );
 
     @GET("api/v1/assignments/{assignmentID}")
-    Call<Assignment> getAssignment(
+    Call<Map<String, String>> getAssignment(
             @Path("assignmentID") int assignmentID
     );
 
