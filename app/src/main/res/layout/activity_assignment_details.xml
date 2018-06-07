@@ -104,6 +104,13 @@
                     android:layout_height="wrap_content"
                     android:text="Other students took ..."
                     android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/textView_estimated_time_comparision"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Your schedule does not fulfill estimated time"
+                    android:textColor="@android:color/holo_red_light" />
             </LinearLayout>
 
             <ListView
