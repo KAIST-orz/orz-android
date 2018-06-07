@@ -92,6 +92,12 @@ public interface OrzApi {
             @Body Map<String, String> body
     );
 
+    @PUT("api/v1/courses/{courseID}")
+    Call<Void> updateLecture(
+            @Path("courseID") int courseID,
+            @Body Map<String, String> body
+    );
+
     @POST("api/v1/courses/{courseID}/assignments")
     Call<Void> registerAssignment(
             @Path("courseID") int courseID,
@@ -99,7 +105,7 @@ public interface OrzApi {
     );
 
     @GET("api/v1/assignments/{assignmentID}")
-    Call<Assignment> getAssignment(
+    Call<Map<String, String>> getAssignment(
             @Path("assignmentID") int assignmentID
     );
 
@@ -153,5 +159,23 @@ public interface OrzApi {
     Call<Alarms> putStudentAlarms(
             @Path("userID") int userID,
             @Body Map<String, String> body
+    );
+
+    //해당 코스에 등록된 과제의 리스트를 가져옴
+    @GET("api/v1/courses/{courseID}/assignments")
+    Call<List<Assignment>> getCourseAssignment(
+            @Path("courseID") int courseID
+    );
+
+    //Lecturer에 의해 course 삭제시에 쓰임
+    @DELETE("api/v1/courses/{courseID}")
+    Call<Void> deleteCourse(
+            @Path("courseID") int courseID
+    );
+
+    //Lecturer에 의해 assignment 삭제시에 쓰임
+    @DELETE("api/v1/assignments/{assignmentID}")
+    Call<Void> deleteAssignment(
+            @Path("assignmentID") int assignmentID
     );
 }
