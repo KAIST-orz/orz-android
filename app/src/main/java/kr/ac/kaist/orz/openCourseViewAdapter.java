@@ -70,10 +70,10 @@ public class openCourseViewAdapter extends ArrayAdapter {
                 // Communicate with the server to subscribe a course.
                 OrzApi api = ApplicationController.getInstance().getApi();
                 User user = ApplicationController.getInstance().getUser();
-                Call<List<Course>> call = api.subscribeCourses(user.getID(), courseToAdd.getID());
-                call.enqueue(new Callback<List<Course>>() {
+                Call<Void> call = api.subscribeCourses(user.getID(), courseToAdd.getID());
+                call.enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                    public void onResponse(Call<Void> call, Response<Void> response) {
                         if(response.isSuccessful()) {
                             // Show a toast message notifying successful subscription.
                             Toast.makeText(getContext(), "Successfully subscribed course " + courseToAdd.getName().toUpperCase(), Toast.LENGTH_LONG).show();
@@ -83,7 +83,7 @@ public class openCourseViewAdapter extends ArrayAdapter {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Course>> call, Throwable t) {
+                    public void onFailure(Call<Void> call, Throwable t) {
                         Toast.makeText(getContext(), "Failed to connect the server.", Toast.LENGTH_LONG).show();
                     }
                 });
