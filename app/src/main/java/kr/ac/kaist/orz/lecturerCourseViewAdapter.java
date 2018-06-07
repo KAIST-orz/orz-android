@@ -5,9 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -35,7 +33,7 @@ public class lecturerCourseViewAdapter extends ArrayAdapter {
 
         //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
         TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
-        TextView courseCodeView = (TextView) customView.findViewById(R.id.CourseCode);
+        TextView courseCodeView = (TextView) customView.findViewById(R.id.CourseCodeProfessor);
         TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
 
         //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
