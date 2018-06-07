@@ -3,6 +3,7 @@ package kr.ac.kaist.orz;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.User;
 
@@ -47,6 +49,28 @@ public class LoginActivity extends AppCompatActivity {
                     if(ApplicationController.getInstance().getUser().getUserType() == 2) {
                         Intent intent = new Intent(getApplicationContext(), OrzMainActivity.class);
                         startActivity(intent);
+
+                        OrzApi api = ApplicationController.getInstance().getApi();
+                        User user = ApplicationController.getInstance().getUser();
+
+                        // Load alarms
+                        Call<Alarms> call2 = api.getStudentAlarms(user.getID());
+                        call2.enqueue(new Callback<Alarms>() {
+                            @Override
+                            public void onResponse(Call<Alarms> call, Response<Alarms> response) {
+                                if(response.isSuccessful()) {
+                                    ApplicationController.getInstance().setAlarms(response.body());
+                                }
+                                else {
+                                    Log.e("orzApi", response.message());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Alarms> call, Throwable t) {
+                                Log.e("orzApi", t.getMessage());
+                            }
+                        });
                     }
                     else {
                         Intent intent = new Intent(getApplicationContext(), LecturerCoursesActivity.class);

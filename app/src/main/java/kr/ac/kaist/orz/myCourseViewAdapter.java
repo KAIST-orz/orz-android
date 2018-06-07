@@ -18,90 +18,90 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 //This is custom listview adaptor for ListView in activity_my_courses.xml, using mycourse.xml as template
-public class myCourseViewAdapter extends ArrayAdapter {
-    private Context mainactivity_context;
-    List<Course> list;
+public class myCourseViewAdapter extends ArrayAdapter<Course> {
+    List<Course> myCourses;
+
+    private class ViewHolder {
+        TextView courseNameText;
+        TextView courseCodeProfessorText;
+        Button addDeleteButton;
+    }
 
     // ListViewAdapter의 생성자
     public myCourseViewAdapter(Context context, List<Course> courses) {
         super(context, R.layout.mycourse, courses);
-        mainactivity_context = context;
-        list = courses;
+        myCourses = courses;
     }
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View customView = inflater.inflate(R.layout.mycourse, parent, false);
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(R.layout.mycourse, parent, false);
 
-        //화면에 뿌려줄 정보 (myCourseInformation)
-        Course aItem = (Course) getItem(position);
+            viewHolder = new ViewHolder();
+            viewHolder.courseNameText = convertView.findViewById(R.id.CourseName);
+            viewHolder.courseCodeProfessorText = convertView.findViewById(R.id.CourseCodeProfessor);
+            viewHolder.addDeleteButton = convertView.findViewById(R.id.myCourse_AddDelete);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
-        //View template으로 사용되는 mycourse.xml에서, 각 요소들을 따옴
-        TextView courseNameView = (TextView) customView.findViewById(R.id.CourseName);
-        TextView courseCodeView = (TextView) customView.findViewById(R.id.CourseCode);
-        TextView courseLecturerView = (TextView) customView.findViewById(R.id.CourseLecturer);
+        // The course item that contains information about a course.
+        Course courseItem = myCourses.get(position);
 
-        //mycourse.xml에서 정해준 TextView들에게 정보를 뿌려줌
-        courseNameView.setText(aItem.getName());
-        courseCodeView.setText(aItem.getCode());
-        courseLecturerView.setText(aItem.getProfessor());
+        // Fill in the TextViews with the course information.
+        viewHolder.courseNameText.setText(courseItem.getName());
+        viewHolder.courseCodeProfessorText.setText(courseItem.getCode() + " · " + courseItem.getProfessor());
+        viewHolder.addDeleteButton.setText("-");    // For My Courses screen, the button deletes courses.
 
-        //삭제 혹은 구독 버튼 클릭 시 나타날 이벤트 구현
-        Button addDel_button = (Button) customView.findViewById(R.id.myCourse_AddDelete);
-        addDel_button.setTag(position);
-        addDel_button.setOnClickListener(new Button.OnClickListener() {
+        // The event listener for button click events.
+        viewHolder.addDeleteButton.setTag(position);
+        viewHolder.addDeleteButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
             public void onClick(View view) {
-                int position=(Integer)view.getTag();
-                int courseID_toDelete = list.get(position).getID();
+                int position= (Integer) view.getTag();
+                final Course myCourse = myCourses.get(position);
 
-                //삭제 혹은 구독하려고 클릭한 course의 ID 출력 (for testing)
-                //Toast.makeText(mainactivity_context, Integer.toString(courseID_toDelete),Toast.LENGTH_LONG).show();
-
-                //Intent에 삭제 혹은 구독할 course의 ID를 담아 다른 activity로 전달할 수 있다. (아래 코드 부분에 해당됨)
-                /*
-                Intent intent = new Intent(
-                        mainactivity_context, // 현재화면의 제어권자
-                        OrzMainActivity.class); // 다음넘어갈 화면
-                intent.putExtra("ID of course-to-be-modified", courseID_toModify);
-
-                mainactivity_context.startActivity(intent); //다음 화면으로 넘어감
-                */
-
+                // Communicate with the server to delete (unsubscribe) the course.
                 OrzApi api = ApplicationController.getInstance().getApi();
                 User user = ApplicationController.getInstance().getUser();
-                Call<Void> call = api.deleteStudentCourses(user.getID(),courseID_toDelete);
-
-                Toast.makeText(mainactivity_context, "Course deletion successful!",Toast.LENGTH_LONG).show();
-
+                Call<Void> call = api.deleteStudentCourses(user.getID(), myCourse.getID());
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(response.isSuccessful()) {
-                            //Adapter에서 mainActivity의 메소드 부르기 (화면 refresh)
-                            //[Ref] https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter
-                            if(mainactivity_context instanceof MyCoursesActivity) {
-                                ((MyCoursesActivity) mainactivity_context).refreshView();
+                            // Show a toast message notifying successful deletion.
+                            Toast.makeText(getContext(), "Successfully deleted course " + myCourse.getName().toUpperCase(),Toast.LENGTH_LONG).show();
+
+                            // Refresh the activity's view to excluded deleted course.
+                            Context context = getContext();
+                            if (context instanceof MyCoursesActivity) {
+                                ((MyCoursesActivity) context).refreshView();
                             }
                         }
                         else {
+                            // Show a message alerting failure.
+                            Toast.makeText(getContext(), "Failed to delete course. ", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
+                        // Show a message alerting failure.
+                        Toast.makeText(getContext(), "Failed to delete course. ", Toast.LENGTH_LONG).show();
                     }
                 });
 
             }
         });
 
-
-        return customView;
+        return convertView;
     }
 }
 
 
 //Reference (Custom ListView Adapter) : https://www.youtube.com/watch?v=nOdSARCVYic
-

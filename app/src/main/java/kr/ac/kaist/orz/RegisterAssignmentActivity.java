@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -25,11 +26,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterAssignmentActivity extends AppCompatActivity {
+    private Calendar currentDue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_assignment);
+
+        // Show +7 days after this day when the user enters this activity.
+        currentDue = Calendar.getInstance();
+        currentDue.add(Calendar.DAY_OF_YEAR, 7);
+        currentDue.set(Calendar.HOUR_OF_DAY, 23);
+        currentDue.set(Calendar.MINUTE, 59);
     }
 
     public void selectTime(final View v) {
@@ -53,7 +61,7 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
                                         Date date = startCalendar.getTime();
 
                                         SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
-                                        ((Button)v).setText(parser.format(date));
+                                        ((TextView) v).setText(parser.format(date));
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
@@ -69,12 +77,12 @@ public class RegisterAssignmentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int courseID = intent.getExtras().getInt("courseID");
         EditText schedule_name = findViewById(R.id.editText_assignment_name);
-        Button due_date = findViewById(R.id.button_due_date);
+        TextView due_date = findViewById(R.id.button_due_date);
         EditText description = findViewById(R.id.editText_description);
 
         if(schedule_name.length() == 0)
             Toast.makeText(this, "assignment name can not be empty", Toast.LENGTH_LONG).show();
-        else if(due_date.getText().equals("start time"))
+        else if(due_date.getText().equals("due date"))
             Toast.makeText(this, "due date can not be empty", Toast.LENGTH_LONG).show();
         else if(description.length() == 0)
             description.setText("no description");

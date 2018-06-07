@@ -1,5 +1,6 @@
 package kr.ac.kaist.orz;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
@@ -85,7 +86,7 @@ public interface OrzApi {
     );
 
     @GET("api/v1/assignments/{assignmentID}")
-    Call<Map<String, String>> getAssignment(
+    Call<Assignment> getAssignment(
             @Path("assignmentID") int assignmentID
     );
 
@@ -93,6 +94,13 @@ public interface OrzApi {
     Call<Void> updateAssignment(
             @Path("assignmentID") int assignmentID,
             @Body Map<String, String> body
+    );
+
+    @PUT("api/v1/students/{userID}/assignments/{assignmentID}")
+    Call<Void> updateStudentAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Body Map<String, Object> body
     );
 
     // My Courses 에 있는 삭제 버튼을 누를 시, DB에 있는 해당 코스를 삭제함
@@ -123,7 +131,6 @@ public interface OrzApi {
             @Path("courseID") int courseID
     );
 
-    //해당 코스에 등록된 과제의 리스트를 가져옴
     @GET("api/v1/courses/{courseID}/assignments")
     Call<List<Assignment>> getCourseAssignment(
             @Path("courseID") int courseID
@@ -139,5 +146,16 @@ public interface OrzApi {
     @DELETE("api/v1/assignments/{assignmentID}")
     Call<Void> deleteAssignment(
             @Path("assignmentID") int assignmentID
+    );
+
+    @GET("api/v1/students/{userID}/alarms")
+    Call<Alarms> getStudentAlarms(
+            @Path("userID") int userID
+    );
+
+    @PUT("api/v1/students/{userID}/alarms")
+    Call<Alarms> putStudentAlarms(
+            @Path("userID") int userID,
+            @Body Map<String, String> body
     );
 }
