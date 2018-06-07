@@ -83,7 +83,6 @@ public class MyCoursesActivity extends AppCompatActivity {
                     m_Adapter.notifyDataSetChanged();
                 }
                 else {
-                    Toast.makeText(MyCoursesActivity.this, "Failed to load your courses. ", Toast.LENGTH_LONG).show();
                 }
             }
 
