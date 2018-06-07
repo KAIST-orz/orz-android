@@ -52,8 +52,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
     Intent intent;
     StudentAssignment assignment;
 
-    int v_original_height;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
