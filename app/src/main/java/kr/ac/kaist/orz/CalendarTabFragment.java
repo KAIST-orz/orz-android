@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.Schedule;
@@ -100,9 +101,6 @@ public class CalendarTabFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setAlarm();
-        setAlarm();
-
         // When this fragment is first created, instantiate a new Calendar object.
         current = Calendar.getInstance();
         numOfViews = -1;     // Initialize to -1 to indicate the initiation.
@@ -121,6 +119,7 @@ public class CalendarTabFragment extends Fragment
                 if(response.isSuccessful()) {
                     assignments.addAll(response.body());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment", response.message());
@@ -141,6 +140,7 @@ public class CalendarTabFragment extends Fragment
                     personalSchedules.addAll(response.body());
                     Log.d("123", response.body().toString());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment2", response.message());
@@ -161,6 +161,7 @@ public class CalendarTabFragment extends Fragment
                     timeForAssignments.addAll(response.body());
                     Log.d("123", response.body().toString());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment3", response.message());
@@ -290,6 +291,7 @@ public class CalendarTabFragment extends Fragment
             timeForAssignments.add((TimeForAssignment) schedule);
         }
         displayCurrentDate();
+        setAlarm();
     }
 
     // Remove anything (schedule, assignment) displayed on the scheduleLayout.
@@ -656,13 +658,59 @@ public class CalendarTabFragment extends Fragment
             alarmManager.cancel(pendingIntent);
         }
 
-        Calendar c1 = Calendar.getInstance();
-        c1.add(Calendar.SECOND, 4);
-        setSingleAlarm(c1, "1", "111");
-        Calendar c2 = Calendar.getInstance();
-        c2.add(Calendar.SECOND, 8);
-        setSingleAlarm(c2, "2", "222");
+        Calendar now = Calendar.getInstance();
+        Alarms userAlarms = ApplicationController.getInstance().getAlarms();
 
+        for (PersonalSchedule p : personalSchedules) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getPersonalScheduleAlarm());
+            alarms.addAll(p.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(p.getStart().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            p.getName(),
+                            "After "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
+
+        for (TimeForAssignment t : timeForAssignments) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getTimeForAssignmentAlarm());
+            alarms.addAll(t.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(t.getStart().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            "Time for "+t.getAssignmentName(),
+                            t.getCourseName()+"\nAfter "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
+
+        for (StudentAssignment s : assignments) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getAssignmentDueAlarm());
+            alarms.addAll(s.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(s.getDue().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            "Due for "+s.getName(),
+                            s.getCourseName()+"\nAfter "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
     }
 
     public void setSingleAlarm(Calendar calendar, String title, String message) {
