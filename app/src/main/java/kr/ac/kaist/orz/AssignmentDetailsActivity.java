@@ -104,6 +104,8 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
         adapter = new TextArrayAdapter(this, time_for_assignment);
         listView2.setAdapter(adapter);
 
+        // TODO: get appropriate time_for_assignment array (make it sorted), and need to pass as extra in the intent.
+
         listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
