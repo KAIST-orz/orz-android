@@ -26,6 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
+    int assignmentID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_assignment_details_lecturer);
 
         Intent intent = getIntent();
-        int assignmentID = intent.getExtras().getInt("assignmentID");
+        assignmentID = intent.getExtras().getInt("assignmentID");
 
         OrzApi api = ApplicationController.getInstance().getApi();
         Call<Assignment> call = api.getAssignment(assignmentID);
@@ -121,11 +122,11 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if(response.isSuccessful() && response.code()==200) {
-                        Toast.makeText(AssignmentDetailsLecturerActivity.this, "assignment created", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AssignmentDetailsLecturerActivity.this, "assignment updated", Toast.LENGTH_LONG).show();
                         finish();
                     }
                     else {
-                        Toast.makeText(AssignmentDetailsLecturerActivity.this, "assignment creation failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AssignmentDetailsLecturerActivity.this, "assignment update failed " + response.code(), Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -135,5 +136,45 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void delete(View v) {
+        //Toast.makeText(this, "lecture deleted", Toast.LENGTH_LONG).show();
+
+        final OrzApi api = ApplicationController.getInstance().getApi();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Are you sure to delete this assignment?");
+        adb.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Call<Void> call = api.deleteAssignment(assignmentID);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            Toast.makeText(AssignmentDetailsLecturerActivity.this, "Successfully deleted", Toast.LENGTH_LONG).show();
+
+                            Intent intent = new Intent(AssignmentDetailsLecturerActivity.this, LecturerCoursesActivity.class);
+                            startActivity(intent);
+
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(AssignmentDetailsLecturerActivity.this, "Deletion failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(AssignmentDetailsLecturerActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        adb.setNegativeButton("no", null);
+        adb.show();
+
+        finish();
     }
 }
