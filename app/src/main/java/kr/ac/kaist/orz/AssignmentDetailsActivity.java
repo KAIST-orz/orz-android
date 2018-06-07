@@ -17,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +85,12 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
+        final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
+        final Integer[] times_int = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
+
+        notification_time.add(times[Arrays.asList(times_int).indexOf(ApplicationController.getInstance().getAlarms().getAssignmentDueAlarm())] + " (default)");
+
         for(Integer alarm : assignment.getAlarms()) {
-            final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
-            final Integer[] times_int = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
             notification_time.add(times[ Arrays.asList(times_int).indexOf(alarm) ]);
         }
 
@@ -101,12 +106,43 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                 if(notification_time.get(position).equals("Add more notification")) {
                     selectAlarm();
                 }
-                else {
+                else if(position > 0) {
                     adb.setTitle("remove notification?");
                     adb.setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+
+
+                                    OrzApi api = ApplicationController.getInstance().getApi();
+                                    User user = ApplicationController.getInstance().getUser();
+                                    Map<String, Object> body = new HashMap<>();
+                                    body.put("timeEstimation", String.valueOf(assignment.getTimeEstimation()));
+                                    body.put("significance", String.valueOf(assignment.getSignificance()));
+                                    assignment.removeAlarm(position);
+                                    body.put("alarms", assignment.getAlarms());
+                                    Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
+                                    call.enqueue(new Callback<Void>() {
+                                        @Override
+                                        public void onResponse(Call<Void> call, Response<Void> response) {
+                                            if(response.isSuccessful() && response.code()==200) {
+                                                Toast.makeText(AssignmentDetailsActivity.this, "alarm remove success", Toast.LENGTH_LONG).show();
+                                                notification_time.remove(position);
+                                                adapter1.notifyDataSetChanged();
+                                                setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_notification));
+                                            }
+                                            else {
+                                                Toast.makeText(AssignmentDetailsActivity.this, "alarm remove failed " + response.code(), Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Void> call, Throwable t) {
+                                            Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+
+
                                     Toast.makeText(getApplicationContext(), "remove alarm #" + String.valueOf(position), Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -158,6 +194,38 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         TextView description = findViewById(R.id.textView_description);
         description.setText(assignment.getDescription());
+
+        RatingBar ratingBar = findViewById(R.id.ratingBar);
+        ratingBar.setRating(assignment.getSignificance());
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, final float rating, boolean fromUser) {
+                OrzApi api = ApplicationController.getInstance().getApi();
+                User user = ApplicationController.getInstance().getUser();
+                Map<String, Object> body = new HashMap<>();
+                body.put("timeEstimation", String.valueOf(assignment.getTimeEstimation()));
+                body.put("significance", String.valueOf((int) rating));
+                body.put("alarms", assignment.getAlarms());
+                Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            assignment.setSignificance((int) rating);
+                            Toast.makeText(AssignmentDetailsActivity.this, "rating change success", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            Toast.makeText(AssignmentDetailsActivity.this, "rating change failed " + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 
     public void selectAlarm() {
@@ -178,6 +246,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                         body.put("timeEstimation", String.valueOf(assignment.getTimeEstimation()));
                         body.put("significance", String.valueOf(assignment.getSignificance()));
                         assignment.addAlarm(times_int[lw.getCheckedItemPosition()]);
+                        Collections.sort(assignment.getAlarms());
                         body.put("alarms", assignment.getAlarms());
                         Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
                         call.enqueue(new Callback<Void>() {

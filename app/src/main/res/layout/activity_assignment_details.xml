@@ -56,6 +56,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:layout_marginBottom="@dimen/details_layout_margin_vertical"
+                android:layout_marginTop="@dimen/details_layout_margin_vertical" >
+
+                <TextView
+                    android:id="@+id/textView_significance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Significance"
+                    android:textColor="@android:color/black"/>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:rating="0"
+                    android:stepSize="1" />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:paddingBottom="@dimen/details_layout_margin_vertical"
                 android:paddingTop="@dimen/details_layout_margin_vertical">
 

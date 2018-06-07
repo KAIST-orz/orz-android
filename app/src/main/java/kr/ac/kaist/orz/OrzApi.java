@@ -79,6 +79,12 @@ public interface OrzApi {
             @Body Map<String, String> body
     );
 
+    @PUT("api/v1/courses/{courseID}")
+    Call<Void> updateLecture(
+            @Path("courseID") int courseID,
+            @Body Map<String, String> body
+    );
+
     @POST("api/v1/courses/{courseID}/assignments")
     Call<Void> registerAssignment(
             @Path("courseID") int courseID,
@@ -131,6 +137,18 @@ public interface OrzApi {
             @Path("courseID") int courseID
     );
 
+    @GET("api/v1/students/{userID}/alarms")
+    Call<Alarms> getStudentAlarms(
+            @Path("userID") int userID
+    );
+
+    @PUT("api/v1/students/{userID}/alarms")
+    Call<Alarms> putStudentAlarms(
+            @Path("userID") int userID,
+            @Body Map<String, String> body
+    );
+
+    //해당 코스에 등록된 과제의 리스트를 가져옴
     @GET("api/v1/courses/{courseID}/assignments")
     Call<List<Assignment>> getCourseAssignment(
             @Path("courseID") int courseID
@@ -146,16 +164,5 @@ public interface OrzApi {
     @DELETE("api/v1/assignments/{assignmentID}")
     Call<Void> deleteAssignment(
             @Path("assignmentID") int assignmentID
-    );
-
-    @GET("api/v1/students/{userID}/alarms")
-    Call<Alarms> getStudentAlarms(
-            @Path("userID") int userID
-    );
-
-    @PUT("api/v1/students/{userID}/alarms")
-    Call<Alarms> putStudentAlarms(
-            @Path("userID") int userID,
-            @Body Map<String, String> body
     );
 }
