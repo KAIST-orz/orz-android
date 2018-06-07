@@ -68,9 +68,22 @@ public interface OrzApi {
             @Path("userID") int userID
     );
 
+    @POST("api/v1/students/{userID}/personal-schedules")
+    Call<Void> registerStudentPersonalSchedule(
+            @Path("userID") int userID,
+            @Body Map<String, Object> body
+    );
+
     @GET("api/v1/students/{userID}/time-for-assignments")
     Call<List<TimeForAssignment>> getStudentTimeForAssignments(
             @Path("userID") int userID
+    );
+
+    @POST("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
+    Call<Void> registerStudentTimeForAssignment(
+            @Path("userID") int userID,
+            @Path("assignmentID") int assignmentID,
+            @Body Map<String, Object> body
     );
  
     @POST("api/v1/lecturers/{userID}/courses")

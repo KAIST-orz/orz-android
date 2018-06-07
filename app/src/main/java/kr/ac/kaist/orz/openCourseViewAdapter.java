@@ -79,8 +79,6 @@ public class openCourseViewAdapter extends ArrayAdapter {
                             Toast.makeText(getContext(), "Successfully subscribed course " + courseToAdd.getName().toUpperCase(), Toast.LENGTH_LONG).show();
                         }
                         else {
-                            // Show a toast message notifying failure.
-                            Toast.makeText(getContext(), "Failed to subscribe the course. ", Toast.LENGTH_LONG).show();
                         }
                     }
 

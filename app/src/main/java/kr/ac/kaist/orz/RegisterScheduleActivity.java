@@ -1,22 +1,159 @@
 package kr.ac.kaist.orz;
 
+import android.app.Application;
 import android.content.DialogInterface;
+import android.support.design.widget.SubtitleCollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import kr.ac.kaist.orz.models.Alarms;
+import kr.ac.kaist.orz.models.Assignment;
+import kr.ac.kaist.orz.models.StudentAssignment;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RegisterScheduleActivity extends AppCompatActivity {
+    // The index in the list of schedule types (custom/time for assignment).
+    private int currentTypePosition = 0;
+
+    // The collapsing toolbar layout.
+    private SubtitleCollapsingToolbarLayout collapsingToolbarLayout;
+
+    private List<StudentAssignment> assignments = new ArrayList<StudentAssignment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_schedule);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // CollapstingToolbarLayout
+        collapsingToolbarLayout
+                = (SubtitleCollapsingToolbarLayout) findViewById(R.id.subtitlecollapsingtoolbarlayout);
+
+        // Set text colors.
+        int titleColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        int subtitleColor = ContextCompat.getColor(this, R.color.colorButtonNormal);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setCollapsedSubtitleTextColor(subtitleColor);
+        collapsingToolbarLayout.setExpandedTitleTextColor(titleColor);
+        collapsingToolbarLayout.setExpandedSubtitleTextColor(subtitleColor);
+
+        // Set title.
+        collapsingToolbarLayout.setTitle("Register a custom schedule");
+
+        // Display 'X' button on toolbar.
+        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        // The ListView to show assignments.
+        final ListView listView = findViewById(R.id.listView_schedule_type);
+
+        // Get list of assignments from the server.
+        OrzApi api = ApplicationController.getInstance().getApi();
+        User user = ApplicationController.getInstance().getUser();
+        Call<List<StudentAssignment>> call = api.getStudentAssignments(user.getID());
+        call.enqueue(new Callback<List<StudentAssignment>>() {
+            @Override
+            public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
+                if (response.isSuccessful()) {
+                    // Get all assignments and sort it by due date.
+                    assignments.addAll(response.body());
+                    Collections.sort(assignments, StudentAssignment.DUE_COMPARATOR);
+
+                    // Add "<course name>\n<assignment name> strings to scheduleTypes list.
+                    ArrayList<String> scheduleTypes = new ArrayList<>();
+                    scheduleTypes.add("Custom schedule");
+                    for (Assignment assignment : assignments) {
+                        scheduleTypes.add(assignment.getCourseName() + "\n" + assignment.getName());
+                    }
+
+                    ArrayAdapter<String> scheduleTypeAdapter
+                            = new ArrayAdapter<>(RegisterScheduleActivity.this, R.layout.schedule_type_list_item, scheduleTypes);
+                    listView.setAdapter(scheduleTypeAdapter);
+
+                    // Do not allow multiple choices.
+                    listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                    // Check "Custom schedule" by default.
+                    listView.setItemChecked(0, true);
+                    setListViewHeightBasedOnChildren(listView);
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StudentAssignment>> call, Throwable t) {
+
+            }
+        });
+
+        // TODO: Set exact color.
+        // Set default background color: background for personal schedule.
+        int backgroundColor = ContextCompat.getColor(this, R.color.colorAccent);
+        collapsingToolbarLayout.setContentScrimColor(backgroundColor);
+        collapsingToolbarLayout.setBackgroundColor(backgroundColor);
+
+        // Set OnItemSelectedListener.
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if (currentTypePosition == position) {
+                    // Do nothing.
+                } else {
+                    // TODO: Set the background color of the action bar and modify fields of 'schedule'.
+                    currentTypePosition = position;
+
+                    EditText scheduleNameText = findViewById(R.id.editText_schedule_name);
+                    scheduleNameText.setEnabled(false);
+
+                    if (position == 0) {
+                        collapsingToolbarLayout.setTitle("Register a custom schedule");
+                        collapsingToolbarLayout.setSubtitle("");
+                        scheduleNameText.setEnabled(true);
+                        scheduleNameText.setHint("Schedule Name");
+                    } else {
+                        collapsingToolbarLayout.setTitle(assignments.get(position - 1).getCourseName());
+                        collapsingToolbarLayout.setSubtitle("Register time to do " + assignments.get(position - 1).getName());
+                        scheduleNameText.setEnabled(false);
+                        scheduleNameText.setHint("Time to do " + assignments.get(position - 1).getName());
+                    }
+                }
+            }
+        });
     }
 
     public void selectTime(final View v) {
@@ -34,9 +171,13 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //Toast.makeText(getApplicationContext(), "test2", Toast.LENGTH_LONG).show();
-                                        String s = String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + " " + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute());
-                                        ((Button)v).setText(s);
+                                        Calendar cal = Calendar.getInstance();
+                                        cal.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth(), tp.getCurrentHour(), tp.getCurrentMinute());
+                                        Date date = cal.getTime();
+
+                                        SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+                                        ((TextView) v).setText(parser.format(date));
+
                                         Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -49,20 +190,82 @@ public class RegisterScheduleActivity extends AppCompatActivity {
         adb.show();
     }
 
-    public void create(View v) {
+    public void create(View v) throws ParseException {
         EditText schedule_name = findViewById(R.id.editText_schedule_name);
-        Button start_time = findViewById(R.id.button_start_time);
-        Button end_time = findViewById(R.id.button_end_time);
+        TextView start_time = findViewById(R.id.textView_start_time);
+        TextView end_time = findViewById(R.id.textView_end_time);
 
         if(schedule_name.length() == 0)
-            Toast.makeText(this, "schedule name can not be empty", Toast.LENGTH_LONG).show();
-        else if(start_time.getText().equals("start time"))
-            Toast.makeText(this, "start time can not be empty", Toast.LENGTH_LONG).show();
-        else if(end_time.getText().equals("end time"))
-            Toast.makeText(this, "end time can not be empty", Toast.LENGTH_LONG).show();
+            if (currentTypePosition == 0) {
+                Toast.makeText(this, "Schedule name can not be empty", Toast.LENGTH_LONG).show();
+            }
+        else if(start_time.getText().equals("Start Time"))
+            Toast.makeText(this, "Start time can not be empty", Toast.LENGTH_LONG).show();
+        else if(end_time.getText().equals("End Time"))
+            Toast.makeText(this, "End time can not be empty", Toast.LENGTH_LONG).show();
         else {
-            Toast.makeText(this, "schedule created", Toast.LENGTH_LONG).show();
+            // Post the new schedule.
+            OrzApi api = ApplicationController.getInstance().getApi();
+            User user = ApplicationController.getInstance().getUser();
+            Map<String, Object> body = new HashMap<>();
+            List<Integer> alarms = new ArrayList<>();
+
+            // Put start and end time.
+            SimpleDateFormat parser1 = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+            SimpleDateFormat parser2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            body.put("start", parser2.format(parser1.parse(start_time.getText().toString())));
+            body.put("end", parser2.format(parser1.parse(end_time.getText().toString())));
+
+            Call<Void> call;
+            if (currentTypePosition == 0) { // Post a personal schedule.
+                alarms.add(ApplicationController.getInstance().getAlarms().getPersonalScheduleAlarm());
+                body.put("name", schedule_name.getText().toString());
+                body.put("alarms", alarms);
+                call = api.registerStudentPersonalSchedule(user.getID(), body);
+            } else {    // Post a time for assignment.
+                alarms.add(ApplicationController.getInstance().getAlarms().getTimeForAssignmentAlarm());
+                body.put("studentAssignment", assignments.get(currentTypePosition - 1));
+                body.put("alarms", alarms);
+                call = api.registerStudentTimeForAssignment(user.getID(), assignments.get(currentTypePosition - 1).getID(), body);
+            }
+
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(RegisterScheduleActivity.this, "Successfully registered your schedule. ", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(RegisterScheduleActivity.this, "Failed to register your schedule. ", Toast.LENGTH_LONG).show();
+                }
+            });
+
             finish();
         }
+    }
+
+     public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
 }
