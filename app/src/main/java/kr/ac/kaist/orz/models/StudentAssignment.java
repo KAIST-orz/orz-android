@@ -30,6 +30,8 @@ public class StudentAssignment extends Assignment implements Serializable {
         return significance;
     }
 
+    public void setSignificance(int sig) { significance = sig; }
+
     private static class SignificanceComparator implements Comparator<StudentAssignment> {
         @Override
         public int compare(StudentAssignment a1, StudentAssignment a2) {
@@ -44,4 +46,6 @@ public class StudentAssignment extends Assignment implements Serializable {
     public List<Integer> getAlarms() { return alarms; }
 
     public void addAlarm(int alarm) { alarms.add(alarm); }
+
+    public void removeAlarm(int index) { alarms.remove(index); }
 }
