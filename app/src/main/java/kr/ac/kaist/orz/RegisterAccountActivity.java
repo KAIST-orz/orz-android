@@ -36,7 +36,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
         OrzApi api = ApplicationController.getInstance().getApi();
 
         Spinner spinner = findViewById(R.id.spinner_schools);
-        adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, name_list);
+        adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, name_list);
         spinner.setAdapter(adapter);
 
         final List<School> list = new ArrayList<School>();
