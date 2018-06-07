@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     Alarms a = response.body();
                     alarms = new int[] {a.getAssignmentDueAlarm(), a.getPersonalScheduleAlarm(), a.getTimeForAssignmentAlarm()};
+                    updateText();
                 }
                 else {
                     Log.e("orzApi", response.message());
@@ -82,9 +84,24 @@ public class NotificationSettingsActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "time set to ".concat(checkedItem.toString()), Toast.LENGTH_LONG).show();
                         alarms[type] = checkedTimeValue;
                         alarmsUpdated();
+                        updateText();
                     }
                 });
         adb.show();
+    }
+
+    private void updateText() {
+        final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
+        final Integer[] timesValue = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
+
+        TextView assignmnetDueText = (TextView) findViewById(R.id.button_assignment_due);
+        assignmnetDueText.setText(getResources().getText(R.string.notification_settings_assignment_due)+" : "+times[Arrays.asList(timesValue).indexOf(alarms[0])]);
+
+        TextView personalScheduleText = (TextView) findViewById(R.id.button_personal_schedule);
+        personalScheduleText.setText(getResources().getText(R.string.notification_settings_personal_schedule)+" : "+times[Arrays.asList(timesValue).indexOf(alarms[1])]);
+
+        TextView timeForAssignmentText = (TextView) findViewById(R.id.button_time_for_assignment);
+        timeForAssignmentText.setText(getResources().getText(R.string.notification_settings_time_for_assignment)+" : "+times[Arrays.asList(timesValue).indexOf(alarms[2])]);
     }
 
     private void alarmsUpdated() {
