@@ -85,9 +85,12 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
+        final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
+        final Integer[] times_int = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
+
+        notification_time.add(times[Arrays.asList(times_int).indexOf(ApplicationController.getInstance().getAlarms().getAssignmentDueAlarm())] + " (default)");
+
         for(Integer alarm : assignment.getAlarms()) {
-            final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
-            final Integer[] times_int = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
             notification_time.add(times[ Arrays.asList(times_int).indexOf(alarm) ]);
         }
 
@@ -103,7 +106,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                 if(notification_time.get(position).equals("Add more notification")) {
                     selectAlarm();
                 }
-                else {
+                else if(position > 0) {
                     adb.setTitle("remove notification?");
                     adb.setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {

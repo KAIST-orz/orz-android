@@ -79,6 +79,12 @@ public interface OrzApi {
             @Body Map<String, String> body
     );
 
+    @PUT("api/v1/courses/{courseID}")
+    Call<Void> updateLecture(
+            @Path("courseID") int courseID,
+            @Body Map<String, String> body
+    );
+
     @POST("api/v1/courses/{courseID}/assignments")
     Call<Void> registerAssignment(
             @Path("courseID") int courseID,
@@ -86,7 +92,7 @@ public interface OrzApi {
     );
 
     @GET("api/v1/assignments/{assignmentID}")
-    Call<Assignment> getAssignment(
+    Call<Map<String, String>> getAssignment(
             @Path("assignmentID") int assignmentID
     );
 

@@ -52,6 +52,13 @@
                 android:divider="#00000000" />
 
             <Button
+                android:id="@+id/button_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="update"
+                android:text="@string/update" />
+
+            <Button
                 android:id="@+id/button_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

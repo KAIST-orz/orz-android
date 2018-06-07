@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -105,12 +106,12 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int courseID = intent.getExtras().getInt("courseID");
         EditText schedule_name = findViewById(R.id.editText_assignment_name);
-        Button due_date = findViewById(R.id.button_due_date);
+        TextView due_date = findViewById(R.id.button_due_date);
         EditText description = findViewById(R.id.editText_description);
 
         if(schedule_name.length() == 0)
             Toast.makeText(this, "assignment name can not be empty", Toast.LENGTH_LONG).show();
-        else if(due_date.getText().equals("start time"))
+        else if(due_date.getText().equals("due date"))
             Toast.makeText(this, "due date can not be empty", Toast.LENGTH_LONG).show();
         else if(description.length() == 0)
             description.setText("no description");
@@ -122,7 +123,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
             SimpleDateFormat parser2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             body.put("due", parser2.format(parser1.parse(due_date.getText().toString())));
             body.put("description", description.getText().toString());
-            Call<Void> call = api.updateAssignment(courseID, body);
+            Call<Void> call = api.updateAssignment(assignmentID, body);
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
@@ -179,7 +180,5 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
         });
         adb.setNegativeButton("no", null);
         adb.show();
-
-        finish();
     }
 }

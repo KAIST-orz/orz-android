@@ -10,14 +10,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.Course;
@@ -82,6 +85,44 @@ public class LectureDetailsActivity extends AppCompatActivity {
             }
         });
         setListViewHeightBasedOnChildren(listview1);
+    }
+
+    public void update(View v) {
+        EditText lecture_name = findViewById(R.id.editText_lecture_name);
+        EditText lecture_code = findViewById(R.id.editText_lecture_code);
+        EditText professor = findViewById(R.id.editText_professor);
+
+        if(lecture_name.length() == 0)
+            Toast.makeText(this, "lecture name can not be empty", Toast.LENGTH_LONG).show();
+        else if(lecture_code.length() == 0)
+            Toast.makeText(this, "lecture code can not be empty", Toast.LENGTH_LONG).show();
+        else if(professor.length() == 0)
+            Toast.makeText(this, "professor can not be empty", Toast.LENGTH_LONG).show();
+        else {
+            OrzApi api = ApplicationController.getInstance().getApi();
+            User user = ApplicationController.getInstance().getUser();
+            Map<String, String> body = new HashMap<>();
+            body.put("name", lecture_name.getText().toString());
+            body.put("code", lecture_code.getText().toString());
+            body.put("professor", professor.getText().toString());
+            Call<Void> call = api.updateLecture(courseID, body);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful() && response.code() == 200) {
+                        Toast.makeText(LectureDetailsActivity.this, "update lecture success", Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(LectureDetailsActivity.this, "update lecture failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(LectureDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     public void delete(View v) {
