@@ -266,7 +266,7 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             setResult(RESULT_OK_PERSONAL_SCHEDULE, intent);
                             finish();
                         } else {
-                            Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterScheduleActivity.this, "Please check your duration is valid and not overlapping", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -295,7 +295,7 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             setResult(RESULT_OK_TIME_FOR_ASSIGNMENT, intent);
                             finish();
                         } else {
-                            Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterScheduleActivity.this, "Please check your duration is valid and not overlapping", Toast.LENGTH_LONG).show();
                         }
                     }
 
