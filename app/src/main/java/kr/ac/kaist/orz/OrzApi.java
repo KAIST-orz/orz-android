@@ -4,6 +4,7 @@ import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.Course;
 import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
+import kr.ac.kaist.orz.models.Schedule;
 import kr.ac.kaist.orz.models.School;
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.TimeForAssignment;
@@ -69,7 +70,7 @@ public interface OrzApi {
     );
 
     @POST("api/v1/students/{userID}/personal-schedules")
-    Call<Void> registerStudentPersonalSchedule(
+    Call<PersonalSchedule> registerStudentPersonalSchedule(
             @Path("userID") int userID,
             @Body Map<String, Object> body
     );
@@ -80,7 +81,7 @@ public interface OrzApi {
     );
 
     @POST("api/v1/students/{userID}/assignments/{assignmentID}/time-for-assignments")
-    Call<Void> registerStudentTimeForAssignment(
+    Call<TimeForAssignment> registerStudentTimeForAssignment(
             @Path("userID") int userID,
             @Path("assignmentID") int assignmentID,
             @Body Map<String, Object> body

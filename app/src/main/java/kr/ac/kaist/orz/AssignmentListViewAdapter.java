@@ -2,7 +2,6 @@ package kr.ac.kaist.orz;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,8 +53,7 @@ public class AssignmentListViewAdapter extends ArrayAdapter {
         }
 
         // Populate the data into the view using viewHolder object.
-        // TODO: set appropriate color.
-        int color = ContextCompat.getColor(getContext(), R.color.colorPrimaryDark);
+        int color = Colors.getCourseColor(getContext(), assignment.getCourseID());
         viewHolder.arrowHead.getDrawable().setTint(color);
         viewHolder.textLayout.setBackgroundColor(color);
         viewHolder.courseNameText.setText(assignment.getCourseName());
