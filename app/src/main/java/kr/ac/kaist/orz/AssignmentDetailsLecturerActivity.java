@@ -178,6 +178,6 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
             }
         });
         adb.setNegativeButton("no", null);
-        adb.show();     
+        adb.show();
     }
 }

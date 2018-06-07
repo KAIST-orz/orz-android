@@ -48,6 +48,10 @@ public class Assignment implements Serializable {
         return calendar;
     }
 
+    public int getCourseID() {
+        return courseID;
+    }
+
     public String getCourseName() {
         return courseName;
     }

@@ -1,8 +1,10 @@
 package kr.ac.kaist.orz;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -11,7 +13,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -22,15 +23,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.text.DateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
+import kr.ac.kaist.orz.models.Alarms;
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.Schedule;
@@ -54,6 +55,8 @@ public class CalendarTabFragment extends Fragment
     private ImageButton toPreviousDay;
     private ImageButton toNextDay;
     private Button pickDate;
+
+    private int requestCode = 0;
 
     // Keep the date information which the user has chosen
     private Calendar current;
@@ -90,6 +93,10 @@ public class CalendarTabFragment extends Fragment
         return fragment;
     }
 
+    public void getCalendarEvents() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +119,7 @@ public class CalendarTabFragment extends Fragment
                 if(response.isSuccessful()) {
                     assignments.addAll(response.body());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment", response.message());
@@ -132,6 +140,7 @@ public class CalendarTabFragment extends Fragment
                     personalSchedules.addAll(response.body());
                     Log.d("123", response.body().toString());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment2", response.message());
@@ -152,6 +161,7 @@ public class CalendarTabFragment extends Fragment
                     timeForAssignments.addAll(response.body());
                     Log.d("123", response.body().toString());
                     displayCurrentDate();
+                    setAlarm();
                 }
                 else {
                     Log.e("CalendarTabFragment3", response.message());
@@ -270,6 +280,20 @@ public class CalendarTabFragment extends Fragment
         displayDeadlines(assignments);
     }
 
+    public void updateSchedules(Schedule schedule) {
+        if (schedule == null) {
+            return;
+        }
+
+        if (schedule instanceof PersonalSchedule) {
+            personalSchedules.add((PersonalSchedule) schedule);
+        } else if (schedule instanceof TimeForAssignment) {
+            timeForAssignments.add((TimeForAssignment) schedule);
+        }
+        displayCurrentDate();
+        setAlarm();
+    }
+
     // Remove anything (schedule, assignment) displayed on the scheduleLayout.
     private void clearLayout() {
         if (numOfViews > 0) {
@@ -355,8 +379,8 @@ public class CalendarTabFragment extends Fragment
         scheduleView.setTitle(title);
         scheduleView.setDescription(description);
 
-        // TODO: Fill appropriate background and font color.
-        scheduleView.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        // Set color of the schedule.
+        scheduleView.setColor(Colors.getScheduleColor(getContext(), schedule));
 
         // Assign a unique ID to setup constraints of the view.
         int viewId = View.generateViewId();
@@ -505,9 +529,7 @@ public class CalendarTabFragment extends Fragment
         int topMargin = calculateDeadlineViewTopMargin(assignment.getDue());
 
         deadlineView.setCourseName(assignment.getCourseName());
-
-        // TODO: Fill appropriate color.
-        deadlineView.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+        deadlineView.setColor(Colors.getCourseColor(getContext(), assignment.getCourseID()));
 
         // Assign a unique ID to setup constraints.
         int viewId = View.generateViewId();
@@ -626,5 +648,77 @@ public class CalendarTabFragment extends Fragment
     // Implement this interface to handle actions in activity.
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction();
+    }
+
+    public void setAlarm() {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        for (int i=0; i<requestCode; i++) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), i, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        Calendar now = Calendar.getInstance();
+        Alarms userAlarms = ApplicationController.getInstance().getAlarms();
+
+        for (PersonalSchedule p : personalSchedules) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getPersonalScheduleAlarm());
+            alarms.addAll(p.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(p.getStart().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            p.getName(),
+                            "After "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
+
+        for (TimeForAssignment t : timeForAssignments) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getTimeForAssignmentAlarm());
+            alarms.addAll(t.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(t.getStart().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            "Time for "+t.getAssignmentName(),
+                            t.getCourseName()+"\nAfter "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
+
+        for (StudentAssignment s : assignments) {
+            List<Integer> alarms = new ArrayList<>();
+            alarms.add(userAlarms.getAssignmentDueAlarm());
+            alarms.addAll(s.getAlarms());
+            for (Integer a : alarms) {
+                Calendar alarmTime = Calendar.getInstance();
+                alarmTime.setTime(s.getDue().getTime());
+                alarmTime.add(Calendar.MINUTE, -a);
+                if (alarmTime.after(now)) {
+                    setSingleAlarm(
+                            alarmTime,
+                            "Due for "+s.getName(),
+                            s.getCourseName()+"\nAfter "+String.valueOf(a)+" minutes");
+                }
+            }
+        }
+    }
+
+    public void setSingleAlarm(Calendar calendar, String title, String message) {
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        alarmIntent.putExtra("title", title);
+        alarmIntent.putExtra("message", message);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), requestCode++, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }
