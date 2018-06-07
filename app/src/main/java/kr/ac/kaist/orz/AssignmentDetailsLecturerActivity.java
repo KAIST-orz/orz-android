@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,19 +36,25 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
         assignmentID = intent.getExtras().getInt("assignmentID");
 
         OrzApi api = ApplicationController.getInstance().getApi();
-        Call<Assignment> call = api.getAssignment(assignmentID);
-        call.enqueue(new Callback<Assignment>() {
+        Call<Map<String, String>> call = api.getAssignment(assignmentID);
+        call.enqueue(new Callback<Map<String, String>>() {
             @Override
-            public void onResponse(Call<Assignment> call, Response<Assignment> response) {
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                 if(response.isSuccessful() && response.code()==200) {
-                    Assignment assignment = response.body();
+                    Map<String, String> body = new HashMap<>();
+                    body.putAll(response.body());
                     EditText assignment_name =  findViewById(R.id.editText_assignment_name);
                     Button due_date =  findViewById(R.id.button_due_date);
                     EditText description =  findViewById(R.id.editText_description);
-                    assignment_name.setText(assignment.getName());
+                    assignment_name.setText(body.get("name"));
                     SimpleDateFormat parser1 = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
-                    due_date.setText(parser1.format(assignment.getDue()));
-                    description.setText(assignment.getDescription());
+                    SimpleDateFormat parser2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    try {
+                        due_date.setText(parser1.format(parser2.parse(body.get("due"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    description.setText(body.get("description"));
                 }
                 else {
                     Toast.makeText(AssignmentDetailsLecturerActivity.this, "Could not get assignment information", Toast.LENGTH_LONG).show();
@@ -57,7 +62,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Assignment> call, Throwable t) {
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
                 Toast.makeText(AssignmentDetailsLecturerActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
             }
         });
