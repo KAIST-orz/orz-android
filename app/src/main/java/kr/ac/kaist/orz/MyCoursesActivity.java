@@ -5,14 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +22,7 @@ public class MyCoursesActivity extends AppCompatActivity {
     private myCourseViewAdapter m_Adapter;
 
     //데이터를 저장하게 되는 리스트
-    private List<Course> list = new ArrayList<>();
+    private List<Course> myCourses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +35,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         // Xml에서 추가한 ListView 연결
         m_ListView = (ListView)findViewById(R.id.listview_myCourses);
         //리스트뷰와 리스트를 연결하기 위해 사용되는 어댑터
-        m_Adapter = new myCourseViewAdapter(this, list);
+        m_Adapter = new myCourseViewAdapter(this, myCourses);
         //리스트뷰의 어댑터를 지정해준다.
         m_ListView.setAdapter(m_Adapter);
 
@@ -51,7 +45,7 @@ public class MyCoursesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(
-                        getApplicationContext(), // 현재화면의 제어권자
+                        MyCoursesActivity.this, // 현재화면의 제어권자
                         OpenCoursesActivity.class); // 다음넘어갈 화면
 
                 startActivity(intent); //다음 화면으로 넘어감
@@ -67,7 +61,7 @@ public class MyCoursesActivity extends AppCompatActivity {
         super.onResume();
 
         // List 초기화
-        list.clear();
+        myCourses.clear();
 
         // List에 데이터 입력
         addData();
@@ -85,24 +79,19 @@ public class MyCoursesActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
                 if(response.isSuccessful()) {
-                    list.addAll(response.body());
+                    myCourses.addAll(response.body());
                     m_Adapter.notifyDataSetChanged();
                 }
                 else {
+                    Toast.makeText(MyCoursesActivity.this, "Failed to load your courses. ", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Course>> call, Throwable t) {
+                Toast.makeText(MyCoursesActivity.this, "Failed to load your courses. ", Toast.LENGTH_LONG).show();
             }
         });
-
-        /*
-        list.add(new myCourseInformation("Logical Writing", "HSS001(K)","Jaeun Oh", 100));
-        list.add(new myCourseInformation("Interactive Product Design", "ID301(A)","Woohun Lee", 200));
-        list.add(new myCourseInformation("Computer Organization", "CS311","Hyunsoo Yoon", 301));
-        list.add(new myCourseInformation("Introduction to Software Engineering", "CS350","Doo-Hwan Bae", 404));
-        */
     }
 
     public void refreshView(){
@@ -110,3 +99,4 @@ public class MyCoursesActivity extends AppCompatActivity {
         startActivity(getIntent());
     }
 }
+
