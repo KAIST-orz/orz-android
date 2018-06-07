@@ -192,7 +192,6 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(getApplicationContext(), "test1", Toast.LENGTH_LONG).show();
                         adb.setPositiveButton("set",
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -203,8 +202,6 @@ public class RegisterScheduleActivity extends AppCompatActivity {
 
                                         SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
                                         ((TextView) v).setText(parser.format(date));
-
-                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
@@ -221,10 +218,9 @@ public class RegisterScheduleActivity extends AppCompatActivity {
         TextView start_time = findViewById(R.id.textView_start_time);
         TextView end_time = findViewById(R.id.textView_end_time);
 
-        if(schedule_name.length() == 0) {
-            if (currentTypePosition == 0) {
-                Toast.makeText(this, "Schedule name can not be empty", Toast.LENGTH_LONG).show();
-            }
+        if(currentTypePosition == 0 && schedule_name.length() == 0) {
+            // Do not allow when a user does not enter a name for personal schedule.
+            Toast.makeText(this, "Schedule name can not be empty", Toast.LENGTH_LONG).show();
         }
         else if(start_time.getText().equals("Start Time")) {
             Toast.makeText(this, "Start time can not be empty", Toast.LENGTH_LONG).show();
@@ -289,10 +285,10 @@ public class RegisterScheduleActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra("schedule", response.body());
 
-                            setResult(RESULT_OK_PERSONAL_SCHEDULE, intent);
+                            setResult(RESULT_OK_TIME_FOR_ASSIGNMENT, intent);
                             finish();
                         } else {
-                            Toast.makeText(RegisterScheduleActivity.this, response.code(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterScheduleActivity.this, String.valueOf(response.code()), Toast.LENGTH_LONG).show();
                         }
                     }
 

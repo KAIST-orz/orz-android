@@ -26,10 +26,11 @@
 
         <Button
             android:id="@+id/pick_date"
+            style="?attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/to_next_day"
             app:layout_constraintStart_toEndOf="@+id/to_previous_day"

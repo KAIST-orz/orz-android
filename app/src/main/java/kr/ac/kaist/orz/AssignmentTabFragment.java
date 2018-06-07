@@ -70,7 +70,6 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         return fragment;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +98,9 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
             @Override
             public void onResponse(Call<List<StudentAssignment>> call, Response<List<StudentAssignment>> response) {
                 if(response.isSuccessful()) {
+                    // Add the assignments into the list and sort it by currently picked sorting criteria.
                     assignmentList.addAll(response.body());
+                    Collections.sort(assignmentList, getComparator(sortingCriteria));
                     listViewAdapter.notifyDataSetChanged();
                 }
                 else {
@@ -140,29 +141,24 @@ public class AssignmentTabFragment extends Fragment implements DialogInterface.O
         Object checkedItem = listView.getAdapter().getItem(listView.getCheckedItemPosition());
         sortingCriteria = checkedItem.toString();
 
-        // Get appropriate comparator for each sorting criteria.
-        Comparator<? super StudentAssignment> assignmentComparator;
-        switch (sortingCriteria) {
-            case SORT_DUE:
-                assignmentComparator = Assignment.DUE_COMPARATOR;
-                break;
-            case SORT_COURSE:
-                assignmentComparator = Assignment.COURSE_COMPARATOR;
-                break;
-            case SORT_SIGNIFICANCE:
-                assignmentComparator = StudentAssignment.SIGNIFICANCE_COMPARATOR;
-                break;
-            case SORT_ESTIMATE:
-                assignmentComparator = Assignment.ESTIMATE_COMPARATOR;
-                break;
-            default:
-                assignmentComparator = null;
-        }
+        // Get appropriate comparator for the selected criteria and sort the list of assignments.
+        Collections.sort(assignmentList, getComparator(sortingCriteria));
+        listViewAdapter.notifyDataSetChanged();
+    }
 
-        // Sort the assignmentList with picked sorting criteria, then notify assignmentListViewAdapter.
-        if (assignmentComparator != null) {
-            Collections.sort(assignmentList, assignmentComparator);
-            listViewAdapter.notifyDataSetChanged();
+    // Returns the comparator for the sorting criteria passed by argument.
+    public static Comparator<? super StudentAssignment> getComparator(String SORT_CRITERIA) {
+        switch (SORT_CRITERIA) {
+            case SORT_COURSE:
+                return Assignment.COURSE_COMPARATOR;
+            case SORT_SIGNIFICANCE:
+                return StudentAssignment.SIGNIFICANCE_COMPARATOR;
+            case SORT_ESTIMATE:
+                return Assignment.ESTIMATE_COMPARATOR;
+            case SORT_DUE:
+            default:
+                // Default is to sort by due dates.
+                return Assignment.DUE_COMPARATOR;
         }
     }
 }
