@@ -146,7 +146,7 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                     Map<String, Object> body = new HashMap<>();
                                     body.put("timeEstimation", String.valueOf(assignment.getTimeEstimation()));
                                     body.put("significance", String.valueOf(assignment.getSignificance()));
-                                    assignment.removeAlarm(position);
+                                    assignment.removeAlarm(position - 1);
                                     body.put("alarms", assignment.getAlarms());
                                     Call<Void> call = api.updateStudentAssignment(user.getID(), assignment.getID(), body);
                                     call.enqueue(new Callback<Void>() {
@@ -168,7 +168,6 @@ public class AssignmentDetailsActivity extends AppCompatActivity {
                                             Toast.makeText(AssignmentDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Toast.makeText(getApplicationContext(), "remove alarm #" + String.valueOf(position), Toast.LENGTH_LONG).show();
                                 }
                             });
                     adb.setNegativeButton("No", null);

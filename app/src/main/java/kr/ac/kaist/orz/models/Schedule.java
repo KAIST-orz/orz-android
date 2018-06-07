@@ -43,4 +43,10 @@ public abstract class Schedule implements Serializable {
         return calendar;
 
     }
+
+    public List<Integer> getAlarms() { return alarms; }
+
+    public void addAlarm(int alarm) { alarms.add(alarm); }
+
+    public void removeAlarm(int index) { alarms.remove(index); }
 }

@@ -24,17 +24,35 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import kr.ac.kaist.orz.models.Assignment;
 import kr.ac.kaist.orz.models.PersonalSchedule;
 import kr.ac.kaist.orz.models.Schedule;
 import kr.ac.kaist.orz.models.StudentAssignment;
 import kr.ac.kaist.orz.models.TimeForAssignment;
+import kr.ac.kaist.orz.models.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ScheduleDetailsActivity extends AppCompatActivity {
 
     List<String> notification_time = new ArrayList<String>();
+
+    TextArrayAdapter adapter;
+
+    Schedule schedule;
+
+    boolean is_personal_schedule;
+    boolean is_time_for_assignment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +82,35 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
             }
         });
 
-        notification_time.add("5 minute before (Default)");
-        notification_time.add("10 minute before");
-        notification_time.add("Add more notification");
-
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
 
         Intent intent = getIntent();
-        Schedule schedule = (Schedule) intent.getExtras().getSerializable("schedule");
+        schedule = (Schedule) intent.getExtras().getSerializable("schedule");
+
+        if (PersonalSchedule.class.isInstance(schedule)) {
+            is_personal_schedule = true;
+            is_time_for_assignment = false;
+        }
+
+        final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
+        final Integer[] times_int = new Integer[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
+
+        if(is_personal_schedule)
+            notification_time.add(times[Arrays.asList(times_int).indexOf(ApplicationController.getInstance().getAlarms().getPersonalScheduleAlarm())] + " (default)");
+        else
+            notification_time.add(times[Arrays.asList(times_int).indexOf(ApplicationController.getInstance().getAlarms().getTimeForAssignmentAlarm())] + " (default)");
+
+        for(Integer alarm : schedule.getAlarms()) {
+            notification_time.add(times[ Arrays.asList(times_int).indexOf(alarm) ]);
+        }
+
+        notification_time.add("Add more notification");
 
         // The ListView to show notification times set.
         ListView listView1 = findViewById(R.id.listView_notification);
-        TextArrayAdapter adapter = new TextArrayAdapter(this, notification_time);
+        adapter = new TextArrayAdapter(this, notification_time);
         listView1.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView1);
 
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,13 +118,47 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
                 if(notification_time.get(position).equals("Add more notification")) {
                     selectAlarm();
                 }
-                else {
+                else if(position > 0) {
                     adb.setTitle("remove notification?");
                     adb.setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(getApplicationContext(), "remove alarm #" + String.valueOf(position), Toast.LENGTH_LONG).show();
+
+                                    OrzApi api = ApplicationController.getInstance().getApi();
+                                    User user = ApplicationController.getInstance().getUser();
+                                    Map<String, Object> body = new HashMap<>();
+                                    schedule.removeAlarm(position - 1);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.KOREA);
+                                    body.put("start", sdf.format(schedule.getStart().getTime()));
+                                    body.put("end", sdf.format(schedule.getEnd().getTime()));
+                                    body.put("alarms", schedule.getAlarms());
+                                    if(is_personal_schedule)
+                                        body.put("name", ((PersonalSchedule) schedule).getName());
+                                    Call<Void> call;
+                                    if(is_personal_schedule)
+                                        call = api.updatePersonalSchedule(user.getID(), schedule.id, body);
+                                    else
+                                        call = api.updateTimeForAssignment(user.getID(), ((TimeForAssignment) schedule).getAssignmentID(), schedule.id, body);
+                                    call.enqueue(new Callback<Void>() {
+                                        @Override
+                                        public void onResponse(Call<Void> call, Response<Void> response) {
+                                            if(response.isSuccessful() && response.code()==200) {
+                                                Toast.makeText(ScheduleDetailsActivity.this, "alarm remove success", Toast.LENGTH_LONG).show();
+                                                notification_time.remove(position);
+                                                adapter.notifyDataSetChanged();
+                                                setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_notification));
+                                            }
+                                            else {
+                                                Toast.makeText(ScheduleDetailsActivity.this, "alarm remove failed " + response.code(), Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Void> call, Throwable t) {
+                                            Toast.makeText(ScheduleDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
                                 }
                             });
                     adb.setNegativeButton("No", null);
@@ -98,62 +166,7 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        setListViewHeightBasedOnChildren(listView1);
 
-        // TODO: Get list of assignments from the server.
-        // TODO: Sort by some criteria (e.g. due date).
-        ArrayList<StudentAssignment> assignments = null;
-
-        // Make a list of strings containing "<course name>\n<assignment name>
-        // with header "Custom schedule".
-        ArrayList<String> scheduleTypes = new ArrayList<>();
-        scheduleTypes.add("Custom schedule");
-
-        for (Assignment assignment : assignments) {
-            scheduleTypes.add(assignment.getCourseName() + "\n" + assignment.getName());
-        }
-
-        // Set which checkbox should be checked.
-        int currentType = 0;
-        if (schedule instanceof TimeForAssignment) {
-            for (int i = 0; i < assignments.size(); i++) {
-                if (assignments.get(i).getID() == ((TimeForAssignment) schedule).getAssignmentID()) {
-                    currentType = i + 1;
-                    break;
-                }
-            }
-        }
-
-        // The ListView to show which type (personal schedule or time for which assignment) of schedule this is.
-        ListView listView2 = findViewById(R.id.listView_schedule_type);
-        ArrayAdapter<String> scheduleTypeAdapter = new ArrayAdapter<>(this, R.layout.schedule_type_list_item, scheduleTypes);
-        listView2.setAdapter(scheduleTypeAdapter);
-        listView2.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-        // Check appropriate checkbox.
-        listView2.setItemChecked(currentType, true);
-
-        // Set OnItemSelectedListener.
-        final int[] currentTypeContainer = new int[]{currentType};
-        listView2.setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (currentTypeContainer[0] == position) {
-                    // Do nothing.
-                } else {
-                    // TODO: Send the server that change occurred on this schedule.
-                    // TODO: Set the background color of the action bar and modify fields of 'schedule'.
-                    // TODO: Might have to refresh this activity.
-                    currentTypeContainer[0] = position;
-                    finish();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // Not possible.
-            }
-        });
 
         // Display the title of this page according to the schedule type.
         // TODO: Set appropriate color according to the schedule type.
@@ -180,23 +193,58 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
     }
 
     public void selectAlarm() {
-        final String[] times = new String[] {"1min", "3min", "5min", "10min", "30min", "1hour", "2hour", "3hour"};
+        final String[] times = new String[] {"1min", "3min", "5min", "10min", "15min", "30min", "1hour", "2hour", "3hour"};
+        final int[] times_int = new int[] {1, 3, 5, 10, 15, 30, 60, 120, 180};
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle("set time");
-        adb.setSingleChoiceItems(times, 1, null);
+        adb.setSingleChoiceItems(times, 0, null);
         adb.setPositiveButton("close",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ListView lw = ((AlertDialog)dialog).getListView();
-                        Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
-                        Toast.makeText(getApplicationContext(), "time set to ".concat(checkedItem.toString()), Toast.LENGTH_LONG).show();
+
+                        final ListView lw = ((AlertDialog)dialog).getListView();
+                        OrzApi api = ApplicationController.getInstance().getApi();
+                        User user = ApplicationController.getInstance().getUser();
+                        Map<String, Object> body = new HashMap<>();
+                        schedule.addAlarm(times_int[lw.getCheckedItemPosition()]);
+                        Collections.sort(schedule.getAlarms());
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.KOREA);
+                        body.put("start", sdf.format(schedule.getStart().getTime()));
+                        body.put("end", sdf.format(schedule.getEnd().getTime()));
+                        body.put("alarms", schedule.getAlarms());
+                        if(is_personal_schedule)
+                            body.put("name", ((PersonalSchedule) schedule).getName());
+                        Call<Void> call;
+                        if(is_personal_schedule)
+                            call = api.updatePersonalSchedule(user.getID(), schedule.id, body);
+                        else
+                            call = api.updateTimeForAssignment(user.getID(), ((TimeForAssignment) schedule).getAssignmentID(), schedule.id, body);
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if(response.isSuccessful() && response.code()==200) {
+                                    Toast.makeText(ScheduleDetailsActivity.this, "alarm set success", Toast.LENGTH_LONG).show();
+                                    notification_time.add(notification_time.size() - 1, times[lw.getCheckedItemPosition()]);
+                                    adapter.notifyDataSetChanged();
+                                    setListViewHeightBasedOnChildren((ListView) findViewById(R.id.listView_notification));
+                                }
+                                else {
+                                    Toast.makeText(ScheduleDetailsActivity.this, "alarm set failed " + response.code(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Toast.makeText(ScheduleDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 });
         adb.show();
     }
 
-    public void selectTime(View v) {
+    public void selectTime(final View v) {
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
         final DatePicker dp = new DatePicker(this);
         final TimePicker tp = new TimePicker(this);
@@ -212,7 +260,53 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //Toast.makeText(getApplicationContext(), "test2", Toast.LENGTH_LONG).show();
-                                        Toast.makeText(getApplicationContext(), String.valueOf(dp.getYear()) + "-" + String.valueOf(dp.getMonth() + 1) + "-" + String.valueOf(dp.getDayOfMonth()) + "\n" + String.valueOf(tp.getCurrentHour()) + ":" + String.valueOf(tp.getCurrentMinute()), Toast.LENGTH_LONG).show();
+                                        Calendar calendar = Calendar.getInstance();
+                                        calendar.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth(), tp.getCurrentHour(), tp.getCurrentMinute());
+                                        final Date date = calendar.getTime();
+
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.KOREA);
+
+                                        OrzApi api = ApplicationController.getInstance().getApi();
+                                        User user = ApplicationController.getInstance().getUser();
+                                        Map<String, Object> body = new HashMap<>();
+                                        if(v.equals(findViewById(R.id.textView_start_time))) {
+                                            body.put("start", sdf.format(date));
+                                            body.put("end", sdf.format(schedule.getEnd().getTime()));
+                                        }
+                                        else {
+                                            body.put("start", sdf.format(schedule.getStart().getTime()));
+                                            body.put("end", sdf.format(date));
+                                        }
+                                        body.put("alarms", schedule.getAlarms());
+                                        if(is_personal_schedule)
+                                            body.put("name", ((PersonalSchedule) schedule).getName());
+
+                                        Call<Void> call;
+                                        if(is_personal_schedule)
+                                            call = api.updatePersonalSchedule(user.getID(), schedule.id, body);
+                                        else
+                                            call = api.updateTimeForAssignment(user.getID(), ((TimeForAssignment) schedule).getAssignmentID(), schedule.id, body);
+                                        call.enqueue(new Callback<Void>() {
+                                            @Override
+                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                if(response.isSuccessful() && response.code()==200) {
+                                                    Toast.makeText(ScheduleDetailsActivity.this, "time set success", Toast.LENGTH_LONG).show();
+                                                    SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
+                                                    ((TextView) v).setText(parser.format(date));
+                                                }
+                                                else {
+                                                    Toast.makeText(ScheduleDetailsActivity.this, "time set failed " + response.code(), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                Toast.makeText(ScheduleDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+
+
+
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
@@ -225,8 +319,41 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
     }
 
     public void delete(View v) {
-        Toast.makeText(this, "schedule deleted", Toast.LENGTH_LONG).show();
-        finish();
+
+        final OrzApi api = ApplicationController.getInstance().getApi();
+        final User user = ApplicationController.getInstance().getUser();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Are you sure to delete this assignment?");
+        adb.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Call<Void> call;
+                if(is_personal_schedule)
+                    call = api.deletePersonalSchedule(user.getID(), schedule.id);
+                else
+                    call = api.deleteTimeForAssignment(user.getID(), ((TimeForAssignment) schedule).getAssignmentID(), schedule.id);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful() && response.code()==200) {
+                            Toast.makeText(ScheduleDetailsActivity.this, "Successfully deleted", Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(ScheduleDetailsActivity.this, "Deletion failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(ScheduleDetailsActivity.this, "Not connected to server", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        adb.setNegativeButton("no", null);
+        adb.show();
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
