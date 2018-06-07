@@ -7,34 +7,71 @@
     tools:context=".RegisterAssignmentActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/editText_assignment_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="assignment name"
+            android:hint="Assignment name"
             android:inputType="text" />
 
-        <Button
-            android:id="@+id/button_due_date"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:onClick="selectTime"
-            android:text="due date"
-            android:textAllCaps="false" />
+            android:layout_marginStart="4dp"
+            android:layout_weight="0"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Due date"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="0"
+                android:background="@android:color/black"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/button_due_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="selectTime"
+                android:text="Select the due date"
+                android:textSize="18sp" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/editText_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="description"
+            android:hint="Description"
             android:inputType="text" />
 
         <Button

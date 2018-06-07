@@ -18,4 +18,5 @@ public class TimeForAssignment extends Schedule implements Serializable {
 
     public String getAssignmentName() { return assignmentName; }
     public String getCourseName() { return courseName; }
+    public int getAssignmentID() { return assignmentID; }
 }

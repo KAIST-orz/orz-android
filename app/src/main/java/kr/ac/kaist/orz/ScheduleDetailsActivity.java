@@ -117,8 +117,7 @@ public class ScheduleDetailsActivity extends AppCompatActivity {
         int currentType = 0;
         if (schedule instanceof TimeForAssignment) {
             for (int i = 0; i < assignments.size(); i++) {
-                // TODO: implement TimeForAssignment$getAssignmentId()
-                if (assignments.get(i).getID() == ((TimeForAssignment) schedule).getAssignmentId()) {
+                if (assignments.get(i).getID() == ((TimeForAssignment) schedule).getAssignmentID()) {
                     currentType = i + 1;
                     break;
                 }
