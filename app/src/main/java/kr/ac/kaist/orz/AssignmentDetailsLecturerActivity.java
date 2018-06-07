@@ -6,9 +6,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -43,7 +43,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.code()==200) {
                     Assignment assignment = response.body();
                     EditText assignment_name =  findViewById(R.id.editText_assignment_name);
-                    Button due_date =  findViewById(R.id.button_due_date);
+                    TextView due_date =  findViewById(R.id.button_due_date);
                     EditText description =  findViewById(R.id.editText_description);
                     assignment_name.setText(assignment.getName());
                     SimpleDateFormat parser1 = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
@@ -83,7 +83,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
                                         Date date = startCalendar.getTime();
 
                                         SimpleDateFormat parser = new SimpleDateFormat("HH:mm, dd MMMM yyyy");
-                                        ((Button)v).setText(parser.format(date));
+                                        ((TextView) v).setText(parser.format(date));
                                     }
                                 });
                         adb.setNegativeButton("cancel", null);
@@ -99,7 +99,7 @@ public class AssignmentDetailsLecturerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int courseID = intent.getExtras().getInt("courseID");
         EditText schedule_name = findViewById(R.id.editText_assignment_name);
-        Button due_date = findViewById(R.id.button_due_date);
+        TextView due_date = findViewById(R.id.button_due_date);
         EditText description = findViewById(R.id.editText_description);
 
         if(schedule_name.length() == 0)
